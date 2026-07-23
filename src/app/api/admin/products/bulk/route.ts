@@ -53,6 +53,9 @@ export async function POST(req: NextRequest) {
           slug, name: r.name, story: r.story || null, category: r.category,
           colorHex: r.colorHex || "#8A7A6A", colorName: r.colorName || null,
           basePrice, status: (r.status as any) || "ACTIVE", vendorId,
+          featured: r.featured === "true" || r.featured === "1",
+          featuredOrder: parseInt(r.featuredOrder || "0", 10),
+          lookbookOrder: r.lookbookOrder ? parseInt(r.lookbookOrder, 10) : null,
           variants: { create: SIZES.map((size) => ({ size, sku: `${slug}-${size}`, stock })) },
           tiers: { create: [
             { label: "Signature linen", priceAdd: 0, position: 0 },

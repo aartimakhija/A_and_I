@@ -124,6 +124,7 @@ model Address {
   @@index([userId])
 }
 
+
 // ── Vendor management ──────────────────────────────────────────────
 model Vendor {
   id         String       @id @default(cuid())
@@ -157,6 +158,9 @@ model Product {
   name        String
   story       String?                                  // narrative, not description
   status      ProductStatus  @default(ACTIVE)
+  featured      Boolean      @default(false)   // shows in Home's "Hand-picked" section
+  featuredOrder Int          @default(0)       // lower = earlier, when featured is true
+  lookbookOrder Int?                           // null = not in Lookbook; set = position (ascending)
   category    String                                   // ready | craft | linen
   occasion    String[]                                 // for multi-filter / SEO
   colorHex    String

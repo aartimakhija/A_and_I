@@ -47,8 +47,8 @@ export default function BulkImportForm({ vendorSlugs, isAdmin }: { vendorSlugs: 
 
   function downloadTemplate() {
     const sampleVendor = vendorSlugs[0] || "your-vendor-slug";
-    const header = "name,slug,category,colorHex,colorName,story,basePrice,stock,vendorSlug,status,imageUrls";
-    const example = `Mint Flutter,,ready,#B9B7AD,Mint,"A soft, breathable co-ord for warm days.",4800,6,${sampleVendor},ACTIVE,`;
+    const header = "name,slug,category,colorHex,colorName,story,basePrice,stock,vendorSlug,status,imageUrls,featured,featuredOrder,lookbookOrder";
+    const example = `Mint Flutter,,ready,#B9B7AD,Mint,"A soft, breathable co-ord for warm days.",4800,6,${sampleVendor},ACTIVE,,false,0,`;
     const blob = new Blob([header + "\n" + example + "\n"], { type: "text/csv" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");

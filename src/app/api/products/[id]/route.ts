@@ -22,7 +22,7 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
 
   const b = await req.json();
   const data: any = {};
-  for (const f of ["name", "story", "category", "colorHex", "colorName", "fabric", "basePrice", "status", "metaTitle", "metaDesc"]) {
+  for (const f of ["name", "story", "category", "colorHex", "colorName", "fabric", "basePrice", "status", "metaTitle", "metaDesc", "featured", "featuredOrder", "lookbookOrder"]) {
     if (b[f] !== undefined) data[f] = b[f];
   }
   if (Array.isArray(b.occasion)) data.occasion = b.occasion;

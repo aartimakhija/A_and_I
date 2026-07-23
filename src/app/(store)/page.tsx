@@ -7,11 +7,19 @@ export default async function HomePage() {
     where: { status: "ACTIVE" },
     include: PRODUCT_INCLUDE,
     orderBy: { createdAt: "desc" },
-    take: 24,
+    take: 40,
   });
   const all = products.map(toSFProduct);
 
-  const featured = all.slice(0, 4);
+  // Admin-curated picks (set via each product's edit page) take priority;
+  // fall back to "most recent" so the homepage still works before anyone
+  // has curated anything.
+  const curatedFeatured = products
+    .filter((p) => p.featured)
+    .sort((a, b) => a.featuredOrder - b.featuredOrder)
+    .map(toSFProduct);
+  const featured = curatedFeatured.length > 0 ? curatedFeatured.slice(0, 4) : all.slice(0, 4);
+
   const craft = all.filter((p) => p.category === "craft").slice(0, 3);
   const philosophyPiece = all.find((p) => p.category === "linen") ?? all[4] ?? null;
 

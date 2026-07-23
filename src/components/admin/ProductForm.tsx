@@ -10,7 +10,7 @@ type Props = {
   product?: {
     id: string; slug: string; name: string; story: string | null; category: string;
     colorHex: string; colorName: string | null; basePrice: number; status: string;
-    vendorId: string; images: ImageRow[];
+    vendorId: string; images: ImageRow[]; featured: boolean; featuredOrder: number; lookbookOrder: number | null;
     variants: { size: string; stock: number }[];
     tiers: { label: string; priceAdd: number }[];
   };
@@ -29,6 +29,10 @@ export default function ProductForm({ vendors, isAdmin, product }: Props) {
   const [colorName, setColorName] = useState(product?.colorName ?? "");
   const [basePrice, setBasePrice] = useState(((product?.basePrice ?? 480000) / 100).toString());
   const [status, setStatus] = useState(product?.status ?? "ACTIVE");
+  const [featured, setFeatured] = useState(product?.featured ?? false);
+  const [featuredOrder, setFeaturedOrder] = useState(product?.featuredOrder ?? 0);
+  const [inLookbook, setInLookbook] = useState(product?.lookbookOrder != null);
+  const [lookbookOrder, setLookbookOrder] = useState(product?.lookbookOrder ?? 0);
   const [vendorId, setVendorId] = useState(product?.vendorId ?? vendors[0]?.id ?? "");
   const [images, setImages] = useState<string[]>(product?.images.map((i) => i.url) ?? []);
   const [stock, setStock] = useState<Record<string, number>>(
@@ -72,6 +76,7 @@ export default function ProductForm({ vendors, isAdmin, product }: Props) {
     const payload = {
       name, slug: slug || name.toLowerCase().replace(/[^a-z0-9]+/g, "-"), story, category,
       colorHex, colorName, basePrice: Math.round(parseFloat(basePrice || "0") * 100), status,
+      featured, featuredOrder, lookbookOrder: inLookbook ? lookbookOrder : null,
       vendorId: isAdmin ? vendorId : undefined,
       images,
       variants: SIZES.map((s) => ({ size: s, stock: stock[s] ?? 0 })),
@@ -123,6 +128,27 @@ export default function ProductForm({ vendors, isAdmin, product }: Props) {
             {["DRAFT", "ACTIVE", "ARCHIVED", "SOLD_OUT"].map((s) => <option key={s} value={s}>{s}</option>)}
           </select>
         </div>
+      </div>
+
+      <label style={{ ...label, marginTop: 20, display: "block" }}>Where this shows up</label>
+      <div style={{ border: "1px solid #eee", padding: "12px 14px", marginTop: 6, display: "flex", flexDirection: "column", gap: 12 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+          <input type="checkbox" id="featured" checked={featured} onChange={(e) => setFeatured(e.target.checked)} />
+          <label htmlFor="featured" style={{ fontSize: 13 }}>Feature on homepage ("Hand-picked" section)</label>
+          {featured && (
+            <input type="number" value={featuredOrder} onChange={(e) => setFeaturedOrder(parseInt(e.target.value || "0", 10))}
+              title="Lower number shows first" style={{ width: 60, padding: 6, border: "1px solid #ddd", marginLeft: "auto" }} />
+          )}
+        </div>
+        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+          <input type="checkbox" id="inLookbook" checked={inLookbook} onChange={(e) => setInLookbook(e.target.checked)} />
+          <label htmlFor="inLookbook" style={{ fontSize: 13 }}>Include in Lookbook</label>
+          {inLookbook && (
+            <input type="number" value={lookbookOrder} onChange={(e) => setLookbookOrder(parseInt(e.target.value || "0", 10))}
+              title="Lower number shows first" style={{ width: 60, padding: 6, border: "1px solid #ddd", marginLeft: "auto" }} />
+          )}
+        </div>
+        <p style={{ fontSize: 11, color: "#999", margin: 0 }}>The number controls order — lower shows first. Leave both off and the homepage/lookbook will just show your most recent pieces automatically.</p>
       </div>
 
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 16 }}>
