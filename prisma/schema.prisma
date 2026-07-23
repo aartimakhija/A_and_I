@@ -8,45 +8,120 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum Role { CUSTOMER ADMIN VENDOR }
-enum OrderStatus { PENDING PAID FULFILLING SHIPPED DELIVERED CANCELLED REFUNDED }
-enum PaymentStatus { CREATED AUTHORIZED CAPTURED FAILED REFUNDED }
-enum ProductStatus { DRAFT ACTIVE ARCHIVED SOLD_OUT }
-enum VendorStatus { PENDING APPROVED SUSPENDED }
-enum ShipmentStatus { LABEL_CREATED PICKED_UP IN_TRANSIT OUT_FOR_DELIVERY DELIVERED FAILED RTO }
-enum ReturnStatus { REQUESTED APPROVED REJECTED PICKED_UP RECEIVED REFUNDED }
-enum ReturnReason { SIZE_ISSUE DAMAGED NOT_AS_DESCRIBED CHANGED_MIND QUALITY_ISSUE OTHER }
+enum Role {
+  CUSTOMER
+  ADMIN
+  VENDOR
+}
+
+enum OrderStatus {
+  PENDING
+  PAID
+  FULFILLING
+  SHIPPED
+  DELIVERED
+  CANCELLED
+  REFUNDED
+}
+
+enum PaymentStatus {
+  CREATED
+  AUTHORIZED
+  CAPTURED
+  FAILED
+  REFUNDED
+}
+
+enum ProductStatus {
+  DRAFT
+  ACTIVE
+  ARCHIVED
+  SOLD_OUT
+}
+
+enum VendorStatus {
+  PENDING
+  APPROVED
+  SUSPENDED
+}
+
+enum ShipmentStatus {
+  LABEL_CREATED
+  PICKED_UP
+  IN_TRANSIT
+  OUT_FOR_DELIVERY
+  DELIVERED
+  FAILED
+  RTO
+}
+
+enum ReturnStatus {
+  REQUESTED
+  APPROVED
+  REJECTED
+  PICKED_UP
+  RECEIVED
+  REFUNDED
+}
+
+enum ReturnReason {
+  SIZE_ISSUE
+  DAMAGED
+  NOT_AS_DESCRIBED
+  CHANGED_MIND
+  QUALITY_ISSUE
+  OTHER
+}
+
 
 // ── Identity / accounts (Memory layer) ─────────────────────────────
+// ─────────────────────────────────────────────────────────────
+
 model User {
-  id            String    @id @default(cuid())
-  email         String    @unique
+  id            String      @id @default(cuid())
+  email         String      @unique
   name          String?
   passwordHash  String?
-  role          Role      @default(CUSTOMER)
-  vendorId      String?                       // set when role = VENDOR
-  vendor        Vendor?   @relation(fields: [vendorId], references: [id])
+  role          Role        @default(CUSTOMER)
+
+  // Nullable unless the user is a vendor
+  vendorId      String?     @unique
+  vendor        Vendor?     @relation(fields: [vendorId], references: [id])
+
+  savedSize     String?
+  stylePrefs    Json?
+
   addresses     Address[]
   orders        Order[]
   wishlist      Wishlist[]
-  savedSize     String?
-  stylePrefs    Json?                         // behavioural / style profile
-  createdAt     DateTime  @default(now())
+
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
 }
 
 model Address {
-  id        String  @id @default(cuid())
-  userId    String
-  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-  name      String
-  phone     String
-  line1     String
-  line2     String?
-  city      String
-  state     String
-  pincode   String
-  country   String  @default("IN")
-  isDefault Boolean @default(false)
+  id            String      @id @default(cuid())
+
+  userId        String
+  user          User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  name          String
+  phone         String
+
+  line1         String
+  line2         String?
+
+  city          String
+  state         String
+  pincode       String
+  country       String      @default("IN")
+
+  isDefault     Boolean     @default(false)
+
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  @@index([userId])
 }
 
 // ── Vendor management ──────────────────────────────────────────────
