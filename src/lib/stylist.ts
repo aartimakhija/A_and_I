@@ -1,12 +1,20 @@
 import Anthropic from "@anthropic-ai/sdk";
-const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+
+let _client: Anthropic | null = null;
+function getClient() {
+  if (!process.env.ANTHROPIC_API_KEY) {
+    throw new Error("Stylist unavailable — set ANTHROPIC_API_KEY to enable it.");
+  }
+  if (!_client) _client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+  return _client;
+}
 
 // LLM styling assistant — "complete the look" / occasion suggestions.
 export async function styleAdvice(prompt: string, catalogue: { name: string; category: string; colorName?: string | null }[]) {
   const system = `You are the A & I stylist. Brand: Indian craft, global silhouette.
 Recommend outfits ONLY from this catalogue (use exact names). Be concise, warm, editorial.
 Catalogue: ${catalogue.map((c) => `${c.name} (${c.category}${c.colorName ? ", " + c.colorName : ""})`).join("; ")}`;
-  const res = await client.messages.create({
+  const res = await getClient().messages.create({
     model: process.env.ANTHROPIC_MODEL || "claude-sonnet-4-6",
     max_tokens: 600,
     system,

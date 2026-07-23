@@ -46,7 +46,12 @@ export async function POST(req: NextRequest) {
     include: { payment: true },
   });
 
-  const rzp = await createRzpOrder(total, order.number);
+  let rzp;
+  try {
+    rzp = await createRzpOrder(total, order.number);
+  } catch (e: any) {
+    return NextResponse.json({ error: "Payments aren't configured yet — set RAZORPAY_KEY_ID/RAZORPAY_KEY_SECRET.", detail: e?.message }, { status: 503 });
+  }
   await prisma.payment.update({ where: { orderId: order.id }, data: { rzpOrderId: rzp.id } });
 
   return NextResponse.json({
