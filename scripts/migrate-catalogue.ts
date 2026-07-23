@@ -12,6 +12,14 @@
 // Deliberately does NOT print any image data to stdout/logs — only ids,
 // counts, and slugs — since the base64 payloads are enormous.
 
+// `prisma db push`/`db seed` auto-load .env from either the project root or
+// the prisma/ folder — running this script directly with tsx doesn't get
+// that for free, so load both explicitly (whichever exists wins; harmless
+// if one is missing).
+import { config } from "dotenv";
+config({ path: "prisma/.env" });
+config();
+
 import { readFileSync } from "fs";
 import { resolve } from "path";
 import { PrismaClient } from "@prisma/client";
