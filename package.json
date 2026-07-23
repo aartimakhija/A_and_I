@@ -1,0 +1,40 @@
+{
+  "name": "aandi-commerce",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "prisma generate && next build",
+    "start": "next start",
+    "lint": "next lint",
+    "db:push": "prisma db push",
+    "db:seed": "tsx prisma/seed.ts",
+    "db:studio": "prisma studio",
+    "migrate:catalogue": "tsx scripts/migrate-catalogue.ts"
+  },
+  "prisma": { "seed": "tsx prisma/seed.ts" },
+  "dependencies": {
+    "next": "^14.2.5",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "@prisma/client": "^5.18.0",
+    "next-auth": "^5.0.0-beta.20",
+    "@auth/prisma-adapter": "^2.4.2",
+    "bcryptjs": "^2.4.3",
+    "razorpay": "^2.9.4",
+    "zod": "^3.23.8",
+    "@anthropic-ai/sdk": "^0.27.0",
+    "qrcode": "^1.5.4",
+    "nanoid": "^5.0.7",
+    "@aws-sdk/client-s3": "^3.600.0"
+  },
+  "devDependencies": {
+    "prisma": "^5.18.0",
+    "tsx": "^4.16.2",
+    "typescript": "^5.5.4",
+    "@types/node": "^20.14.0",
+    "@types/react": "^18.3.3",
+    "@types/bcryptjs": "^2.4.6",
+    "@types/qrcode": "^1.5.5"
+  }
+}
