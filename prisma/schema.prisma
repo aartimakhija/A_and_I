@@ -1,6 +1,12 @@
 // A & I — commerce data model (PostgreSQL)
-generator client { provider = "prisma-client-js" }
-datasource db { provider = "postgresql"; url = env("DATABASE_URL") }
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
 
 enum Role { CUSTOMER ADMIN VENDOR }
 enum OrderStatus { PENDING PAID FULFILLING SHIPPED DELIVERED CANCELLED REFUNDED }
