@@ -17,11 +17,16 @@ export async function categoryPaths() {
 }
 
 export async function buildSitemap() {
-  const products = await prisma.product.findMany({ where: { status: "ACTIVE" }, select: { slug: true, updatedAt: true } });
   const base = process.env.NEXT_PUBLIC_SITE_URL;
-  return [
-    { url: `${base}/`, },
+  const staticEntries = [
+    { url: `${base}/` },
     ...["ready", "craft", "linen"].map((c) => ({ url: `${base}/shop/${c}` })),
-    ...products.map((p) => ({ url: `${base}/products/${p.slug}`, lastModified: p.updatedAt })),
   ];
+  try {
+    const products = await prisma.product.findMany({ where: { status: "ACTIVE" }, select: { slug: true, updatedAt: true } });
+    return [...staticEntries, ...products.map((p) => ({ url: `${base}/products/${p.slug}`, lastModified: p.updatedAt }))];
+  } catch {
+    // A sitemap missing a few product URLs beats a 500 on /sitemap.xml.
+    return staticEntries;
+  }
 }
