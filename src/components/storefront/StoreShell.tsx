@@ -11,6 +11,7 @@ import { CartDrawer } from "./CartDrawer";
 import { SearchOverlay } from "./SearchOverlay";
 import { SavedDrawer } from "./SavedDrawer";
 import { ExitPopup } from "./ExitPopup";
+import { StylistWidget } from "./StylistWidget";
 import { T, SANS } from "./theme";
 import type { SFProduct } from "@/lib/storefront-adapter";
 
@@ -61,6 +62,7 @@ export function StoreShell({ catalogue, children }: { catalogue: SFProduct[]; ch
         <SavedDrawer />
         <SearchOverlay />
         <ExitPopup />
+        <StylistWidget />
       </div>
     </StoreProviders>
   );

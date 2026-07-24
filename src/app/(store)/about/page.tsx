@@ -3,6 +3,15 @@ import { toSFProduct, PRODUCT_INCLUDE } from "@/lib/storefront-adapter";
 import { About } from "@/components/storefront/About";
 
 export default async function AboutPage() {
-  const p = await prisma.product.findFirst({ where: { status: "ACTIVE", category: "craft" }, include: PRODUCT_INCLUDE });
-  return <About featurePiece={p ? toSFProduct(p) : null} />;
+  const products = await prisma.product.findMany({
+    where: { status: "ACTIVE" },
+    include: PRODUCT_INCLUDE,
+    orderBy: { createdAt: "desc" },
+    take: 12,
+  });
+  const all = products.map(toSFProduct);
+  const originPiece = all.find((p) => p.category === "craft") ?? all[0] ?? null;
+  const processPieces = all.filter((p) => p.id !== originPiece?.id).slice(0, 3);
+
+  return <About originPiece={originPiece} processPieces={processPieces} pieceCount={all.length} />;
 }

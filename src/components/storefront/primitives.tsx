@@ -25,7 +25,7 @@ export function Photo({ images = [], color = T.stone, name = "", ratio = "3/4", 
     ...style,
   };
   return (
-    <div className={reveal ? "reveal-img" : undefined} style={plate}>
+    <div className={reveal ? "reveal-img" : undefined} style={plate} data-in="true">
       {images.map((src, idx) => bad[idx] ? null : (
         <img key={idx} src={src} alt={idx === 0 ? name : ""} loading="lazy"
           onError={() => setBad((b) => ({ ...b, [idx]: true }))}

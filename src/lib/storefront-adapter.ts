@@ -16,11 +16,12 @@ export type SFProduct = {
   variants: { size: string; stock: number }[];
   tiers: { label: string; priceAdd: number }[]; // priceAdd in rupees
   status: string;
+  preOrder: boolean;
 };
 
 type PrismaProductWithRelations = {
   id: string; slug: string; name: string; story: string | null; category: string;
-  colorHex: string; colorName: string | null; basePrice: number; status: string;
+  colorHex: string; colorName: string | null; basePrice: number; status: string; preOrder: boolean;
   images: { url: string; position: number }[];
   variants: { size: string; stock: number }[];
   tiers: { label: string; priceAdd: number; position: number }[];
@@ -40,6 +41,7 @@ export function toSFProduct(p: PrismaProductWithRelations): SFProduct {
     variants: p.variants,
     tiers: [...p.tiers].sort((a, b) => a.position - b.position).map((t) => ({ label: t.label, priceAdd: t.priceAdd / 100 })),
     status: p.status,
+    preOrder: p.preOrder,
   };
 }
 

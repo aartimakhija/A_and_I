@@ -166,6 +166,8 @@ model Product {
   featured      Boolean      @default(false)   // shows in Home's "Hand-picked" section
   featuredOrder Int          @default(0)       // lower = earlier, when featured is true
   lookbookOrder Int?                           // null = not in Lookbook; set = position (ascending)
+  preOrder      Boolean      @default(false)   // production hasn't started — PDP shows "Reserve" instead of "Add to bag"
+  preOrders     PreOrder[]
   vendorId    String
   vendor      Vendor         @relation(fields: [vendorId], references: [id])
   images      ProductImage[]
@@ -244,6 +246,24 @@ model ContactMessage {                               // "Contact us" form submis
   read      Boolean  @default(false)
   createdAt DateTime @default(now())
   @@index([createdAt])
+}
+
+// Pre-order / waitlist-to-production — validates real demand for a piece
+// before a single unit is cut, per the "inventory is risk, data reduces
+// risk" principle in the business plan's drop system.
+model PreOrder {
+  id           String   @id @default(cuid())
+  productId    String
+  product      Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  size         String
+  email        String
+  phone        String?
+  qty          Int      @default(1)
+  status       String   @default("PENDING")          // PENDING | CONFIRMED | FULFILLED | CANCELLED
+  discountCode String?                                // small incentive for committing early
+  createdAt    DateTime @default(now())
+  @@index([productId])
+  @@index([status])
 }
 
 // ── Orders (OMS) ───────────────────────────────────────────────────

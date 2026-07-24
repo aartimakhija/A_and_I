@@ -19,6 +19,7 @@ export async function POST(req: NextRequest) {
       slug: b.slug, name: b.name, story: b.story, category: b.category, colorHex: b.colorHex,
       colorName: b.colorName, basePrice: b.basePrice, status: b.status || "ACTIVE", vendorId,
       featured: b.featured ?? false, featuredOrder: b.featuredOrder ?? 0, lookbookOrder: b.lookbookOrder ?? null,
+      preOrder: b.preOrder ?? false,
       variants: { create: (b.variants ?? []).map((v: any) => ({ size: v.size, sku: `${b.slug}-${v.size}`, stock: v.stock ?? 0 })) },
       tiers: { create: (b.tiers ?? []).map((t: any, i: number) => ({ label: t.label, priceAdd: t.priceAdd ?? 0, position: t.position ?? i })) },
       images: { create: (b.images ?? []).map((url: string, i: number) => ({ url, position: i })) },

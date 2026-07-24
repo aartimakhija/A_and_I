@@ -68,7 +68,7 @@ export function Lookbook({ products }: { products: SFProduct[] }) {
                   <Photo images={d.images} color={d.color} name={d.name} ratio="4/5" fit="contain" reveal eyebrow={`Look ${String(i + 1).padStart(2, "0")}`} />
                 </div>
               </div>
-              <div className="look-txt reveal" style={{ order: flip ? 1 : 2 }}>
+              <div className="look-txt" style={{ order: flip ? 1 : 2 }}>
                 <div style={{ fontFamily: SERIF, fontSize: "clamp(40px,5vw,68px)", color: T.gold, lineHeight: 1, opacity: 0.5 }}>{String(i + 1).padStart(2, "0")}</div>
                 <div style={{ marginTop: 10 }}><Eyebrow>{look.occasion}</Eyebrow></div>
                 <h2 style={{ fontFamily: SERIF, fontWeight: 300, fontSize: "clamp(28px,3.6vw,46px)", lineHeight: 1.04, color: T.ink, margin: "8px 0 14px" }}>{d.name}</h2>

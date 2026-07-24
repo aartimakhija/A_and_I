@@ -1,6 +1,7 @@
 "use client";
 import { createContext, useContext, useState, useEffect, useMemo, ReactNode } from "react";
 import type { SFProduct } from "@/lib/storefront-adapter";
+import type { FitAnswers, Size } from "@/lib/fit";
 
 export type CartItem = {
   key: string;
@@ -15,6 +16,8 @@ export type CartItem = {
   qty: number;
 };
 
+export type StyleProfile = { answers: FitAnswers; recommendedSize: Size; note: string };
+
 type StoreState = {
   catalogue: SFProduct[]; // all ACTIVE products — powers search + wishlist drawer lookups
   cart: CartItem[];
@@ -28,6 +31,8 @@ type StoreState = {
   savedOpen: boolean; setSavedOpen: (v: boolean) => void;
   searchOpen: boolean; setSearchOpen: (v: boolean) => void;
   menuOpen: boolean; setMenuOpen: (v: boolean) => void;
+  stylistOpen: boolean; setStylistOpen: (v: boolean) => void;
+  styleProfile: StyleProfile | null; setStyleProfile: (p: StyleProfile | null) => void;
   rm: boolean;
 };
 
@@ -40,14 +45,17 @@ export const useStore = () => {
 
 const CART_KEY = "aandi:cart";
 const SAVED_KEY = "aandi:saved";
+const STYLE_KEY = "aandi:style-profile";
 
 export function StoreProviders({ catalogue, rm, children }: { catalogue: SFProduct[]; rm: boolean; children: ReactNode }) {
   const [cart, setCart] = useState<CartItem[]>([]);
   const [saved, setSaved] = useState<string[]>([]);
+  const [styleProfile, setStyleProfileState] = useState<StyleProfile | null>(null);
   const [cartOpen, setCartOpen] = useState(false);
   const [savedOpen, setSavedOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [stylistOpen, setStylistOpen] = useState(false);
   const [hydrated, setHydrated] = useState(false);
 
   // Hydrate from localStorage on mount (real persistence across visits — this is
@@ -56,11 +64,19 @@ export function StoreProviders({ catalogue, rm, children }: { catalogue: SFProdu
     try {
       const c = localStorage.getItem(CART_KEY); if (c) setCart(JSON.parse(c));
       const s = localStorage.getItem(SAVED_KEY); if (s) setSaved(JSON.parse(s));
+      const p = localStorage.getItem(STYLE_KEY); if (p) setStyleProfileState(JSON.parse(p));
     } catch {}
     setHydrated(true);
   }, []);
   useEffect(() => { if (hydrated) localStorage.setItem(CART_KEY, JSON.stringify(cart)); }, [cart, hydrated]);
   useEffect(() => { if (hydrated) localStorage.setItem(SAVED_KEY, JSON.stringify(saved)); }, [saved, hydrated]);
+  useEffect(() => {
+    if (!hydrated) return;
+    if (styleProfile) localStorage.setItem(STYLE_KEY, JSON.stringify(styleProfile));
+    else localStorage.removeItem(STYLE_KEY);
+  }, [styleProfile, hydrated]);
+
+  const setStyleProfile = (p: StyleProfile | null) => setStyleProfileState(p);
 
   const addToCart = (p: SFProduct, size: string, tier?: string) => {
     const tierAdd = p.tiers.find((t) => t.label === tier)?.priceAdd ?? 0;
@@ -78,7 +94,8 @@ export function StoreProviders({ catalogue, rm, children }: { catalogue: SFProdu
   return (
     <StoreCtx.Provider value={{
       catalogue, cart, addToCart, removeFromCart, clearCart, subtotal, cartOpen, setCartOpen,
-      saved, toggleSaved, savedOpen, setSavedOpen, searchOpen, setSearchOpen, menuOpen, setMenuOpen, rm,
+      saved, toggleSaved, savedOpen, setSavedOpen, searchOpen, setSearchOpen, menuOpen, setMenuOpen,
+      stylistOpen, setStylistOpen, styleProfile, setStyleProfile, rm,
     }}>
       {children}
     </StoreCtx.Provider>

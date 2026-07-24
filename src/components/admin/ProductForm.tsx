@@ -10,7 +10,7 @@ type Props = {
   product?: {
     id: string; slug: string; name: string; story: string | null; category: string;
     colorHex: string; colorName: string | null; basePrice: number; status: string;
-    vendorId: string; images: ImageRow[]; featured: boolean; featuredOrder: number; lookbookOrder: number | null;
+    vendorId: string; images: ImageRow[]; featured: boolean; featuredOrder: number; lookbookOrder: number | null; preOrder: boolean;
     variants: { size: string; stock: number }[];
     tiers: { label: string; priceAdd: number }[];
   };
@@ -33,6 +33,7 @@ export default function ProductForm({ vendors, isAdmin, product }: Props) {
   const [featuredOrder, setFeaturedOrder] = useState(product?.featuredOrder ?? 0);
   const [inLookbook, setInLookbook] = useState(product?.lookbookOrder != null);
   const [lookbookOrder, setLookbookOrder] = useState(product?.lookbookOrder ?? 0);
+  const [preOrder, setPreOrder] = useState(product?.preOrder ?? false);
   const [vendorId, setVendorId] = useState(product?.vendorId ?? vendors[0]?.id ?? "");
   const [images, setImages] = useState<string[]>(product?.images.map((i) => i.url) ?? []);
   const [stock, setStock] = useState<Record<string, number>>(
@@ -76,7 +77,7 @@ export default function ProductForm({ vendors, isAdmin, product }: Props) {
     const payload = {
       name, slug: slug || name.toLowerCase().replace(/[^a-z0-9]+/g, "-"), story, category,
       colorHex, colorName, basePrice: Math.round(parseFloat(basePrice || "0") * 100), status,
-      featured, featuredOrder, lookbookOrder: inLookbook ? lookbookOrder : null,
+      featured, featuredOrder, lookbookOrder: inLookbook ? lookbookOrder : null, preOrder,
       vendorId: isAdmin ? vendorId : undefined,
       images,
       variants: SIZES.map((s) => ({ size: s, stock: stock[s] ?? 0 })),
@@ -149,6 +150,10 @@ export default function ProductForm({ vendors, isAdmin, product }: Props) {
           )}
         </div>
         <p style={{ fontSize: 11, color: "#999", margin: 0 }}>The number controls order — lower shows first. Leave both off and the homepage/lookbook will just show your most recent pieces automatically.</p>
+        <div style={{ display: "flex", alignItems: "center", gap: 10, borderTop: "1px solid #eee", paddingTop: 12 }}>
+          <input type="checkbox" id="preOrder" checked={preOrder} onChange={(e) => setPreOrder(e.target.checked)} />
+          <label htmlFor="preOrder" style={{ fontSize: 13 }}>Open for pre-order (production hasn't started — PDP shows "Reserve" instead of "Add to bag")</label>
+        </div>
       </div>
 
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 16 }}>

@@ -1,7 +1,8 @@
 "use client";
 import { useRouter } from "next/navigation";
-import { T, SANS, SERIF, peso, CAT_LABEL } from "./theme";
-import { Photo, Eyebrow, Title, TiltCard } from "./primitives";
+import { T, SANS, CAT_LABEL } from "./theme";
+import { Eyebrow, Title, TiltCard } from "./primitives";
+import { ProductCard } from "./ProductCard";
 import { useStore } from "./StoreContext";
 import type { SFProduct } from "@/lib/storefront-adapter";
 
@@ -14,15 +15,15 @@ const FILTERS: { id: string; label: string }[] = [
 
 export function Collection({ products, category }: { products: SFProduct[]; category: string }) {
   const router = useRouter();
-  const { rm, saved, toggleSaved } = useStore();
+  const { rm } = useStore();
 
   return (
     <>
-      <header style={{ textAlign: "center", padding: "clamp(48px,7vw,90px) 24px clamp(28px,4vw,48px)" }}>
+      <header style={{ textAlign: "center", padding: "clamp(36px,5vw,64px) 24px clamp(20px,3vw,32px)" }}>
         <Eyebrow>SS'26 — {products.length} pieces</Eyebrow>
-        <Title>The <span style={{ fontStyle: "italic", color: T.gold }}>Collection</span></Title>
+        <Title size="clamp(28px,4vw,48px)">The <span style={{ fontStyle: "italic", color: T.gold }}>Collection</span></Title>
       </header>
-      <div style={{ display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap", padding: "0 24px 40px" }}>
+      <div style={{ display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap", padding: "0 24px 32px" }}>
         {FILTERS.map((f) => (
           <button key={f.id} onClick={() => router.push(`/shop/${f.id}`)}
             style={{ fontFamily: SANS, fontSize: 9, letterSpacing: 3, textTransform: "uppercase", cursor: "pointer",
@@ -32,24 +33,10 @@ export function Collection({ products, category }: { products: SFProduct[]; cate
           </button>
         ))}
       </div>
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 18, maxWidth: 1320, margin: "0 auto", padding: "0 clamp(20px,4vw,48px) clamp(64px,9vw,110px)" }} className="grid-4 reveal">
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 18, maxWidth: 1320, margin: "0 auto", padding: "0 clamp(20px,4vw,48px) clamp(64px,9vw,110px)" }} className="grid-4">
         {products.map((d) => (
           <TiltCard rm={rm} key={d.id}>
-            <div style={{ position: "relative", borderRadius: 12, overflow: "hidden", border: `1px solid ${T.border}` }}>
-              <button onClick={(e) => { e.stopPropagation(); toggleSaved(d.id); }} aria-label="Save to wishlist"
-                style={{ position: "absolute", top: 10, right: 10, zIndex: 2, background: "rgba(248,246,243,0.85)",
-                  border: "none", borderRadius: "50%", width: 30, height: 30, cursor: "pointer", fontSize: 15,
-                  color: saved.includes(d.id) ? T.gold : T.stone, display: "flex", alignItems: "center", justifyContent: "center" }}>
-                {saved.includes(d.id) ? "♥" : "♡"}
-              </button>
-              <div onClick={() => router.push(`/products/${d.slug}`)} style={{ cursor: "pointer" }}>
-                <Photo images={d.images} color={d.color} name={d.name} />
-                <div style={{ background: T.card, padding: "14px 16px" }}>
-                  <div style={{ fontFamily: SERIF, fontStyle: "italic", fontSize: 18, color: T.ink }}>{d.name}</div>
-                  <div style={{ fontFamily: SANS, fontSize: 11, letterSpacing: 1, color: T.stone, marginTop: 4 }}>{peso(d.price)}</div>
-                </div>
-              </div>
-            </div>
+            <ProductCard product={d} />
           </TiltCard>
         ))}
       </div>

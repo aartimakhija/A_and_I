@@ -4,10 +4,14 @@ import Link from "next/link";
 import BulkSelectTable from "@/components/admin/BulkSelectTable";
 
 export default async function AdminProducts() {
-  const products = await prisma.product.findMany({ include: { vendor: true, variants: true }, orderBy: { createdAt: "desc" } });
+  const products = await prisma.product.findMany({
+    include: { vendor: true, variants: true, images: { orderBy: { position: "asc" }, take: 1 } },
+    orderBy: { createdAt: "desc" },
+  });
   const rows = products.map((p) => ({
     id: p.id, name: p.name, category: p.category, vendorName: p.vendor.name,
     price: p.basePrice, stock: p.variants.reduce((s, v) => s + v.stock, 0), status: p.status,
+    thumbnail: p.images[0]?.url ?? null,
   }));
   return (
     <>

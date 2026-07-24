@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 
 export default function BulkSelectTable({ products }: {
-  products: { id: string; name: string; category: string; vendorName: string; price: number; stock: number; status: string }[];
+  products: { id: string; name: string; category: string; vendorName: string; price: number; stock: number; status: string; thumbnail: string | null }[];
 }) {
   const router = useRouter();
   const [selected, setSelected] = useState<Set<string>>(new Set());
@@ -43,11 +43,17 @@ export default function BulkSelectTable({ products }: {
       <table style={{ width: "100%", borderCollapse: "collapse", marginTop: 16 }}>
         <thead><tr>
           <th style={{ padding: 8 }}><input type="checkbox" checked={allChecked} onChange={toggleAll} /></th>
+          <th style={{ padding: 8 }}></th>
           {["Name", "Category", "Vendor", "Price", "Stock", "Status", ""].map((h) => <th key={h} style={{ textAlign: "left", borderBottom: "1px solid #ccc", padding: 8 }}>{h}</th>)}
         </tr></thead>
         <tbody>{products.map((p) => (
           <tr key={p.id}>
             <td style={{ padding: 8 }}><input type="checkbox" checked={selected.has(p.id)} onChange={() => toggle(p.id)} /></td>
+            <td style={{ padding: 8 }}>
+              {p.thumbnail
+                ? <img src={p.thumbnail} alt="" style={{ width: 40, height: 50, objectFit: "cover", border: "1px solid #eee" }} />
+                : <div style={{ width: 40, height: 50, background: "#f0ece4", border: "1px solid #eee" }} />}
+            </td>
             <td style={{ padding: 8 }}>{p.name}</td><td>{p.category}</td><td>{p.vendorName}</td>
             <td>₹{(p.price / 100).toLocaleString("en-IN")}</td>
             <td>{p.stock}</td>

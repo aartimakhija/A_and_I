@@ -19,7 +19,7 @@ export function SocialProof({ products }: { products: SFProduct[] }) {
         <div style={{ maxWidth: 1180, margin: "0 auto", textAlign: "center" }}>
           <Eyebrow>Kindred spirits</Eyebrow>
           <Title size="clamp(24px,3.4vw,40px)" style={{ marginTop: 12 }}>Worn, and <i style={{ color: T.gold }}>loved.</i></Title>
-          <div className="grid-3 reveal" style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 30, marginTop: 44, textAlign: "left" }}>
+          <div className="grid-3" style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 30, marginTop: 44, textAlign: "left" }}>
             {quotes.map(([q, who]) => (
               <div key={who}>
                 <div style={{ fontFamily: SERIF, fontSize: 13, color: T.gold, letterSpacing: 2, marginBottom: 12 }}>★★★★★</div>
@@ -32,7 +32,7 @@ export function SocialProof({ products }: { products: SFProduct[] }) {
       </section>
 
       {ugc.length > 0 && (
-        <section className="reveal" style={{ padding: "0 0 clamp(20px,4vw,40px)" }}>
+        <section className="" style={{ padding: "0 0 clamp(20px,4vw,40px)" }}>
           <div style={{ textAlign: "center", padding: "clamp(28px,4vw,40px) 24px" }}>
             <Eyebrow>As worn by you</Eyebrow>
             <Title size="clamp(22px,3vw,34px)" style={{ marginTop: 10 }}>@aandi <i style={{ color: T.gold }}>· tag us to be featured</i></Title>

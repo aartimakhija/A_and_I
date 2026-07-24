@@ -5,6 +5,7 @@ import { T, SANS, SERIF, peso } from "./theme";
 import { Photo, Eyebrow, Title, Btn, TiltCard, FlipCard } from "./primitives";
 import { layer } from "./hooks";
 import { Hero3D } from "./Hero3D";
+import { ProductCard } from "./ProductCard";
 import { SocialProof } from "./SocialProof";
 import { useStore } from "./StoreContext";
 import type { SFProduct } from "@/lib/storefront-adapter";
@@ -42,7 +43,7 @@ export function Home({ featured, craft, philosophyPiece, allProducts }: {
           </div>
         </div>
         <div className="hero-plates" style={{ position: "relative", minHeight: 0 }}>
-          <Hero3D rm={rm} heroImage={craft[0]?.images[0]} caption={craft[0] ? `${craft[0].name} · The Studio` : undefined} />
+          <Hero3D rm={rm} heroImage={featured[0]?.images[0]} caption={featured[0] ? `${featured[0].name} · SS'26` : undefined} />
         </div>
       </section>
 
@@ -65,16 +66,10 @@ export function Home({ featured, craft, philosophyPiece, allProducts }: {
             <button onClick={() => router.push("/shop/all")} style={{ background: "none", border: "none", cursor: "pointer",
               fontFamily: SANS, fontSize: 9, letterSpacing: 3, textTransform: "uppercase", color: T.stone, borderBottom: `1px solid ${T.stone}`, paddingBottom: 3 }}>View all</button>
           </div>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 18 }} className="grid-4 reveal">
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 18 }} className="grid-4">
             {featured.map((d) => (
               <TiltCard rm={rm} key={d.id}>
-                <div onClick={() => router.push(`/products/${d.slug}`)} style={{ cursor: "pointer", borderRadius: 12, overflow: "hidden", border: `1px solid ${T.border}` }}>
-                  <Photo images={d.images} color={d.color} name={d.name} eyebrow="Featured" fit="contain" />
-                  <div style={{ background: T.card, padding: "14px 16px" }}>
-                    <div style={{ fontFamily: SERIF, fontStyle: "italic", fontSize: 19, color: T.ink }}>{d.name}</div>
-                    <div style={{ fontFamily: SANS, fontSize: 11, letterSpacing: 1, color: T.stone, marginTop: 4 }}>{peso(d.price)}</div>
-                  </div>
-                </div>
+                <ProductCard product={d} />
               </TiltCard>
             ))}
           </div>
@@ -87,7 +82,7 @@ export function Home({ featured, craft, philosophyPiece, allProducts }: {
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", alignItems: "stretch" }} className="grid-2">
             <Photo images={philosophyPiece.images} color={philosophyPiece.color} name={philosophyPiece.name} ratio="auto" fit="contain"
               style={{ minHeight: 460, aspectRatio: "auto" }} eyebrow="In Jaipur" />
-            <div className="reveal" style={{ padding: "clamp(40px,6vw,84px)", display: "flex", flexDirection: "column", justifyContent: "center" }}>
+            <div className="" style={{ padding: "clamp(40px,6vw,84px)", display: "flex", flexDirection: "column", justifyContent: "center" }}>
               <Eyebrow>The Philosophy</Eyebrow>
               <Title size="clamp(28px,4vw,48px)">Indian craft,<br /><span style={{ fontStyle: "italic", color: T.gold }}>global silhouette.</span></Title>
               <p style={{ fontFamily: SANS, fontWeight: 300, color: T.mid, fontSize: 15, lineHeight: 1.8, maxWidth: 440, marginTop: 22 }}>
@@ -110,7 +105,7 @@ export function Home({ featured, craft, philosophyPiece, allProducts }: {
               <Eyebrow light>Tap to reveal</Eyebrow>
               <Title light size="clamp(28px,4vw,48px)">The craft <span style={{ fontStyle: "italic", color: T.gold }}>behind the cut</span></Title>
             </div>
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 22 }} className="grid-3 reveal">
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 22 }} className="grid-3">
               {craft.map((d, i) => {
                 const craftName = CRAFT_NAMES[i % CRAFT_NAMES.length];
                 return (
