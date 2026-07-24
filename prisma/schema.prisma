@@ -90,6 +90,7 @@ model User {
 
   savedSize     String?
   stylePrefs    Json?
+  referralCode  String?     @unique   // their own shareable "give 10%, get 10%" code
 
   addresses     Address[]
   orders        Order[]
@@ -177,6 +178,7 @@ model Product {
   orderItems  OrderItem[]
   wishlist    Wishlist[]
   notify      NotifyRequest[]
+  blogTags    BlogPostProduct[]
   dropId      String?
   drop        Drop?          @relation(fields: [dropId], references: [id])
   metaTitle   String?
@@ -267,6 +269,53 @@ model PreOrder {
 }
 
 // ── Orders (OMS) ───────────────────────────────────────────────────
+// Referral codes ("give 10%, get 10%") and general discount codes. A
+// referral code is a permanent, multi-use PromoCode owned by one customer;
+// redeeming it (at checkout) creates a fresh single-use reward PromoCode for
+// the referrer as their "get 10%" side of the deal.
+model PromoCode {
+  id              String   @id @default(cuid())
+  code            String   @unique
+  percentOff      Int      @default(10)
+  source          String   @default("REFERRAL")   // REFERRAL | REWARD | MANUAL
+  referrerUserId  String?                          // whose referral this is (for REFERRAL codes)
+  rewardForUserId String?                          // who this reward belongs to (for REWARD codes)
+  maxRedemptions  Int      @default(1)
+  redemptions     Int      @default(0)
+  active          Boolean  @default(true)
+  createdAt       DateTime @default(now())
+  @@index([referrerUserId])
+  @@index([rewardForUserId])
+}
+
+// ── Journal / editorial blog — admin-authored, shoppable ───────────
+model BlogPost {
+  id          String            @id @default(cuid())
+  slug        String            @unique
+  title       String
+  subtitle    String?
+  coverImage  String?
+  body        String                                     // paragraphs, plain text (double newline = new paragraph)
+  status      String            @default("DRAFT")        // DRAFT | PUBLISHED
+  authorName  String            @default("A & I Editorial")
+  publishedAt DateTime?
+  products    BlogPostProduct[]
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+  @@index([status])
+  @@index([publishedAt])
+}
+
+model BlogPostProduct {                                   // "Shop this post" tagging
+  id        String   @id @default(cuid())
+  postId    String
+  post      BlogPost @relation(fields: [postId], references: [id], onDelete: Cascade)
+  productId String
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  position  Int      @default(0)
+  @@unique([postId, productId])
+}
+
 model Order {
   id          String        @id @default(cuid())
   number      String        @unique                 // human-friendly e.g. AI-10231
@@ -277,6 +326,8 @@ model Order {
   items       OrderItem[]
   subtotal    Int
   shipping    Int           @default(0)
+  discount    Int           @default(0)                // paise, from an applied promo code
+  discountCode String?
   total       Int
   currency    String        @default("INR")
   note        String?

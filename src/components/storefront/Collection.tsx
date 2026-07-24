@@ -33,7 +33,7 @@ export function Collection({ products, category }: { products: SFProduct[]; cate
           </button>
         ))}
       </div>
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 18, maxWidth: 1320, margin: "0 auto", padding: "0 clamp(20px,4vw,48px) clamp(64px,9vw,110px)" }} className="grid-4">
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 26, maxWidth: 1320, margin: "0 auto", padding: "0 clamp(20px,4vw,48px) clamp(64px,9vw,110px)" }} className="grid-catalogue">
         {products.map((d) => (
           <TiltCard rm={rm} key={d.id}>
             <ProductCard product={d} />

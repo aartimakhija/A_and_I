@@ -43,13 +43,26 @@ function useRevealObserver() {
   }, [pathname]);
 }
 
-export function StoreShell({ catalogue, children }: { catalogue: SFProduct[]; children: ReactNode }) {
+function useCaptureReferral() {
+  const pathname = usePathname();
+  useEffect(() => {
+    try {
+      const ref = new URLSearchParams(window.location.search).get("ref");
+      if (ref) localStorage.setItem("aandi:ref", ref.trim().toUpperCase());
+    } catch {}
+  }, [pathname]);
+}
+
+export function StoreShell({ catalogue, isLoggedIn, initialSaved, children }: {
+  catalogue: SFProduct[]; isLoggedIn: boolean; initialSaved: string[]; children: ReactNode;
+}) {
   const rm = usePrefersReducedMotion();
   useParallax(rm);
   useRevealObserver();
+  useCaptureReferral();
 
   return (
-    <StoreProviders catalogue={catalogue} rm={rm}>
+    <StoreProviders catalogue={catalogue} rm={rm} isLoggedIn={isLoggedIn} initialSaved={initialSaved}>
       <div style={{ background: T.bg, minHeight: "100vh", color: T.ink, fontFamily: SANS, display: "flex", flexDirection: "column" }}>
         <GlobalStyle />
         <div className="fx-grain" />

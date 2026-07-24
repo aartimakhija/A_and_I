@@ -4,8 +4,8 @@ import { T, SANS, SERIF } from "./theme";
 
 export function Footer() {
   const cols: [string, [string, string][]][] = [
-    ["Shop", [["Collection", "/shop/all"], ["Lookbook", "/lookbook"], ["About", "/about"]]],
-    ["Help", [["Shipping & Returns", "/account/orders"], ["Find your fit", "/fit-quiz"], ["Contact", "/contact"]]],
+    ["Shop", [["Collection", "/shop/all"], ["Lookbook", "/lookbook"], ["Journal", "/blog"], ["About", "/about"]]],
+    ["Help", [["Shipping & Returns", "/account/orders"], ["Find your fit", "/fit-quiz"], ["Refer a friend", "/account/refer"], ["Contact", "/contact"]]],
     ["Connect", [["Instagram", "https://instagram.com"], ["WhatsApp", "https://wa.me/"], ["Pinterest", "https://pinterest.com"]]],
   ];
   return (

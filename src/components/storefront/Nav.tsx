@@ -5,7 +5,7 @@ import { T, SANS, SERIF } from "./theme";
 import { useStore } from "./StoreContext";
 
 const links: [string, string][] = [
-  ["/", "Home"], ["/shop/all", "Collection"], ["/lookbook", "Lookbook"], ["/about", "About"], ["/contact", "Contact"],
+  ["/", "Home"], ["/shop/all", "Collection"], ["/lookbook", "Lookbook"], ["/blog", "Journal"], ["/about", "About"], ["/contact", "Contact"],
 ];
 
 export function Nav() {

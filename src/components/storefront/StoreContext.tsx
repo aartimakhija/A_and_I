@@ -47,9 +47,11 @@ const CART_KEY = "aandi:cart";
 const SAVED_KEY = "aandi:saved";
 const STYLE_KEY = "aandi:style-profile";
 
-export function StoreProviders({ catalogue, rm, children }: { catalogue: SFProduct[]; rm: boolean; children: ReactNode }) {
+export function StoreProviders({ catalogue, rm, isLoggedIn, initialSaved, children }: {
+  catalogue: SFProduct[]; rm: boolean; isLoggedIn: boolean; initialSaved: string[]; children: ReactNode;
+}) {
   const [cart, setCart] = useState<CartItem[]>([]);
-  const [saved, setSaved] = useState<string[]>([]);
+  const [saved, setSaved] = useState<string[]>(isLoggedIn ? initialSaved : []);
   const [styleProfile, setStyleProfileState] = useState<StyleProfile | null>(null);
   const [cartOpen, setCartOpen] = useState(false);
   const [savedOpen, setSavedOpen] = useState(false);
@@ -60,16 +62,18 @@ export function StoreProviders({ catalogue, rm, children }: { catalogue: SFProdu
 
   // Hydrate from localStorage on mount (real persistence across visits — this is
   // a deployed site, not a sandboxed artifact, so browser storage is appropriate here).
+  // Signed-in customers skip the local wishlist entirely — theirs already came
+  // from the server (initialSaved) and every toggle writes straight to the account.
   useEffect(() => {
     try {
       const c = localStorage.getItem(CART_KEY); if (c) setCart(JSON.parse(c));
-      const s = localStorage.getItem(SAVED_KEY); if (s) setSaved(JSON.parse(s));
+      if (!isLoggedIn) { const s = localStorage.getItem(SAVED_KEY); if (s) setSaved(JSON.parse(s)); }
       const p = localStorage.getItem(STYLE_KEY); if (p) setStyleProfileState(JSON.parse(p));
     } catch {}
     setHydrated(true);
-  }, []);
+  }, [isLoggedIn]);
   useEffect(() => { if (hydrated) localStorage.setItem(CART_KEY, JSON.stringify(cart)); }, [cart, hydrated]);
-  useEffect(() => { if (hydrated) localStorage.setItem(SAVED_KEY, JSON.stringify(saved)); }, [saved, hydrated]);
+  useEffect(() => { if (hydrated && !isLoggedIn) localStorage.setItem(SAVED_KEY, JSON.stringify(saved)); }, [saved, hydrated, isLoggedIn]);
   useEffect(() => {
     if (!hydrated) return;
     if (styleProfile) localStorage.setItem(STYLE_KEY, JSON.stringify(styleProfile));
@@ -89,7 +93,14 @@ export function StoreProviders({ catalogue, rm, children }: { catalogue: SFProdu
   const removeFromCart = (key: string) => setCart((c) => c.filter((i) => i.key !== key));
   const clearCart = () => setCart([]);
   const subtotal = useMemo(() => cart.reduce((s, i) => s + i.price * i.qty, 0), [cart]);
-  const toggleSaved = (id: string) => setSaved((s) => (s.includes(id) ? s.filter((x) => x !== id) : [...s, id]));
+
+  const toggleSaved = (id: string) => {
+    setSaved((s) => (s.includes(id) ? s.filter((x) => x !== id) : [...s, id]));
+    if (isLoggedIn) {
+      fetch("/api/wishlist", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ productId: id }) })
+        .catch(() => {}); // best-effort — local state already updated optimistically
+    }
+  };
 
   return (
     <StoreCtx.Provider value={{

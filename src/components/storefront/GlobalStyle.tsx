@@ -47,6 +47,7 @@ export function GlobalStyle() {
         .hero-plates { grid-template-rows: 1fr 1fr !important; min-height: 50vh; }
         .grid-4 { grid-template-columns: repeat(2,1fr) !important; }
         .grid-3 { grid-template-columns: 1fr !important; }
+        .grid-catalogue { grid-template-columns: repeat(2,1fr) !important; gap: 14px !important; }
         .grid-2, .grid-foot, .pdp { grid-template-columns: 1fr !important; }
         .pdp-gallery { position: static !important; }
         .look-wide { grid-column: span 2 !important; }

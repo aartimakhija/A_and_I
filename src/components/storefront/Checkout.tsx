@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { T, SANS, SERIF, peso } from "./theme";
 import { Photo, Eyebrow, Title, Btn } from "./primitives";
@@ -26,7 +26,36 @@ export function Checkout() {
   const [placed, setPlaced] = useState(false);
   const [orderNo, setOrderNo] = useState("");
   const [apiError, setApiError] = useState("");
+  const [promoInput, setPromoInput] = useState("");
+  const [promo, setPromo] = useState<{ code: string; percentOff: number } | null>(null);
+  const [promoError, setPromoError] = useState("");
+  const [checkingPromo, setCheckingPromo] = useState(false);
   const set = (k: keyof typeof f) => (e: React.ChangeEvent<HTMLInputElement>) => setF((s) => ({ ...s, [k]: e.target.value }));
+
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem("aandi:ref");
+      if (saved) setPromoInput(saved);
+    } catch {}
+  }, []);
+
+  async function applyPromo() {
+    if (!promoInput.trim()) return;
+    setCheckingPromo(true);
+    setPromoError("");
+    try {
+      const res = await fetch(`/api/promo/validate?code=${encodeURIComponent(promoInput.trim())}`);
+      const json = await res.json();
+      if (!json.valid) { setPromoError("That code isn't valid or has already been used."); setPromo(null); return; }
+      setPromo({ code: promoInput.trim().toUpperCase(), percentOff: json.percentOff });
+    } finally {
+      setCheckingPromo(false);
+    }
+  }
+
+  const discount = promo ? Math.round(subtotal * (promo.percentOff / 100)) : 0;
+  const shippingCost = subtotal >= 5000 ? 0 : 99;
+  const total = Math.max(0, subtotal + shippingCost - discount);
 
   const validate = () => {
     const e: Record<string, string> = {};
@@ -56,6 +85,7 @@ export function Checkout() {
           email: f.email,
           items: cart.map((i) => ({ productId: i.productId, size: i.size, tier: i.tier, qty: i.qty })),
           ship: { name: f.name, phone: f.phone, line1: f.address, city: f.city, state: f.state, pincode: f.pin },
+          promoCode: promo?.code,
         }),
       });
       const json = await res.json();
@@ -91,11 +121,13 @@ export function Checkout() {
             setOrderNo(vjson.number || json.number);
             setPlaced(true);
             clearCart();
+            try { localStorage.removeItem("aandi:ref"); } catch {}
           } catch {
             // webhook will still reconcile the order even if this verify call fails
             setOrderNo(json.number);
             setPlaced(true);
             clearCart();
+            try { localStorage.removeItem("aandi:ref"); } catch {}
           } finally {
             setProcessing(false);
           }
@@ -206,21 +238,44 @@ export function Checkout() {
                 </div>
               ))}
             </div>
+            <div style={{ borderBottom: `1px solid ${T.border}`, paddingBottom: 14, marginBottom: 4 }}>
+              {promo ? (
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: 12, color: T.gold }}>
+                  <span>Code <strong>{promo.code}</strong> applied — {promo.percentOff}% off</span>
+                  <button onClick={() => { setPromo(null); setPromoInput(""); }} style={{ background: "none", border: "none", cursor: "pointer", color: T.stone, fontSize: 16, lineHeight: 1 }}>×</button>
+                </div>
+              ) : (
+                <div style={{ display: "flex", gap: 8 }}>
+                  <input value={promoInput} onChange={(e) => setPromoInput(e.target.value)} placeholder="Promo or referral code"
+                    style={{ flex: 1, padding: "9px 10px", border: `1px solid ${T.border}`, fontFamily: SANS, fontSize: 12, background: T.bg, color: T.ink, outline: "none" }} />
+                  <button onClick={applyPromo} disabled={checkingPromo} style={{ padding: "9px 14px", fontFamily: SANS, fontSize: 11, letterSpacing: 1,
+                    textTransform: "uppercase", border: `1px solid ${T.ink}`, background: "transparent", color: T.ink, cursor: "pointer" }}>
+                    {checkingPromo ? "…" : "Apply"}
+                  </button>
+                </div>
+              )}
+              {promoError && <div style={{ fontSize: 11, color: "#B0503E", marginTop: 6 }}>{promoError}</div>}
+            </div>
             <div style={{ borderTop: `1px solid ${T.border}`, paddingTop: 14, display: "flex", flexDirection: "column", gap: 9 }}>
               <div style={{ display: "flex", justifyContent: "space-between", fontFamily: SANS, fontSize: 13, color: T.mid }}>
                 <span>Subtotal</span><span>{peso(subtotal)}</span>
               </div>
               <div style={{ display: "flex", justifyContent: "space-between", fontFamily: SANS, fontSize: 13, color: T.mid }}>
-                <span>Shipping</span><span style={{ color: T.gold }}>{subtotal >= 5000 ? "Complimentary" : peso(99)}</span>
+                <span>Shipping</span><span style={{ color: T.gold }}>{shippingCost === 0 ? "Complimentary" : peso(shippingCost)}</span>
               </div>
+              {discount > 0 && (
+                <div style={{ display: "flex", justifyContent: "space-between", fontFamily: SANS, fontSize: 13, color: T.gold }}>
+                  <span>Discount ({promo?.percentOff}%)</span><span>−{peso(discount)}</span>
+                </div>
+              )}
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginTop: 6 }}>
                 <span style={{ fontFamily: SANS, fontSize: 11, letterSpacing: 2, textTransform: "uppercase", color: T.ink }}>Total</span>
-                <span style={{ fontFamily: SERIF, fontSize: 26, color: T.ink }}>{peso(subtotal + (subtotal >= 5000 ? 0 : 99))}</span>
+                <span style={{ fontFamily: SERIF, fontSize: 26, color: T.ink }}>{peso(total)}</span>
               </div>
               <span style={{ fontFamily: SANS, fontSize: 10, color: T.stone, marginTop: 2 }}>Inclusive of all taxes</span>
             </div>
             <div style={{ marginTop: 22 }}>
-              <Btn full onClick={placeOrder}>{processing ? "Processing…" : `Pay ${peso(subtotal + (subtotal >= 5000 ? 0 : 99))}`}</Btn>
+              <Btn full onClick={placeOrder}>{processing ? "Processing…" : `Pay ${peso(total)}`}</Btn>
             </div>
             <button onClick={() => router.push("/shop/all")} style={{ width: "100%", marginTop: 12, background: "none", border: "none", cursor: "pointer",
               fontFamily: SANS, fontSize: 10, letterSpacing: 2, textTransform: "uppercase", color: T.stone }}>Continue shopping</button>
