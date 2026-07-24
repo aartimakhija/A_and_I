@@ -2,6 +2,13 @@ import { organizationJsonLd, websiteJsonLd } from "@/lib/seo";
 import { getSiteSettings } from "@/lib/settings";
 import Script from "next/script";
 
+// This layout now reads SiteSettings from the database for metadata/GA4/
+// favicon — which means it can never be safely prerendered at build time
+// (same reasoning as the storefront/admin/vendor layouts). Without this,
+// Next tries to run the DB call while generating the special /_not-found
+// page at build time, which is exactly what broke here.
+export const dynamic = "force-dynamic";
+
 export async function generateMetadata() {
   const s = await getSiteSettings();
   return {
