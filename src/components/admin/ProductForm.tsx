@@ -6,6 +6,7 @@ type Vendor = { id: string; name: string };
 type ImageRow = { url: string };
 type Props = {
   vendors: Vendor[];
+  categories: { slug: string; name: string }[];
   isAdmin: boolean;
   product?: {
     id: string; slug: string; name: string; story: string | null; category: string;
@@ -17,14 +18,13 @@ type Props = {
 };
 
 const SIZES = ["XS", "S", "M", "L", "XL"];
-const CATS = ["ready", "craft", "linen"];
 
-export default function ProductForm({ vendors, isAdmin, product }: Props) {
+export default function ProductForm({ vendors, categories, isAdmin, product }: Props) {
   const router = useRouter();
   const [name, setName] = useState(product?.name ?? "");
   const [slug, setSlug] = useState(product?.slug ?? "");
   const [story, setStory] = useState(product?.story ?? "");
-  const [category, setCategory] = useState(product?.category ?? CATS[0]);
+  const [category, setCategory] = useState(product?.category ?? categories[0]?.slug ?? "");
   const [colorHex, setColorHex] = useState(product?.colorHex ?? "#8A7A6A");
   const [colorName, setColorName] = useState(product?.colorName ?? "");
   const [basePrice, setBasePrice] = useState(((product?.basePrice ?? 480000) / 100).toString());
@@ -120,7 +120,7 @@ export default function ProductForm({ vendors, isAdmin, product }: Props) {
         <div>
           <label style={label}>Category</label>
           <select style={field} value={category} onChange={(e) => setCategory(e.target.value)}>
-            {CATS.map((c) => <option key={c} value={c}>{c}</option>)}
+            {categories.map((c) => <option key={c.slug} value={c.slug}>{c.name}</option>)}
           </select>
         </div>
         <div>

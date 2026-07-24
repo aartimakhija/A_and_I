@@ -45,7 +45,7 @@ export function Photo({ images = [], color = T.stone, name = "", ratio = "3/4", 
       {okCount === 0 && (
         <div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column", justifyContent: "flex-end", padding: 20 }}>
           <span aria-hidden style={{ position: "absolute", inset: 0, opacity: 0.07, backgroundImage: `radial-gradient(${color} 0.6px, transparent 0.6px)`, backgroundSize: "5px 5px" }} />
-          <span style={{ fontFamily: SANS, fontSize: 8, letterSpacing: 3, textTransform: "uppercase", color: "rgba(255,255,255,0.55)", fontWeight: 300 }}>{eyebrow || "A & I"}</span>
+          <span style={{ fontFamily: SANS, fontSize: 8, letterSpacing: 3, textTransform: "uppercase", color: "rgba(255,255,255,0.55)", fontWeight: 300 }}>{eyebrow || "A&I"}</span>
           <span style={{ fontFamily: SERIF, fontStyle: "italic", fontSize: 22, lineHeight: 1.1, color: "rgba(255,255,255,0.92)", marginTop: 4 }}>{name}</span>
         </div>
       )}
@@ -83,9 +83,12 @@ export function TiltCard({ rm, children, strength = 9, style }: { rm: boolean; c
 export const Eyebrow = ({ children, light }: { children: React.ReactNode; light?: boolean }) => (
   <span style={{ fontFamily: SANS, fontSize: 9, letterSpacing: 4, textTransform: "uppercase", fontWeight: 300, color: light ? "rgba(196,184,168,0.6)" : T.stone }}>{children}</span>
 );
-export const Title = ({ children, light, size = "clamp(30px,4.4vw,58px)", style }: { children: React.ReactNode; light?: boolean; size?: string; style?: React.CSSProperties }) => (
-  <h2 style={{ fontFamily: SERIF, fontWeight: 300, fontSize: size, lineHeight: 1.05, letterSpacing: "-0.01em", color: light ? T.linenLt : T.ink, margin: 0, ...style }}>{children}</h2>
-);
+export const Title = ({ children, light, size = "clamp(30px,4.4vw,58px)", style, as = "h2" }: { children: React.ReactNode; light?: boolean; size?: string; style?: React.CSSProperties; as?: "h1" | "h2" }) => {
+  const Tag = as;
+  return (
+    <Tag style={{ fontFamily: SERIF, fontWeight: 300, fontSize: size, lineHeight: 1.05, letterSpacing: "-0.01em", color: light ? T.linenLt : T.ink, margin: 0, ...style }}>{children}</Tag>
+  );
+};
 export function Btn({ children, onClick, variant = "dark", full, sm }: { children: React.ReactNode; onClick?: () => void; variant?: "dark" | "light" | "ghost" | "gold"; full?: boolean; sm?: boolean }) {
   const base: React.CSSProperties = {
     fontFamily: SANS, fontSize: sm ? 8 : 9, letterSpacing: 3, textTransform: "uppercase",

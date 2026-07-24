@@ -2,6 +2,7 @@ import Link from "next/link";
 import { getSession } from "@/lib/rbac";
 import { prisma } from "@/lib/prisma";
 export const dynamic = "force-dynamic";
+export const metadata = { robots: { index: false, follow: false } };
 const nav = [["/vendor", "Dashboard"], ["/vendor/orders", "My Orders"], ["/vendor/products", "My Products"]];
 export default async function VendorLayout({ children }: { children: React.ReactNode }) {
   const s = await getSession();

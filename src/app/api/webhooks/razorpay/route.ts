@@ -26,7 +26,7 @@ export async function POST(req: NextRequest) {
       for (const it of payment.order.items) {
         await prisma.variant.updateMany({ where: { productId: it.productId, size: it.size }, data: { stock: { decrement: it.qty } } });
         await prisma.inventoryLedger.create({ data: { variantId: it.id, delta: -it.qty, reason: "ORDER", refId: payment.orderId } });
-        await prisma.passport.create({ data: { serial: newSerial(), orderItemId: it.id, designer: "A & I Atelier", materialOrigin: "India" } });
+        await prisma.passport.create({ data: { serial: newSerial(), orderItemId: it.id, designer: "A&I Atelier", materialOrigin: "India" } });
       }
       if (payment.order.shipPhone) await sendWhatsApp(payment.order.shipPhone, "order_confirmed", [payment.order.number]);
     }

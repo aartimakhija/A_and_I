@@ -8,22 +8,24 @@ import type { SFProduct } from "@/lib/storefront-adapter";
 
 type Post = {
   title: string; subtitle: string | null; coverImage: string | null; body: string;
-  authorName: string; publishedAt: string | null;
+  authorName: string; publishedAt: string | null; updatedAt?: string;
 };
 
 export function BlogPostView({ post, products }: { post: Post; products: SFProduct[] }) {
   const router = useRouter();
   const { rm } = useStore();
   const paragraphs = post.body.split(/\n\s*\n/).map((p) => p.trim()).filter(Boolean);
+  const showUpdated = post.updatedAt && post.publishedAt && new Date(post.updatedAt).toDateString() !== new Date(post.publishedAt).toDateString();
 
   return (
     <article>
       <header style={{ textAlign: "center", padding: "clamp(40px,6vw,72px) 24px clamp(24px,4vw,40px)", maxWidth: 760, margin: "0 auto" }}>
         <Eyebrow>Journal</Eyebrow>
-        <Title size="clamp(30px,5vw,54px)" style={{ marginTop: 10 }}>{post.title}</Title>
+        <Title as="h1" size="clamp(30px,5vw,54px)" style={{ marginTop: 10 }}>{post.title}</Title>
         {post.subtitle && <p style={{ fontFamily: SANS, fontWeight: 300, color: T.mid, fontSize: 16, lineHeight: 1.7, marginTop: 16 }}>{post.subtitle}</p>}
         <div style={{ fontFamily: SANS, fontSize: 11, letterSpacing: 1.5, textTransform: "uppercase", color: T.stone, marginTop: 20 }}>
           {post.authorName}{post.publishedAt ? ` · ${new Date(post.publishedAt).toLocaleDateString("en-IN", { day: "numeric", month: "long", year: "numeric" })}` : ""}
+          {showUpdated && ` · Updated ${new Date(post.updatedAt!).toLocaleDateString("en-IN", { day: "numeric", month: "long", year: "numeric" })}`}
         </div>
       </header>
 

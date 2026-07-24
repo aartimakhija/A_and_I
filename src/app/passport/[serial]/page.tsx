@@ -16,7 +16,7 @@ export default async function Passport({ params }: { params: { serial: string } 
       <p><strong>Atelier:</strong> {prod.vendor.name}</p>
       <p><strong>Material origin:</strong> {p.materialOrigin}</p>
       <p><strong>Made:</strong> {p.madeAt ?? "Made to order in India"}</p>
-      <p style={{ color: "#878787" }}>Authenticity verified · A & I garment passport</p>
+      <p style={{ color: "#878787" }}>Authenticity verified · A&I garment passport</p>
     </main>
   );
 }

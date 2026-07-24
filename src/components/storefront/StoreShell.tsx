@@ -14,6 +14,7 @@ import { ExitPopup } from "./ExitPopup";
 import { StylistWidget } from "./StylistWidget";
 import { T, SANS } from "./theme";
 import type { SFProduct } from "@/lib/storefront-adapter";
+import type { SiteSettingsSlice } from "./StoreContext";
 
 // Activates the .reveal / .reveal-img fade-in system defined in GlobalStyle.
 // Those classes start at opacity:0 and only become visible once JS marks them
@@ -53,8 +54,8 @@ function useCaptureReferral() {
   }, [pathname]);
 }
 
-export function StoreShell({ catalogue, isLoggedIn, initialSaved, children }: {
-  catalogue: SFProduct[]; isLoggedIn: boolean; initialSaved: string[]; children: ReactNode;
+export function StoreShell({ catalogue, isLoggedIn, initialSaved, siteSettings, children }: {
+  catalogue: SFProduct[]; isLoggedIn: boolean; initialSaved: string[]; siteSettings: SiteSettingsSlice; children: ReactNode;
 }) {
   const rm = usePrefersReducedMotion();
   useParallax(rm);
@@ -62,7 +63,7 @@ export function StoreShell({ catalogue, isLoggedIn, initialSaved, children }: {
   useCaptureReferral();
 
   return (
-    <StoreProviders catalogue={catalogue} rm={rm} isLoggedIn={isLoggedIn} initialSaved={initialSaved}>
+    <StoreProviders catalogue={catalogue} rm={rm} isLoggedIn={isLoggedIn} initialSaved={initialSaved} siteSettings={siteSettings}>
       <div style={{ background: T.bg, minHeight: "100vh", color: T.ink, fontFamily: SANS, display: "flex", flexDirection: "column" }}>
         <GlobalStyle />
         <div className="fx-grain" />

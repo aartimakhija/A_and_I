@@ -12,7 +12,7 @@ export function BlogList({ posts }: { posts: Post[] }) {
     <>
       <header style={{ textAlign: "center", padding: "clamp(48px,7vw,90px) 24px clamp(28px,4vw,48px)" }}>
         <Eyebrow>Notes from the studio</Eyebrow>
-        <Title>The <span style={{ fontStyle: "italic", color: T.gold }}>Journal</span></Title>
+        <Title as="h1">The <span style={{ fontStyle: "italic", color: T.gold }}>Journal</span></Title>
         <p style={{ fontFamily: SANS, fontWeight: 300, color: T.mid, fontSize: 15, lineHeight: 1.7, maxWidth: 440, margin: "16px auto 0" }}>
           Craft notes, styling edits, and the stories behind the pieces.
         </p>

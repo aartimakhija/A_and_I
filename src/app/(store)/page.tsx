@@ -1,6 +1,13 @@
 import { prisma } from "@/lib/prisma";
 import { toSFProduct, PRODUCT_INCLUDE } from "@/lib/storefront-adapter";
 import { Home } from "@/components/storefront/Home";
+import { pageMetadata } from "@/lib/seo";
+
+export const metadata = pageMetadata({
+  title: "A&I — Style With Us",
+  description: "Indian craft, global silhouette. Womenswear handmade in small runs across India — bandhani, mirror-work, and zari cut into contemporary silhouettes.",
+  path: "/",
+});
 
 export default async function HomePage() {
   const products = await prisma.product.findMany({

@@ -28,7 +28,7 @@ export default async function Orders() {
                   {["SHIPPED", "DELIVERED"].includes(o.status) && (
                     existingReturn
                       ? <span style={{ fontSize: 12, color: "#666" }}>{existingReturn.status === "REQUESTED" ? "Return requested ✓" : `Return: ${existingReturn.status}`}</span>
-                      : <RequestReturn orderItemId={item.id} />
+                      : <RequestReturn orderItemId={item.id} email={o.email} />
                   )}
                 </div>
               );

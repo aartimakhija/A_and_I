@@ -3,7 +3,8 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { T, SANS, SERIF, peso } from "./theme";
 import { Photo, Eyebrow, Title, Btn } from "./primitives";
-import { CField } from "./CField";
+import { CField, CSelect } from "./CField";
+import { INDIA_STATE_NAMES, INDIA_STATES } from "@/lib/india-locations";
 import { useStore } from "./StoreContext";
 
 function loadRazorpayScript(): Promise<boolean> {
@@ -31,6 +32,8 @@ export function Checkout() {
   const [promoError, setPromoError] = useState("");
   const [checkingPromo, setCheckingPromo] = useState(false);
   const set = (k: keyof typeof f) => (e: React.ChangeEvent<HTMLInputElement>) => setF((s) => ({ ...s, [k]: e.target.value }));
+  const setSelect = (k: keyof typeof f) => (e: React.ChangeEvent<HTMLSelectElement>) => setF((s) => ({ ...s, [k]: e.target.value }));
+  const setState = (e: React.ChangeEvent<HTMLSelectElement>) => setF((s) => ({ ...s, state: e.target.value, city: "" })); // city depends on state — reset it
 
   useEffect(() => {
     try {
@@ -100,7 +103,7 @@ export function Checkout() {
         key: json.keyId,
         amount: json.amount,
         currency: "INR",
-        name: "A & I — Style With Us",
+        name: "A&I — Style With Us",
         description: `Order ${json.number}`,
         order_id: json.razorpayOrderId,
         prefill: { email: f.email, contact: f.phone, name: f.name },
@@ -207,8 +210,12 @@ export function Checkout() {
               <CField label="Full name" value={f.name} onChange={set("name")} error={err.name} placeholder="First and last name" />
               <CField label="Address" value={f.address} onChange={set("address")} error={err.address} placeholder="House no., street, area" />
               <div style={rowStyle} className="co-row">
-                <div style={{ flex: 1 }}><CField label="City" value={f.city} onChange={set("city")} error={err.city} /></div>
-                <div style={{ flex: 1 }}><CField label="State" value={f.state} onChange={set("state")} error={err.state} /></div>
+                <div style={{ flex: 1 }}><CSelect label="State" value={f.state} onChange={setState} error={err.state} options={INDIA_STATE_NAMES} /></div>
+                <div style={{ flex: 1 }}>
+                  <CSelect label="City" value={f.city} onChange={setSelect("city")} error={err.city}
+                    options={f.state ? (INDIA_STATES[f.state] ?? []) : []} disabled={!f.state}
+                    placeholder={f.state ? "Select city…" : "Select a state first"} />
+                </div>
                 <div style={{ flex: 1 }}><CField label="PIN" value={f.pin} onChange={set("pin")} error={err.pin} inputMode="numeric" /></div>
               </div>
             </div>

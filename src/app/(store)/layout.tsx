@@ -2,6 +2,7 @@ import { prisma } from "@/lib/prisma";
 import { toSFProduct, PRODUCT_INCLUDE } from "@/lib/storefront-adapter";
 import { StoreShell } from "@/components/storefront/StoreShell";
 import { getSession } from "@/lib/rbac";
+import { getSiteSettings } from "@/lib/settings";
 
 // Product/order data changes constantly and depends on a live database, so
 // this whole route group should never be statically prerendered at build
@@ -10,9 +11,10 @@ import { getSession } from "@/lib/rbac";
 export const dynamic = "force-dynamic";
 
 export default async function StoreLayout({ children }: { children: React.ReactNode }) {
-  const [products, session] = await Promise.all([
+  const [products, session, settings] = await Promise.all([
     prisma.product.findMany({ where: { status: "ACTIVE" }, include: PRODUCT_INCLUDE, orderBy: { createdAt: "desc" } }),
     getSession(),
+    getSiteSettings(),
   ]);
   const catalogue = products.map(toSFProduct);
 
@@ -24,5 +26,16 @@ export default async function StoreLayout({ children }: { children: React.ReactN
     initialSaved = rows.map((r) => r.productId);
   }
 
-  return <StoreShell catalogue={catalogue} isLoggedIn={!!session.userId} initialSaved={initialSaved}>{children}</StoreShell>;
+  const siteSettings = {
+    announcementText: settings.announcementText, socialInstagram: settings.socialInstagram,
+    socialWhatsapp: settings.socialWhatsapp, socialPinterest: settings.socialPinterest,
+    socialFacebook: settings.socialFacebook, socialTwitter: settings.socialTwitter,
+    contactEmail: settings.contactEmail, contactPhone: settings.contactPhone, logoUrl: settings.logoUrl,
+  };
+
+  return (
+    <StoreShell catalogue={catalogue} isLoggedIn={!!session.userId} initialSaved={initialSaved} siteSettings={siteSettings}>
+      {children}
+    </StoreShell>
+  );
 }

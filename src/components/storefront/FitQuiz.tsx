@@ -32,7 +32,7 @@ export function FitQuiz() {
     <>
       <header style={{ textAlign: "center", padding: "clamp(48px,7vw,90px) 24px clamp(20px,3vw,32px)" }}>
         <Eyebrow>Two minutes, no measuring tape</Eyebrow>
-        <Title>Find your <span style={{ fontStyle: "italic", color: T.gold }}>fit</span></Title>
+        <Title as="h1">Find your <span style={{ fontStyle: "italic", color: T.gold }}>fit</span></Title>
         <p style={{ fontFamily: SANS, fontWeight: 300, color: T.mid, fontSize: 15, lineHeight: 1.7, maxWidth: 440, margin: "16px auto 0" }}>
           A few quick details, and we'll suggest your size across the collection — no body scan, nothing intrusive.
         </p>

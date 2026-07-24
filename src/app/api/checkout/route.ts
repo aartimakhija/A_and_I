@@ -4,6 +4,7 @@ import { customAlphabet } from "nanoid";
 import { prisma } from "@/lib/prisma";
 import { createRzpOrder } from "@/lib/razorpay";
 import { getSession } from "@/lib/rbac";
+import { rateLimit, clientIp } from "@/lib/rate-limit";
 
 const num = customAlphabet("0123456789", 5);
 const rewardCode = customAlphabet("ABCDEFGHJKLMNPQRSTUVWXYZ23456789", 6);
@@ -17,6 +18,9 @@ const Body = z.object({
 });
 
 export async function POST(req: NextRequest) {
+  const { ok } = rateLimit(`checkout:${clientIp(req)}`, 20, 10 * 60 * 1000); // 20 attempts / 10 min per IP
+  if (!ok) return NextResponse.json({ error: "Too many checkout attempts — please wait a few minutes and try again." }, { status: 429 });
+
   const parsed = Body.safeParse(await req.json());
   if (!parsed.success) return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 });
   const { email, items, ship, note, promoCode } = parsed.data;

@@ -50,7 +50,7 @@ export function Lookbook({ products }: { products: SFProduct[] }) {
     <>
       <header style={{ textAlign: "center", padding: "clamp(48px,7vw,90px) 24px clamp(20px,3vw,36px)" }}>
         <Eyebrow>SS'26 · The Styling Edit</Eyebrow>
-        <Title>The <span style={{ fontStyle: "italic", color: T.gold }}>Lookbook</span></Title>
+        <Title as="h1">The <span style={{ fontStyle: "italic", color: T.gold }}>Lookbook</span></Title>
         <p style={{ fontFamily: SANS, fontWeight: 300, color: T.mid, fontSize: 15, lineHeight: 1.7, maxWidth: 440, margin: "16px auto 0" }}>
           Styled head to toe — the bag, the jewellery, the shoes. Everything you need to wear them out the door.
         </p>

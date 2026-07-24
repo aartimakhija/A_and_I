@@ -17,8 +17,8 @@ const PROCESS = [
   { n: "04", h: "Delivered, and remembered", b: "Every piece ships with its own digital passport: the atelier, the material origin, the hands behind it." },
 ];
 
-export function About({ originPiece, processPieces, pieceCount }: {
-  originPiece: SFProduct | null; processPieces: SFProduct[]; pieceCount: number;
+export function About({ originPiece, processPieces, pieceCount, faqs }: {
+  originPiece: SFProduct | null; processPieces: SFProduct[]; pieceCount: number; faqs: { question: string; answer: string }[];
 }) {
   const router = useRouter();
 
@@ -27,9 +27,9 @@ export function About({ originPiece, processPieces, pieceCount }: {
       {/* HERO */}
       <section style={{ background: T.dark, padding: "clamp(64px,10vw,140px) 24px", textAlign: "center" }}>
         <Eyebrow light>Est. for the woman who decides</Eyebrow>
-        <Title light size="clamp(34px,6vw,72px)">We don't follow<br /><span style={{ fontStyle: "italic", color: T.gold }}>the season.</span></Title>
+        <Title as="h1" light size="clamp(34px,6vw,72px)">We don't follow<br /><span style={{ fontStyle: "italic", color: T.gold }}>the season.</span></Title>
         <p style={{ fontFamily: SANS, fontWeight: 300, color: "rgba(196,184,168,0.7)", fontSize: 15, lineHeight: 1.8, maxWidth: 520, margin: "26px auto 0" }}>
-          A & I began with a simple frustration: clothes that were either beautifully Indian or quietly global, never both at once. So we made both — in the same piece.
+          A&I began with a simple frustration: clothes that were either beautifully Indian or quietly global, never both at once. So we made both — in the same piece.
         </p>
       </section>
 
@@ -41,7 +41,7 @@ export function About({ originPiece, processPieces, pieceCount }: {
           <Eyebrow>How it started</Eyebrow>
           <Title size="clamp(26px,3.6vw,42px)" style={{ marginTop: 10 }}>Two women, one<br /><span style={{ fontStyle: "italic", color: T.gold }}>closet problem.</span></Title>
           <p style={{ fontFamily: SANS, fontWeight: 300, fontSize: 15, lineHeight: 1.85, color: T.mid, marginTop: 20, maxWidth: 460 }}>
-            A & I didn't start as a business plan. It started as two friends standing in front of a closet full of clothes and still feeling like there was nothing to wear — everything was either loud heritage or quiet minimalism, never a version of both that felt like <i>us</i>.
+            A&I didn't start as a business plan. It started as two friends standing in front of a closet full of clothes and still feeling like there was nothing to wear — everything was either loud heritage or quiet minimalism, never a version of both that felt like <i>us</i>.
           </p>
           <p style={{ fontFamily: SANS, fontWeight: 300, fontSize: 15, lineHeight: 1.85, color: T.mid, marginTop: 16, maxWidth: 460 }}>
             So we went looking for the ateliers who still do it the old way — hand-tied bandhani, mirror-work set disc by disc, zari woven on a slow loom — and asked them to help us cut it into something that belonged as easily in Jaipur as it did anywhere else in the world.
@@ -101,6 +101,22 @@ export function About({ originPiece, processPieces, pieceCount }: {
           ))}
         </section>
       )}
+
+      {/* FAQ */}
+      <section style={{ maxWidth: 760, margin: "0 auto", padding: "clamp(48px,7vw,90px) clamp(20px,4vw,48px)" }}>
+        <div style={{ textAlign: "center", marginBottom: 40 }}>
+          <Eyebrow>Questions we hear often</Eyebrow>
+          <Title size="clamp(24px,3.4vw,38px)" style={{ marginTop: 10 }}>Frequently <span style={{ fontStyle: "italic", color: T.gold }}>asked.</span></Title>
+        </div>
+        <div style={{ display: "flex", flexDirection: "column", gap: 28 }}>
+          {faqs.map((f) => (
+            <div key={f.question}>
+              <h3 style={{ fontFamily: SERIF, fontStyle: "italic", fontSize: 19, color: T.ink, margin: "0 0 8px" }}>{f.question}</h3>
+              <p style={{ fontFamily: SANS, fontWeight: 300, fontSize: 14, lineHeight: 1.7, color: T.mid, margin: 0 }}>{f.answer}</p>
+            </div>
+          ))}
+        </div>
+      </section>
 
       {/* CLOSING CTA */}
       <section style={{ background: T.dark, padding: "clamp(56px,8vw,100px) 24px", textAlign: "center" }}>

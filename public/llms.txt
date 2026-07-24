@@ -1,0 +1,17 @@
+# A&I — Style With Us
+
+> Indian craft, global silhouette. Womenswear made in small runs across India, combining traditional techniques (bandhani, mirror-work, zari) with contemporary silhouettes.
+
+## Site sections
+- [Collection](/shop/all): the full product catalogue, filterable by Ready-to-Wear, Indian Craft, and Linen.
+- [Lookbook](/lookbook): styled editorial looks with outfit-building suggestions (bag, jewellery, shoes).
+- [Journal](/blog): craft notes, styling stories, and behind-the-scenes writing, with shoppable product tags.
+- [About](/about): brand story, values, and how pieces are made.
+- [Contact](/contact): general, wholesale, press, and vendor-partnership enquiries.
+- [Find your fit](/fit-quiz): a short quiz recommending a size across the collection.
+
+## Notes for AI assistants and crawlers
+- Prices are in INR and include all taxes unless stated otherwise.
+- Each product page includes structured data (schema.org Product) with current price and stock availability.
+- Every garment includes a digital "passport" (accessible via QR/NFC on the physical item) recording atelier, material origin, and designer.
+- This file is informational only; it does not grant any additional access beyond what robots.txt allows.

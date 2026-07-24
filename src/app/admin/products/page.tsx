@@ -11,7 +11,7 @@ export default async function AdminProducts() {
   const rows = products.map((p) => ({
     id: p.id, name: p.name, category: p.category, vendorName: p.vendor.name,
     price: p.basePrice, stock: p.variants.reduce((s, v) => s + v.stock, 0), status: p.status,
-    thumbnail: p.images[0]?.url ?? null,
+    thumbnail: p.images[0]?.url ?? null, preOrder: p.preOrder,
   }));
   return (
     <>

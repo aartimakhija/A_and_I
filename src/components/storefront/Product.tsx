@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { T, SANS, SERIF, peso, CAT_LABEL, SIZES } from "./theme";
 import { Photo, Eyebrow, Title, Btn, TiltCard } from "./primitives";
 import { Lightbox } from "./Lightbox";
+import { SizeChartButton } from "./SizeChartButton";
 import { useStore } from "./StoreContext";
 import type { SFProduct } from "@/lib/storefront-adapter";
 
@@ -89,13 +90,14 @@ export function Product({ product, related }: { product: SFProduct; related: SFP
 
           {(!soldOut || product.preOrder) && (
             <>
-              <div style={{ margin: "30px 0 8px", display: "flex", alignItems: "baseline", gap: 8 }}>
+              <div style={{ margin: "30px 0 8px", display: "flex", alignItems: "baseline", gap: 8, flexWrap: "wrap" }}>
                 <Eyebrow>Size</Eyebrow>
                 {recommended && (
                   <span style={{ fontFamily: SANS, fontSize: 11, color: T.gold }}>
                     · we'd suggest {recommended} <a href="/fit-quiz" style={{ color: T.stone, textDecoration: "underline" }}>(retake quiz)</a>
                   </span>
                 )}
+                <span style={{ marginLeft: "auto" }}><SizeChartButton category={product.category} /></span>
               </div>
               <div style={{ display: "flex", gap: 10 }}>
                 {SIZES.map((s) => {

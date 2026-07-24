@@ -2,11 +2,12 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { requireRole, vendorScope } from "@/lib/rbac";
 import { csvToObjects } from "@/lib/csv";
+import { getCategories } from "@/lib/categories";
 
 const SIZES = ["XS", "S", "M", "L", "XL"];
 
 // Expected CSV columns:
-//   name, slug (optional — derived from name if blank), category (ready|craft|linen),
+//   name, slug (optional — derived from name if blank), category (any active category slug — see Admin → Categories),
 //   colorHex, colorName (optional), story (optional), basePrice (rupees),
 //   stock (applied to every size), vendorSlug (admin only — vendors are locked to themselves),
 //   status (optional, defaults ACTIVE), imageUrls (optional, semicolon-separated)
@@ -22,8 +23,12 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "CSV has no data rows (check it has a header row plus at least one product)" }, { status: 400 });
   }
 
-  const vendors = await prisma.vendor.findMany({ where: vendorScope(s, "id") as any, select: { id: true, slug: true } });
+  const [vendors, categories] = await Promise.all([
+    prisma.vendor.findMany({ where: vendorScope(s, "id") as any, select: { id: true, slug: true } }),
+    getCategories(),
+  ]);
   const vendorBySlug = Object.fromEntries(vendors.map((v) => [v.slug, v.id]));
+  const validCategorySlugs = categories.map((c) => c.slug);
   const defaultVendorId = s.role === "VENDOR" ? s.vendorId! : undefined;
 
   let created = 0, skipped = 0;
@@ -34,8 +39,8 @@ export async function POST(req: NextRequest) {
     const line = i + 2; // +1 for header row, +1 for 1-indexing
     try {
       if (!r.name) { errors.push({ row: line, message: "Missing name" }); continue; }
-      if (!r.category || !["ready", "craft", "linen"].includes(r.category)) {
-        errors.push({ row: line, message: `Category must be ready, craft, or linen (got "${r.category}")` }); continue;
+      if (!r.category || !validCategorySlugs.includes(r.category)) {
+        errors.push({ row: line, message: `Category must be one of: ${validCategorySlugs.join(", ")} (got "${r.category}") — manage these under Admin → Categories` }); continue;
       }
       const slug = (r.slug || r.name).toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
       const existing = await prisma.product.findUnique({ where: { slug } });

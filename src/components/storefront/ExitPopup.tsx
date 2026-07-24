@@ -38,7 +38,7 @@ export function ExitPopup() {
           <Eyebrow>Before you go</Eyebrow>
           <Title size="26px" style={{ margin: "8px 0 10px" }}>Take <i>10% off</i></Title>
           <p style={{ fontFamily: SANS, fontSize: 12.5, color: T.stone, lineHeight: 1.6, marginBottom: 16 }}>
-            Join the A & I Post for early access to the next drop — and a welcome code.
+            Join the A&I Post for early access to the next drop — and a welcome code.
           </p>
           {done ? (
             <p style={{ fontFamily: SERIF, fontStyle: "italic", fontSize: 18, color: T.ink }}>You're on the list ✓</p>

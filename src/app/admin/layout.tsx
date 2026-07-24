@@ -2,7 +2,8 @@ import Link from "next/link";
 // Admin data (orders, products, vendors) must always be live, and shouldn't
 // ever be attempted at build time — same reasoning as the storefront layout.
 export const dynamic = "force-dynamic";
-const nav = [["/admin", "Dashboard"], ["/admin/orders", "Orders (OMS)"], ["/admin/products", "Catalogue (CMS)"], ["/admin/blog", "Journal"], ["/admin/vendors", "Vendors"], ["/admin/preorders", "Pre-orders"], ["/admin/returns", "Returns & Refunds"], ["/admin/messages", "Messages"]];
+export const metadata = { robots: { index: false, follow: false } };
+const nav = [["/admin", "Dashboard"], ["/admin/orders", "Orders (OMS)"], ["/admin/products", "Catalogue (CMS)"], ["/admin/categories", "Categories"], ["/admin/blog", "Journal"], ["/admin/vendors", "Vendors"], ["/admin/purchase-orders", "Purchase Orders"], ["/admin/preorders", "Pre-orders"], ["/admin/returns", "Returns & Refunds"], ["/admin/messages", "Messages"], ["/admin/settings", "Settings"]];
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   return (
     <div style={{ display: "grid", gridTemplateColumns: "220px 1fr", minHeight: "100vh" }}>

@@ -10,7 +10,9 @@
     "db:push": "prisma db push",
     "db:seed": "tsx prisma/seed.ts",
     "db:studio": "prisma studio",
-    "migrate:catalogue": "tsx scripts/migrate-catalogue.ts"
+    "migrate:catalogue": "tsx scripts/migrate-catalogue.ts",
+    "set:preorder": "tsx scripts/set-all-preorder.ts",
+    "seed:blog": "tsx scripts/seed-blog.ts"
   },
   "prisma": { "seed": "tsx prisma/seed.ts" },
   "dependencies": {

@@ -58,7 +58,7 @@ export function Contact() {
     <>
       <header style={{ textAlign: "center", padding: "clamp(48px,7vw,90px) 24px clamp(28px,4vw,48px)" }}>
         <Eyebrow>We'd love to hear from you</Eyebrow>
-        <Title>Get in <span style={{ fontStyle: "italic", color: T.gold }}>touch</span></Title>
+        <Title as="h1">Get in <span style={{ fontStyle: "italic", color: T.gold }}>touch</span></Title>
         <p style={{ fontFamily: SANS, fontWeight: 300, color: T.mid, fontSize: 15, lineHeight: 1.7, maxWidth: 460, margin: "16px auto 0" }}>
           Questions about an order, a wholesale enquiry, or want to collaborate with our ateliers — write to us below.
         </p>

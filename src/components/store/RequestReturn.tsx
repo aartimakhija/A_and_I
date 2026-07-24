@@ -10,7 +10,7 @@ const REASONS = [
   ["OTHER", "Other"],
 ] as const;
 
-export default function RequestReturn({ orderItemId }: { orderItemId: string }) {
+export default function RequestReturn({ orderItemId, email }: { orderItemId: string; email: string }) {
   const [open, setOpen] = useState(false);
   const [reason, setReason] = useState<string>(REASONS[0][0]);
   const [note, setNote] = useState("");
@@ -39,7 +39,7 @@ export default function RequestReturn({ orderItemId }: { orderItemId: string }) 
           const res = await fetch("/api/returns", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ orderItemId, reason, note }),
+            body: JSON.stringify({ orderItemId, email, reason, note }),
           });
           setBusy(false);
           if (res.ok) setDone(true);

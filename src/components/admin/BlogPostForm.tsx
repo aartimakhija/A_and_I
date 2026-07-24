@@ -20,7 +20,7 @@ export default function BlogPostForm({ allProducts, post }: Props) {
   const [coverImage, setCoverImage] = useState(post?.coverImage ?? "");
   const [body, setBody] = useState(post?.body ?? "");
   const [status, setStatus] = useState(post?.status ?? "DRAFT");
-  const [authorName, setAuthorName] = useState(post?.authorName ?? "A & I Editorial");
+  const [authorName, setAuthorName] = useState(post?.authorName ?? "A&I Editorial");
   const [productIds, setProductIds] = useState<string[]>(post?.products.map((p) => p.productId) ?? []);
   const [productSearch, setProductSearch] = useState("");
   const [uploading, setUploading] = useState(false);

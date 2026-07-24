@@ -138,6 +138,7 @@ model Vendor {
   users      User[]
   products   Product[]
   payouts    Payout[]
+  purchaseOrders PurchaseOrder[]
   createdAt  DateTime     @default(now())
 }
 
@@ -179,6 +180,7 @@ model Product {
   wishlist    Wishlist[]
   notify      NotifyRequest[]
   blogTags    BlogPostProduct[]
+  poItems     PurchaseOrderItem[]
   dropId      String?
   drop        Drop?          @relation(fields: [dropId], references: [id])
   metaTitle   String?
@@ -472,4 +474,69 @@ model WebhookEvent {                                   // idempotency for paymen
   eventId   String   @unique
   payload   Json
   createdAt DateTime @default(now())
+}
+
+// Site-wide, admin-configurable settings — the "control panel" for
+// everything that shouldn't require a code change: favicon, social links,
+// SEO defaults, analytics IDs, announcement bar copy. Always exactly one row.
+// Product categories — fully backend-configurable (Admin → Categories).
+// Product.category stays a plain string (matching a Category.slug) rather
+// than a hard foreign key, so existing product rows never need a migration
+// when categories are renamed or reorganized.
+model Category {
+  id       String  @id @default(cuid())
+  name     String
+  slug     String  @unique
+  position Int     @default(0)
+  active   Boolean @default(true)
+}
+
+// Purchase orders — admin generates an editable, printable PO per vendor to
+// request production of specific pieces/quantities. No payment flows through
+// this; it's a paper trail between A&I and the atelier.
+model PurchaseOrder {
+  id        String              @id @default(cuid())
+  poNumber  String              @unique
+  vendorId  String
+  vendor    Vendor              @relation(fields: [vendorId], references: [id])
+  notes     String?
+  terms     String?
+  status    String              @default("DRAFT")   // DRAFT | SENT
+  items     PurchaseOrderItem[]
+  createdAt DateTime            @default(now())
+  updatedAt DateTime            @updatedAt
+}
+
+model PurchaseOrderItem {
+  id          String        @id @default(cuid())
+  poId        String
+  po          PurchaseOrder @relation(fields: [poId], references: [id], onDelete: Cascade)
+  productId   String?
+  product     Product?      @relation(fields: [productId], references: [id])
+  description String
+  qty         Int
+  unitCost    Int                                    // paise
+  position    Int           @default(0)
+}
+
+model SiteSettings {
+  id                     String   @id @default("singleton")
+  siteName               String   @default("A&I")
+  tagline                String?  @default("Style With Us")
+  description            String?  @default("Indian craft, global silhouette. Womenswear handmade in small runs across India.")
+  faviconUrl             String?
+  logoUrl                String?
+  ogImageUrl             String?
+  announcementText       String?  @default("Made in India, in small runs")
+  socialInstagram        String?
+  socialWhatsapp         String?
+  socialPinterest        String?
+  socialFacebook         String?
+  socialTwitter          String?
+  contactEmail           String?
+  contactPhone           String?
+  gaMeasurementId        String?                                  // GA4 "G-XXXXXXX"
+  googleSiteVerification String?                                  // Search Console meta tag content
+  bingSiteVerification   String?                                  // Bing Webmaster meta tag content
+  updatedAt              DateTime @updatedAt
 }

@@ -21,7 +21,7 @@ export async function POST(req: NextRequest) {
     data: {
       slug, title: b.title, subtitle: b.subtitle || null, coverImage: b.coverImage || null,
       body: b.body || "", status: b.status || "DRAFT",
-      authorName: b.authorName || "A & I Editorial",
+      authorName: b.authorName || "A&I Editorial",
       publishedAt: b.status === "PUBLISHED" ? new Date() : null,
       products: { create: (b.productIds ?? []).map((productId: string, i: number) => ({ productId, position: i })) },
     },

@@ -1,7 +1,12 @@
 import { prisma } from "@/lib/prisma";
 import { BlogList } from "@/components/storefront/BlogList";
+import { pageMetadata, breadcrumbJsonLd } from "@/lib/seo";
 
-export const metadata = { title: "Journal — A & I", description: "Craft notes, styling edits, and the stories behind the pieces." };
+export const metadata = pageMetadata({
+  title: "Journal",
+  description: "Craft notes, styling edits, and the stories behind the pieces — from the A&I studio.",
+  path: "/blog",
+});
 
 export default async function BlogPage() {
   const posts = await prisma.blogPost.findMany({
@@ -9,5 +14,10 @@ export default async function BlogPage() {
     orderBy: { publishedAt: "desc" },
     select: { id: true, slug: true, title: true, subtitle: true, coverImage: true, authorName: true, publishedAt: true },
   });
-  return <BlogList posts={posts.map((p) => ({ ...p, publishedAt: p.publishedAt?.toISOString() ?? null }))} />;
+  return (
+    <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd([{ name: "Home", path: "/" }, { name: "Journal", path: "/blog" }])) }} />
+      <BlogList posts={posts.map((p) => ({ ...p, publishedAt: p.publishedAt?.toISOString() ?? null }))} />
+    </>
+  );
 }

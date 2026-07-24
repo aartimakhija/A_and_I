@@ -63,7 +63,7 @@ export default function BulkImportForm({ vendorSlugs, isAdmin }: { vendorSlugs: 
     <div style={box}>
       <p style={{ fontSize: 13, color: "#555", lineHeight: 1.6, marginTop: 0 }}>
         Upload a CSV to create many products at once. Required columns: <code>name</code>, <code>category</code>
-        {" "}(one of <code>ready</code>, <code>craft</code>, <code>linen</code>){isAdmin && <> and <code>vendorSlug</code></>}.
+        {" "}(must match a slug from <a href="/admin/categories">Categories</a>){isAdmin && <> and <code>vendorSlug</code></>}.
         Everything else is optional and has sensible defaults. Rows whose slug already exists are skipped, not overwritten.
       </p>
 
