@@ -23,10 +23,12 @@ export async function POST(req: NextRequest) {
   const po = await prisma.purchaseOrder.create({
     data: {
       poNumber: `PO-${num()}`, vendorId: b.vendorId, notes: b.notes || null, terms: b.terms || null,
-      status: b.status || "DRAFT",
+      status: b.status || "DRAFT", priority: b.priority || "NORMAL",
+      expectedDelivery: b.expectedDelivery ? new Date(b.expectedDelivery) : null,
+      measurementNotes: b.measurementNotes || null, referenceImages: b.referenceImages || [],
       items: {
         create: b.items.map((it: any, i: number) => ({
-          productId: it.productId || null, description: it.description, qty: it.qty,
+          productId: it.productId || null, description: it.description, size: it.size || null, qty: it.qty,
           unitCost: Math.round((it.unitCost || 0) * 100), position: i,
         })),
       },

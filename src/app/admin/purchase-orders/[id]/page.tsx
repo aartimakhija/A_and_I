@@ -16,9 +16,11 @@ export default async function POPage({ params }: { params: { id: string } }) {
   return (
     <POPrintView
       po={{
-        poNumber: po.poNumber, notes: po.notes, terms: po.terms, status: po.status, createdAt: po.createdAt.toISOString(),
+        id: po.id, poNumber: po.poNumber, notes: po.notes, terms: po.terms, status: po.status, createdAt: po.createdAt.toISOString(),
+        priority: po.priority, expectedDelivery: po.expectedDelivery?.toISOString() ?? null,
+        measurementNotes: po.measurementNotes, referenceImages: po.referenceImages,
         vendor: { name: po.vendor.name, email: po.vendor.email, phone: po.vendor.phone },
-        items: po.items.map((it) => ({ description: it.description, qty: it.qty, unitCost: it.unitCost })),
+        items: po.items.map((it) => ({ description: it.description, size: it.size, qty: it.qty, unitCost: it.unitCost })),
       }}
       siteName={settings.siteName}
     />

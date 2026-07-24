@@ -6,7 +6,7 @@ export async function GET(_req: NextRequest, { params }: { params: { id: string 
   const s = await requireRole(["ADMIN", "VENDOR"]);
   const p = await prisma.product.findFirst({
     where: { id: params.id, ...vendorScope(s) },
-    include: { images: true, variants: true, tiers: true },
+    include: { images: true, variants: true, tiers: true, bom: true },
   });
   if (!p) return NextResponse.json({ error: "not found" }, { status: 404 });
   return NextResponse.json(p);
@@ -50,8 +50,18 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
       data: b.images.map((url: string, i: number) => ({ productId: p.id, url, position: i })),
     });
   }
+  // Replace Bill of Materials wholesale if provided
+  if (Array.isArray(b.bom)) {
+    await prisma.productMaterial.deleteMany({ where: { productId: p.id } });
+    const rows = b.bom.filter((r: any) => r.materialId);
+    if (rows.length > 0) {
+      await prisma.productMaterial.createMany({
+        data: rows.map((r: any) => ({ productId: p.id, materialId: r.materialId, qtyPerUnit: r.qtyPerUnit ?? 1 })),
+      });
+    }
+  }
 
-  const full = await prisma.product.findUnique({ where: { id: p.id }, include: { images: true, variants: true, tiers: true } });
+  const full = await prisma.product.findUnique({ where: { id: p.id }, include: { images: true, variants: true, tiers: true, bom: true } });
   return NextResponse.json(full);
 }
 

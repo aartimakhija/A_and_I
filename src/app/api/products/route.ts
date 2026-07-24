@@ -23,6 +23,7 @@ export async function POST(req: NextRequest) {
       variants: { create: (b.variants ?? []).map((v: any) => ({ size: v.size, sku: `${b.slug}-${v.size}`, stock: v.stock ?? 0 })) },
       tiers: { create: (b.tiers ?? []).map((t: any, i: number) => ({ label: t.label, priceAdd: t.priceAdd ?? 0, position: t.position ?? i })) },
       images: { create: (b.images ?? []).map((url: string, i: number) => ({ url, position: i })) },
+      bom: { create: (b.bom ?? []).filter((r: any) => r.materialId).map((r: any) => ({ materialId: r.materialId, qtyPerUnit: r.qtyPerUnit ?? 1 })) },
     },
     include: { images: true, variants: true, tiers: true },
   });

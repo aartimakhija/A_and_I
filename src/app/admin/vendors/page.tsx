@@ -15,7 +15,7 @@ export default async function AdminVendors() {
             <td style={{ padding: 8 }}>{v.name}</td><td>{v.email}</td><td>{v.status}</td>
             <td>{(v.commission * 100).toFixed(0)}%</td><td>{v.moq}</td><td>{v._count.products}</td>
             <td><VendorActions id={v.id} status={v.status} /></td>
-            <td><Link href={`/admin/purchase-orders/new?vendorId=${v.id}`} style={{ fontSize: 12, color: "#0a0a0a" }}>Generate PO</Link></td>
+            <td><Link href={`/admin/purchase-orders/new?vendorId=${v.id}`} style={{ fontSize: 12, color: "#0a0a0a" }}>Create production order</Link></td>
           </tr>
         ))}</tbody>
       </table>

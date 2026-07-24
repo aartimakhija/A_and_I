@@ -4,9 +4,11 @@ import { useRouter } from "next/navigation";
 
 type Vendor = { id: string; name: string };
 type ImageRow = { url: string };
+type MaterialOption = { id: string; name: string; unit: string };
 type Props = {
   vendors: Vendor[];
   categories: { slug: string; name: string }[];
+  materials: MaterialOption[];
   isAdmin: boolean;
   product?: {
     id: string; slug: string; name: string; story: string | null; category: string;
@@ -14,12 +16,13 @@ type Props = {
     vendorId: string; images: ImageRow[]; featured: boolean; featuredOrder: number; lookbookOrder: number | null; preOrder: boolean;
     variants: { size: string; stock: number }[];
     tiers: { label: string; priceAdd: number }[];
+    bom: { materialId: string; qtyPerUnit: number }[];
   };
 };
 
 const SIZES = ["XS", "S", "M", "L", "XL"];
 
-export default function ProductForm({ vendors, categories, isAdmin, product }: Props) {
+export default function ProductForm({ vendors, categories, materials, isAdmin, product }: Props) {
   const router = useRouter();
   const [name, setName] = useState(product?.name ?? "");
   const [slug, setSlug] = useState(product?.slug ?? "");
@@ -34,6 +37,7 @@ export default function ProductForm({ vendors, categories, isAdmin, product }: P
   const [inLookbook, setInLookbook] = useState(product?.lookbookOrder != null);
   const [lookbookOrder, setLookbookOrder] = useState(product?.lookbookOrder ?? 0);
   const [preOrder, setPreOrder] = useState(product?.preOrder ?? false);
+  const [bom, setBom] = useState<{ materialId: string; qtyPerUnit: number }[]>(product?.bom ?? []);
   const [vendorId, setVendorId] = useState(product?.vendorId ?? vendors[0]?.id ?? "");
   const [images, setImages] = useState<string[]>(product?.images.map((i) => i.url) ?? []);
   const [stock, setStock] = useState<Record<string, number>>(
@@ -82,6 +86,7 @@ export default function ProductForm({ vendors, categories, isAdmin, product }: P
       images,
       variants: SIZES.map((s) => ({ size: s, stock: stock[s] ?? 0 })),
       tiers: tiers.map((t, i) => ({ label: t.label, priceAdd: Math.round(t.priceAdd * 100), position: i })),
+      bom: bom.filter((b) => b.materialId),
     };
     try {
       const res = await fetch(product ? `/api/products/${product.id}` : "/api/products", {
@@ -200,6 +205,31 @@ export default function ProductForm({ vendors, categories, isAdmin, product }: P
             onChange={(e) => setTiers((ts) => ts.map((x, idx) => idx === i ? { ...x, priceAdd: parseFloat(e.target.value || "0") } : x))} />
         </div>
       ))}
+
+      <label style={label}>Bill of materials</label>
+      {materials.length === 0 ? (
+        <p style={{ fontSize: 12, color: "#999", marginTop: 6 }}>No materials yet — add some under <a href="/admin/materials">Materials</a> first.</p>
+      ) : (
+        <>
+          {bom.map((row, i) => (
+            <div key={i} style={{ display: "flex", gap: 8, marginTop: 6 }}>
+              <select style={{ ...field, marginTop: 0, flex: 1 }} value={row.materialId}
+                onChange={(e) => setBom((rows) => rows.map((r, idx) => idx === i ? { ...r, materialId: e.target.value } : r))}>
+                <option value="">— select material —</option>
+                {materials.map((m) => <option key={m.id} value={m.id}>{m.name} ({m.unit})</option>)}
+              </select>
+              <input style={{ ...field, marginTop: 0, width: 120 }} type="number" placeholder="Qty per unit" value={row.qtyPerUnit}
+                onChange={(e) => setBom((rows) => rows.map((r, idx) => idx === i ? { ...r, qtyPerUnit: parseFloat(e.target.value || "0") } : r))} />
+              <button type="button" onClick={() => setBom((rows) => rows.filter((_, idx) => idx !== i))}
+                style={{ background: "none", border: "none", cursor: "pointer", color: "#B0503E", fontSize: 18 }}>×</button>
+            </div>
+          ))}
+          <button type="button" onClick={() => setBom((rows) => [...rows, { materialId: "", qtyPerUnit: 1 }])}
+            style={{ marginTop: 8, fontSize: 12, background: "none", border: "1px solid #ccc", padding: "6px 14px", cursor: "pointer" }}>
+            + Add material
+          </button>
+        </>
+      )}
 
       <label style={label}>Images</label>
       <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginTop: 6 }}>

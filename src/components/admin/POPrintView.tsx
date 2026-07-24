@@ -1,9 +1,11 @@
 "use client";
+import PurchaseOrderStatus from "./PurchaseOrderStatus";
 
 type PO = {
-  poNumber: string; notes: string | null; terms: string | null; status: string; createdAt: string;
+  id: string; poNumber: string; notes: string | null; terms: string | null; status: string; createdAt: string;
+  priority: string; expectedDelivery: string | null; measurementNotes: string | null; referenceImages: string[];
   vendor: { name: string; email: string; phone: string | null };
-  items: { description: string; qty: number; unitCost: number }[];
+  items: { description: string; size: string | null; qty: number; unitCost: number }[];
 };
 
 export function POPrintView({ po, siteName }: { po: PO; siteName: string }) {
@@ -18,6 +20,8 @@ export function POPrintView({ po, siteName }: { po: PO; siteName: string }) {
         }
       `}</style>
 
+      <PurchaseOrderStatus id={po.id} status={po.status} />
+
       <div className="no-print" style={{ marginBottom: 24, display: "flex", gap: 12 }}>
         <button onClick={() => window.print()} style={{ padding: "10px 20px", background: "#0a0a0a", color: "#fff", border: 0, cursor: "pointer" }}>
           Print / Save as PDF
@@ -27,12 +31,13 @@ export function POPrintView({ po, siteName }: { po: PO; siteName: string }) {
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", borderBottom: "2px solid #111", paddingBottom: 16 }}>
         <div>
           <div style={{ fontSize: 26, fontWeight: 700 }}>{siteName}</div>
-          <div style={{ fontSize: 12, color: "#666", marginTop: 4 }}>Purchase Order</div>
+          <div style={{ fontSize: 12, color: "#666", marginTop: 4 }}>Production Order</div>
         </div>
         <div style={{ textAlign: "right" }}>
           <div style={{ fontSize: 16, fontWeight: 600 }}>{po.poNumber}</div>
           <div style={{ fontSize: 12, color: "#666" }}>{new Date(po.createdAt).toLocaleDateString("en-IN", { day: "numeric", month: "long", year: "numeric" })}</div>
-          <div style={{ fontSize: 11, color: "#999", marginTop: 4 }}>{po.status}</div>
+          <div style={{ fontSize: 11, color: "#999", marginTop: 4 }}>{po.status.replaceAll("_", " ")} · {po.priority} priority</div>
+          {po.expectedDelivery && <div style={{ fontSize: 11, color: "#999" }}>Expected: {new Date(po.expectedDelivery).toLocaleDateString("en-IN")}</div>}
         </div>
       </div>
 
@@ -45,7 +50,7 @@ export function POPrintView({ po, siteName }: { po: PO; siteName: string }) {
       <table style={{ width: "100%", borderCollapse: "collapse", marginTop: 28 }}>
         <thead>
           <tr style={{ borderBottom: "1px solid #111" }}>
-            {["Description", "Qty", "Unit cost", "Line total"].map((h) => (
+            {["Description", "Size", "Qty", "Unit cost", "Line total"].map((h) => (
               <th key={h} style={{ textAlign: h === "Description" ? "left" : "right", padding: "8px 4px", fontSize: 11, letterSpacing: 1, textTransform: "uppercase" }}>{h}</th>
             ))}
           </tr>
@@ -54,6 +59,7 @@ export function POPrintView({ po, siteName }: { po: PO; siteName: string }) {
           {po.items.map((it, i) => (
             <tr key={i} style={{ borderBottom: "1px solid #eee" }}>
               <td style={{ padding: "10px 4px" }}>{it.description}</td>
+              <td style={{ padding: "10px 4px", textAlign: "right" }}>{it.size ?? "—"}</td>
               <td style={{ padding: "10px 4px", textAlign: "right" }}>{it.qty}</td>
               <td style={{ padding: "10px 4px", textAlign: "right" }}>₹{(it.unitCost / 100).toLocaleString("en-IN")}</td>
               <td style={{ padding: "10px 4px", textAlign: "right" }}>₹{((it.qty * it.unitCost) / 100).toLocaleString("en-IN")}</td>
@@ -66,8 +72,24 @@ export function POPrintView({ po, siteName }: { po: PO; siteName: string }) {
         Total: ₹{(total / 100).toLocaleString("en-IN")}
       </div>
 
+      {po.measurementNotes && (
+        <div style={{ marginTop: 24, paddingTop: 16, borderTop: "1px solid #eee" }}>
+          <div style={{ fontSize: 11, letterSpacing: 1, textTransform: "uppercase", color: "#999", marginBottom: 6 }}>Measurements / fit notes</div>
+          <p style={{ fontSize: 13, color: "#555", lineHeight: 1.6, whiteSpace: "pre-wrap" }}>{po.measurementNotes}</p>
+        </div>
+      )}
+
+      {po.referenceImages.length > 0 && (
+        <div style={{ marginTop: 24 }}>
+          <div style={{ fontSize: 11, letterSpacing: 1, textTransform: "uppercase", color: "#999", marginBottom: 8 }}>Reference images</div>
+          <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+            {po.referenceImages.map((url, i) => <img key={i} src={url} alt="" style={{ width: 100, height: 125, objectFit: "cover", border: "1px solid #ddd" }} />)}
+          </div>
+        </div>
+      )}
+
       {po.terms && (
-        <div style={{ marginTop: 32, paddingTop: 16, borderTop: "1px solid #eee" }}>
+        <div style={{ marginTop: 24, paddingTop: 16, borderTop: "1px solid #eee" }}>
           <div style={{ fontSize: 11, letterSpacing: 1, textTransform: "uppercase", color: "#999", marginBottom: 6 }}>Terms</div>
           <p style={{ fontSize: 13, color: "#555", lineHeight: 1.6, whiteSpace: "pre-wrap" }}>{po.terms}</p>
         </div>

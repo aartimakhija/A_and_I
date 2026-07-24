@@ -3,7 +3,7 @@ import Link from "next/link";
 // ever be attempted at build time — same reasoning as the storefront layout.
 export const dynamic = "force-dynamic";
 export const metadata = { robots: { index: false, follow: false } };
-const nav = [["/admin", "Dashboard"], ["/admin/orders", "Orders (OMS)"], ["/admin/products", "Catalogue (CMS)"], ["/admin/categories", "Categories"], ["/admin/blog", "Journal"], ["/admin/vendors", "Vendors"], ["/admin/purchase-orders", "Purchase Orders"], ["/admin/preorders", "Pre-orders"], ["/admin/returns", "Returns & Refunds"], ["/admin/messages", "Messages"], ["/admin/settings", "Settings"]];
+const nav = [["/admin", "Dashboard"], ["/admin/planning", "Production Planning"], ["/admin/orders", "Orders (OMS)"], ["/admin/products", "Catalogue (CMS)"], ["/admin/categories", "Categories"], ["/admin/materials", "Materials"], ["/admin/material-orders", "Material Orders"], ["/admin/blog", "Journal"], ["/admin/vendors", "Vendors"], ["/admin/purchase-orders", "Production Orders"], ["/admin/preorders", "Pre-orders"], ["/admin/returns", "Returns & Refunds"], ["/admin/messages", "Messages"], ["/admin/settings", "Settings"]];
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   return (
     <div style={{ display: "grid", gridTemplateColumns: "220px 1fr", minHeight: "100vh" }}>

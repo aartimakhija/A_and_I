@@ -139,6 +139,8 @@ model Vendor {
   products   Product[]
   payouts    Payout[]
   purchaseOrders PurchaseOrder[]
+  materials      Material[]
+  materialOrders MaterialOrder[]
   createdAt  DateTime     @default(now())
 }
 
@@ -181,6 +183,7 @@ model Product {
   notify      NotifyRequest[]
   blogTags    BlogPostProduct[]
   poItems     PurchaseOrderItem[]
+  bom         ProductMaterial[]
   dropId      String?
   drop        Drop?          @relation(fields: [dropId], references: [id])
   metaTitle   String?
@@ -316,6 +319,65 @@ model BlogPostProduct {                                   // "Shop this post" ta
   product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
   position  Int      @default(0)
   @@unique([postId, productId])
+}
+
+// ── Raw materials & Bill of Materials (Phase 1 of the Admin OS roadmap) ──
+// Materials are tracked separately from finished-goods Products. A product's
+// "recipe" (ProductMaterial / BOM) says how much of each material one unit
+// needs — this is what Production Planning will check against available
+// stock before recommending a Purchase Order or greenlighting production.
+model Material {
+  id           String              @id @default(cuid())
+  name         String
+  sku          String              @unique
+  unit         String              @default("meters")  // meters | pieces | kg | rolls, etc.
+  costPerUnit  Int                                       // paise
+  stockQty     Float               @default(0)
+  reorderLevel Float               @default(0)           // below this, Dashboard's "Low Materials" flags it
+  vendorId     String?                                    // preferred supplier, if any
+  vendor       Vendor?             @relation(fields: [vendorId], references: [id])
+  bom          ProductMaterial[]
+  orderItems   MaterialOrderItem[]
+  createdAt    DateTime            @default(now())
+  updatedAt    DateTime            @updatedAt
+}
+
+model ProductMaterial {
+  id         String   @id @default(cuid())
+  productId  String
+  product    Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  materialId String
+  material   Material @relation(fields: [materialId], references: [id])
+  qtyPerUnit Float                                        // how much this material is needed per single garment
+  @@unique([productId, materialId])
+}
+
+// Raw-material procurement from a supplier — distinct from PurchaseOrder
+// (which orders *finished goods* from a vendor/atelier). Receiving a
+// MaterialOrder automatically increments the linked Material's stockQty.
+model MaterialOrder {
+  id           String              @id @default(cuid())
+  orderNumber  String              @unique
+  vendorId     String?
+  vendor       Vendor?             @relation(fields: [vendorId], references: [id])
+  supplierName String?                                    // for raw-material suppliers who aren't a garment Vendor
+  expectedDate DateTime?
+  status       String              @default("DRAFT")      // DRAFT | SENT | ACCEPTED | IN_TRANSIT | RECEIVED
+  notes        String?
+  items        MaterialOrderItem[]
+  createdAt    DateTime            @default(now())
+  updatedAt    DateTime            @updatedAt
+}
+
+model MaterialOrderItem {
+  id         String        @id @default(cuid())
+  orderId    String
+  order      MaterialOrder @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  materialId String
+  material   Material      @relation(fields: [materialId], references: [id])
+  qty        Float
+  rate       Int                                           // paise per unit
+  position   Int           @default(0)
 }
 
 model Order {
@@ -495,16 +557,20 @@ model Category {
 // request production of specific pieces/quantities. No payment flows through
 // this; it's a paper trail between A&I and the atelier.
 model PurchaseOrder {
-  id        String              @id @default(cuid())
-  poNumber  String              @unique
-  vendorId  String
-  vendor    Vendor              @relation(fields: [vendorId], references: [id])
-  notes     String?
-  terms     String?
-  status    String              @default("DRAFT")   // DRAFT | SENT
-  items     PurchaseOrderItem[]
-  createdAt DateTime            @default(now())
-  updatedAt DateTime            @updatedAt
+  id               String              @id @default(cuid())
+  poNumber         String              @unique
+  vendorId         String
+  vendor           Vendor              @relation(fields: [vendorId], references: [id])
+  notes            String?
+  terms            String?
+  status           String              @default("DRAFT")   // DRAFT | SENT | ACCEPTED | IN_PROGRESS | READY_FOR_PICKUP | COMPLETED
+  priority         String              @default("NORMAL")  // LOW | NORMAL | HIGH | URGENT
+  expectedDelivery DateTime?
+  measurementNotes String?                                 // custom measurements / fit notes for this production run
+  referenceImages  String[]                                 // blueprint / reference photo URLs
+  items            PurchaseOrderItem[]
+  createdAt        DateTime            @default(now())
+  updatedAt        DateTime            @updatedAt
 }
 
 model PurchaseOrderItem {
@@ -514,8 +580,9 @@ model PurchaseOrderItem {
   productId   String?
   product     Product?      @relation(fields: [productId], references: [id])
   description String
+  size        String?                                      // which size this line is producing, if applicable
   qty         Int
-  unitCost    Int                                    // paise
+  unitCost    Int                                           // paise
   position    Int           @default(0)
 }
 

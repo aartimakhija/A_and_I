@@ -9,9 +9,9 @@ export default async function PurchaseOrdersList() {
   return (
     <>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-        <h1>Purchase orders</h1>
+        <h1>Production orders</h1>
         <Link href="/admin/purchase-orders/new" style={{ padding: "10px 20px", background: "#0a0a0a", color: "#fff", textDecoration: "none", fontSize: 13 }}>
-          + New PO
+          + New production order
         </Link>
       </div>
       <table style={{ width: "100%", borderCollapse: "collapse", marginTop: 16 }}>
