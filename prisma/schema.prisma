@@ -173,7 +173,9 @@ model Product {
   colorHex    String
   colorName   String?
   fabric      String?
-  basePrice   Int                                      // paise
+  basePrice   Int                                      // paise — the selling price
+  costPrice   Int?                                     // paise — landed cost per unit, drives margin/profit reporting
+  vendorCost  Int?                                      // paise — what's paid to the vendor specifically, if different from costPrice
   featured      Boolean      @default(false)   // shows in Home's "Hand-picked" section
   featuredOrder Int          @default(0)       // lower = earlier, when featured is true
   lookbookOrder Int?                           // null = not in Lookbook; set = position (ascending)

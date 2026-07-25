@@ -25,6 +25,9 @@ const GROUPS: [string, [string, string][]][] = [
     ["/admin/quality", "Quality Control"],
     ["/admin/vendor-payments", "Vendor Payments"],
   ]],
+  ["Finance", [
+    ["/admin/finance", "Finance"],
+  ]],
   ["System", [
     ["/admin/messages", "Messages"],
     ["/admin/settings", "Settings"],

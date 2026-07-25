@@ -12,7 +12,7 @@ type Props = {
   isAdmin: boolean;
   product?: {
     id: string; slug: string; name: string; story: string | null; category: string;
-    colorHex: string; colorName: string | null; basePrice: number; status: string;
+    colorHex: string; colorName: string | null; basePrice: number; costPrice: number | null; vendorCost: number | null; status: string;
     vendorId: string; images: ImageRow[]; featured: boolean; featuredOrder: number; lookbookOrder: number | null; preOrder: boolean;
     variants: { size: string; stock: number }[];
     tiers: { label: string; priceAdd: number }[];
@@ -31,6 +31,8 @@ export default function ProductForm({ vendors, categories, materials, isAdmin, p
   const [colorHex, setColorHex] = useState(product?.colorHex ?? "#8A7A6A");
   const [colorName, setColorName] = useState(product?.colorName ?? "");
   const [basePrice, setBasePrice] = useState(((product?.basePrice ?? 480000) / 100).toString());
+  const [costPrice, setCostPrice] = useState(product?.costPrice ? (product.costPrice / 100).toString() : "");
+  const [vendorCost, setVendorCost] = useState(product?.vendorCost ? (product.vendorCost / 100).toString() : "");
   const [status, setStatus] = useState(product?.status ?? "ACTIVE");
   const [featured, setFeatured] = useState(product?.featured ?? false);
   const [featuredOrder, setFeaturedOrder] = useState(product?.featuredOrder ?? 0);
@@ -81,6 +83,8 @@ export default function ProductForm({ vendors, categories, materials, isAdmin, p
     const payload = {
       name, slug: slug || name.toLowerCase().replace(/[^a-z0-9]+/g, "-"), story, category,
       colorHex, colorName, basePrice: Math.round(parseFloat(basePrice || "0") * 100), status,
+      costPrice: costPrice ? Math.round(parseFloat(costPrice) * 100) : null,
+      vendorCost: vendorCost ? Math.round(parseFloat(vendorCost) * 100) : null,
       featured, featuredOrder, lookbookOrder: inLookbook ? lookbookOrder : null, preOrder,
       vendorId: isAdmin ? vendorId : undefined,
       images,
@@ -173,6 +177,17 @@ export default function ProductForm({ vendors, categories, materials, isAdmin, p
         <div>
           <label style={label}>Base price (₹)</label>
           <input style={field} type="number" value={basePrice} onChange={(e) => setBasePrice(e.target.value)} />
+        </div>
+      </div>
+
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+        <div>
+          <label style={label}>Cost price (₹) — for margin reporting</label>
+          <input style={field} type="number" value={costPrice} onChange={(e) => setCostPrice(e.target.value)} placeholder="Landed cost per unit" />
+        </div>
+        <div>
+          <label style={label}>Vendor cost (₹) — optional, if different</label>
+          <input style={field} type="number" value={vendorCost} onChange={(e) => setVendorCost(e.target.value)} placeholder="Defaults to cost price" />
         </div>
       </div>
 
