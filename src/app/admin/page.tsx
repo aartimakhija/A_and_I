@@ -3,7 +3,7 @@ import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 
 export default async function Dashboard() {
-  const [orders, paid, products, vendors, materials, pendingReturns, pendingPreorders] = await Promise.all([
+  const [orders, paid, products, vendors, materials, pendingReturns, pendingPreorders, pendingQC] = await Promise.all([
     prisma.order.count(),
     prisma.order.aggregate({ _sum: { total: true }, where: { status: { in: ["PAID", "FULFILLING", "SHIPPED", "DELIVERED"] } } }),
     prisma.product.count(),
@@ -11,6 +11,7 @@ export default async function Dashboard() {
     prisma.material.findMany({ select: { name: true, stockQty: true, reorderLevel: true, unit: true } }),
     prisma.return.count({ where: { status: "REQUESTED" } }),
     prisma.preOrder.count({ where: { status: "PENDING" } }),
+    prisma.purchaseOrder.count({ where: { status: { in: ["IN_PROGRESS", "READY_FOR_PICKUP"] } } }),
   ]);
   const rev = (paid._sum.total ?? 0) / 100;
   const lowMaterials = materials.filter((m) => m.stockQty <= m.reorderLevel);
@@ -26,11 +27,16 @@ export default async function Dashboard() {
         <div style={card}><div>Vendors</div><h2>{vendors}</h2></div>
       </div>
 
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 16, marginTop: 16 }}>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 16, marginTop: 16 }}>
         <div style={{ ...card, borderColor: lowMaterials.length > 0 ? "#e8b04a" : "#eee" }}>
           <div>Low materials</div>
           <h2 style={{ color: lowMaterials.length > 0 ? "#B0503E" : undefined }}>{lowMaterials.length}</h2>
           {lowMaterials.length > 0 && <Link href="/admin/materials" style={{ fontSize: 12 }}>Review →</Link>}
+        </div>
+        <div style={card}>
+          <div>Pending QC</div>
+          <h2>{pendingQC}</h2>
+          {pendingQC > 0 && <Link href="/admin/quality" style={{ fontSize: 12 }}>Inspect →</Link>}
         </div>
         <div style={card}>
           <div>Returns awaiting review</div>

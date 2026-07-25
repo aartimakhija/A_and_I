@@ -1,15 +1,15 @@
-import Link from "next/link";
+import AdminNav from "@/components/admin/AdminNav";
 // Admin data (orders, products, vendors) must always be live, and shouldn't
 // ever be attempted at build time — same reasoning as the storefront layout.
 export const dynamic = "force-dynamic";
 export const metadata = { robots: { index: false, follow: false } };
-const nav = [["/admin", "Dashboard"], ["/admin/planning", "Production Planning"], ["/admin/orders", "Orders (OMS)"], ["/admin/products", "Catalogue (CMS)"], ["/admin/categories", "Categories"], ["/admin/materials", "Materials"], ["/admin/material-orders", "Material Orders"], ["/admin/blog", "Journal"], ["/admin/vendors", "Vendors"], ["/admin/purchase-orders", "Production Orders"], ["/admin/preorders", "Pre-orders"], ["/admin/returns", "Returns & Refunds"], ["/admin/messages", "Messages"], ["/admin/settings", "Settings"]];
+
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   return (
     <div style={{ display: "grid", gridTemplateColumns: "220px 1fr", minHeight: "100vh" }}>
-      <aside style={{ background: "#33301f", color: "#F0EBE3", padding: 24 }}>
-        <div style={{ fontWeight: 600, letterSpacing: 2, marginBottom: 24 }}>A &amp; I · ADMIN</div>
-        {nav.map(([h, l]) => <Link key={h} href={h} style={{ display: "block", color: "#F0EBE3", padding: "8px 0", textDecoration: "none" }}>{l}</Link>)}
+      <aside style={{ background: "#33301f", color: "#F0EBE3", padding: 24, overflowY: "auto" }}>
+        <div style={{ fontWeight: 600, letterSpacing: 2, marginBottom: 24 }}>A&amp;I · ADMIN</div>
+        <AdminNav />
       </aside>
       <main style={{ padding: 32, background: "#fbf8f5" }}>{children}</main>
     </div>

@@ -137,21 +137,28 @@ model Vendor {
   moq        Int          @default(1)      // minimum order qty for production
   users      User[]
   products   Product[]
-  payouts    Payout[]
+  payouts    VendorPayment[]
   purchaseOrders PurchaseOrder[]
   materials      Material[]
   materialOrders MaterialOrder[]
   createdAt  DateTime     @default(now())
 }
 
-model Payout {
-  id        String   @id @default(cuid())
+// Every completed Production Order generates a payable amount to its vendor.
+// VendorPayment records what's actually been paid against that — either tied
+// to one specific Production Order, or as a general/lump-sum payment.
+model VendorPayment {
+  id        String        @id @default(cuid())
   vendorId  String
-  vendor    Vendor   @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+  vendor    Vendor        @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+  poId      String?
+  po        PurchaseOrder? @relation(fields: [poId], references: [id])
   amount    Int                                    // in paise
-  period    String                                 // e.g. "2026-06"
-  status    String   @default("PENDING")
-  createdAt DateTime @default(now())
+  method    String?                                // bank transfer | UPI | cash, etc.
+  reference String?                                // transaction ID / cheque number
+  notes     String?
+  status    String        @default("PAID")         // PAID (payments are logged after the fact) | PENDING (scheduled but not sent)
+  createdAt DateTime      @default(now())
 }
 
 // ── Catalogue / CMS ────────────────────────────────────────────────
@@ -560,6 +567,7 @@ model PurchaseOrder {
   id               String              @id @default(cuid())
   poNumber         String              @unique
   vendorId         String
+  payments         VendorPayment[]
   vendor           Vendor              @relation(fields: [vendorId], references: [id])
   notes            String?
   terms            String?
@@ -574,16 +582,35 @@ model PurchaseOrder {
 }
 
 model PurchaseOrderItem {
-  id          String        @id @default(cuid())
-  poId        String
-  po          PurchaseOrder @relation(fields: [poId], references: [id], onDelete: Cascade)
-  productId   String?
-  product     Product?      @relation(fields: [productId], references: [id])
-  description String
-  size        String?                                      // which size this line is producing, if applicable
-  qty         Int
-  unitCost    Int                                           // paise
-  position    Int           @default(0)
+  id            String        @id @default(cuid())
+  poId          String
+  po            PurchaseOrder @relation(fields: [poId], references: [id], onDelete: Cascade)
+  productId     String?
+  product       Product?      @relation(fields: [productId], references: [id])
+  description   String
+  size          String?                                      // which size this line is producing, if applicable
+  qty           Int
+  unitCost      Int                                           // paise
+  position      Int           @default(0)
+  qualityChecks QualityCheck[]
+}
+
+// Quality control on finished goods arriving from a Production Order.
+// Passing a check auto-increments the matching Product/size's stock —
+// nothing should require a manual stock adjustment unless explicitly done.
+model QualityCheck {
+  id          String            @id @default(cuid())
+  poItemId    String
+  poItem      PurchaseOrderItem @relation(fields: [poItemId], references: [id], onDelete: Cascade)
+  checklist   Json                                            // { stitching: true, measurements: true, colorMatch: true, embroidery: true, packaging: true }
+  qtyChecked  Int
+  qtyPassed   Int
+  qtyFailed   Int
+  result      String            @default("PENDING")           // PASSED | FAILED | PARTIAL
+  notes       String?
+  photos      String[]
+  inspectedBy String?
+  createdAt   DateTime          @default(now())
 }
 
 model SiteSettings {
