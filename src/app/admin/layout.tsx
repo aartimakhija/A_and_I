@@ -1,4 +1,5 @@
 import AdminNav from "@/components/admin/AdminNav";
+import AdminHeader from "@/components/admin/AdminHeader";
 // Admin data (orders, products, vendors) must always be live, and shouldn't
 // ever be attempted at build time — same reasoning as the storefront layout.
 export const dynamic = "force-dynamic";
@@ -11,7 +12,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         <div style={{ fontWeight: 600, letterSpacing: 2, marginBottom: 24 }}>A&amp;I · ADMIN</div>
         <AdminNav />
       </aside>
-      <main style={{ padding: 32, background: "#fbf8f5" }}>{children}</main>
+      <div style={{ display: "flex", flexDirection: "column" }}>
+        <AdminHeader />
+        <main style={{ padding: 32, background: "#fbf8f5", flex: 1 }}>{children}</main>
+      </div>
     </div>
   );
 }
