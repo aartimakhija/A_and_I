@@ -11,7 +11,9 @@ export type SFProduct = {
   category: string;
   color: string;
   colorName: string | null;
-  price: number; // rupees, for display — DB stores paise
+  price: number; // rupees, for display — DB stores paise. This IS the real charged price.
+  mrp: number | null; // rupees — derived "was" price, only present when discountPercent is set
+  discountPercent: number | null;
   images: string[];
   variants: { size: string; stock: number }[];
   tiers: { label: string; priceAdd: number }[]; // priceAdd in rupees
@@ -21,13 +23,16 @@ export type SFProduct = {
 
 type PrismaProductWithRelations = {
   id: string; slug: string; name: string; story: string | null; category: string;
-  colorHex: string; colorName: string | null; basePrice: number; status: string; preOrder: boolean;
+  colorHex: string; colorName: string | null; basePrice: number; discountPercent: number | null; status: string; preOrder: boolean;
   images: { url: string; position: number }[];
   variants: { size: string; stock: number }[];
   tiers: { label: string; priceAdd: number; position: number }[];
 };
 
 export function toSFProduct(p: PrismaProductWithRelations): SFProduct {
+  const price = p.basePrice / 100;
+  const discountPercent = p.discountPercent && p.discountPercent > 0 && p.discountPercent < 100 ? p.discountPercent : null;
+  const mrp = discountPercent ? Math.round(price / (1 - discountPercent / 100)) : null;
   return {
     id: p.id,
     slug: p.slug,
@@ -36,7 +41,7 @@ export function toSFProduct(p: PrismaProductWithRelations): SFProduct {
     category: p.category,
     color: p.colorHex,
     colorName: p.colorName,
-    price: p.basePrice / 100,
+    price, mrp, discountPercent,
     images: [...p.images].sort((a, b) => a.position - b.position).map((i) => i.url),
     variants: p.variants,
     tiers: [...p.tiers].sort((a, b) => a.position - b.position).map((t) => ({ label: t.label, priceAdd: t.priceAdd / 100 })),

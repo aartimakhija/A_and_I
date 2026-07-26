@@ -10,8 +10,10 @@ const code = customAlphabet("ABCDEFGHJKLMNPQRSTUVWXYZ23456789", 6);
 const Body = z.object({
   productId: z.string(),
   size: z.string(),
+  name: z.string().min(1),
   email: z.string().email(),
   phone: z.string().optional(),
+  location: z.string().optional(),
   qty: z.number().int().positive().default(1),
 });
 

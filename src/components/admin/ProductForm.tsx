@@ -12,7 +12,7 @@ type Props = {
   isAdmin: boolean;
   product?: {
     id: string; slug: string; name: string; story: string | null; category: string;
-    colorHex: string; colorName: string | null; basePrice: number; costPrice: number | null; vendorCost: number | null; status: string;
+    colorHex: string; colorName: string | null; basePrice: number; discountPercent: number | null; costPrice: number | null; vendorCost: number | null; status: string;
     vendorId: string; images: ImageRow[]; featured: boolean; featuredOrder: number; lookbookOrder: number | null; preOrder: boolean;
     variants: { size: string; stock: number }[];
     tiers: { label: string; priceAdd: number }[];
@@ -31,6 +31,7 @@ export default function ProductForm({ vendors, categories, materials, isAdmin, p
   const [colorHex, setColorHex] = useState(product?.colorHex ?? "#8A7A6A");
   const [colorName, setColorName] = useState(product?.colorName ?? "");
   const [basePrice, setBasePrice] = useState(((product?.basePrice ?? 480000) / 100).toString());
+  const [discountPercent, setDiscountPercent] = useState(product?.discountPercent?.toString() ?? "");
   const [costPrice, setCostPrice] = useState(product?.costPrice ? (product.costPrice / 100).toString() : "");
   const [vendorCost, setVendorCost] = useState(product?.vendorCost ? (product.vendorCost / 100).toString() : "");
   const [status, setStatus] = useState(product?.status ?? "ACTIVE");
@@ -83,6 +84,7 @@ export default function ProductForm({ vendors, categories, materials, isAdmin, p
     const payload = {
       name, slug: slug || name.toLowerCase().replace(/[^a-z0-9]+/g, "-"), story, category,
       colorHex, colorName, basePrice: Math.round(parseFloat(basePrice || "0") * 100), status,
+      discountPercent: discountPercent ? Math.min(99, Math.max(0, parseInt(discountPercent, 10))) : null,
       costPrice: costPrice ? Math.round(parseFloat(costPrice) * 100) : null,
       vendorCost: vendorCost ? Math.round(parseFloat(vendorCost) * 100) : null,
       featured, featuredOrder, lookbookOrder: inLookbook ? lookbookOrder : null, preOrder,
@@ -175,8 +177,17 @@ export default function ProductForm({ vendors, categories, materials, isAdmin, p
           <input style={field} value={colorName} onChange={(e) => setColorName(e.target.value)} />
         </div>
         <div>
-          <label style={label}>Base price (₹)</label>
+          <label style={label}>Base price (₹) — the actual selling price</label>
           <input style={field} type="number" value={basePrice} onChange={(e) => setBasePrice(e.target.value)} />
+        </div>
+        <div>
+          <label style={label}>Discount % (optional)</label>
+          <input style={field} type="number" min={0} max={99} value={discountPercent} onChange={(e) => setDiscountPercent(e.target.value)} placeholder="e.g. 25" />
+          {discountPercent && parseFloat(discountPercent) > 0 && (
+            <p style={{ fontSize: 11, color: "#999", marginTop: 4 }}>
+              Storefront will show <s>₹{Math.round(parseFloat(basePrice || "0") / (1 - parseFloat(discountPercent) / 100)).toLocaleString("en-IN")}</s> ₹{parseFloat(basePrice || "0").toLocaleString("en-IN")} <span style={{ color: "#1a7a3c" }}>({discountPercent}% off)</span>
+            </p>
+          )}
         </div>
       </div>
 

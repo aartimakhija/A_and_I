@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { T, SANS, SERIF, peso, CAT_LABEL, SIZES } from "./theme";
-import { Photo, Eyebrow, Title, Btn, TiltCard } from "./primitives";
+import { Photo, Eyebrow, Title, Btn, TiltCard, PriceTag } from "./primitives";
 import { Lightbox } from "./Lightbox";
 import { SizeChartButton } from "./SizeChartButton";
 import { useStore } from "./StoreContext";
@@ -19,8 +19,10 @@ export function Product({ product, related }: { product: SFProduct; related: SFP
   const [lbIndex, setLbIndex] = useState(0);
   const [notifyEmail, setNotifyEmail] = useState("");
   const [notified, setNotified] = useState(false);
+  const [reserveName, setReserveName] = useState("");
   const [reserveEmail, setReserveEmail] = useState("");
   const [reservePhone, setReservePhone] = useState("");
+  const [reserveLocation, setReserveLocation] = useState("");
   const [reserving, setReserving] = useState(false);
   const [reserved, setReserved] = useState<{ discountCode: string } | null>(null);
   const [reserveError, setReserveError] = useState("");
@@ -41,6 +43,7 @@ export function Product({ product, related }: { product: SFProduct; related: SFP
   }
 
   async function reserve() {
+    if (!reserveName.trim()) { setReserveError("Enter your name"); return; }
     if (!reserveEmail) { setReserveError("Enter your email"); return; }
     setReserving(true);
     setReserveError("");
@@ -48,7 +51,7 @@ export function Product({ product, related }: { product: SFProduct; related: SFP
       const res = await fetch("/api/preorders", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ productId: product.id, size, email: reserveEmail, phone: reservePhone || undefined }),
+        body: JSON.stringify({ productId: product.id, size, name: reserveName, email: reserveEmail, phone: reservePhone || undefined, location: reserveLocation || undefined }),
       });
       const json = await res.json();
       if (!res.ok) throw new Error(json.error || "Could not reserve — try again");
@@ -59,6 +62,7 @@ export function Product({ product, related }: { product: SFProduct; related: SFP
       setReserving(false);
     }
   }
+
 
   return (
     <>
@@ -82,7 +86,11 @@ export function Product({ product, related }: { product: SFProduct; related: SFP
               cursor: "pointer", fontSize: 20, color: isSaved ? T.gold : T.stone, lineHeight: 1 }}>{isSaved ? "♥" : "♡"}</button>
           </div>
           <h1 style={{ fontFamily: SERIF, fontWeight: 300, fontSize: "clamp(32px,4.5vw,54px)", lineHeight: 1.05, color: T.ink, margin: "10px 0" }}>{product.name}</h1>
-          <div style={{ fontFamily: SANS, fontSize: 16, letterSpacing: 1, color: T.mid, marginBottom: 8 }}>{peso(finalPrice)}</div>
+          <div style={{ marginBottom: 8 }}>
+            {finalPrice === product.price
+              ? <PriceTag price={product.price} mrp={product.mrp} discountPercent={product.discountPercent} size={16} />
+              : <span style={{ fontFamily: SANS, fontSize: 16, letterSpacing: 1, color: T.mid }}>{peso(finalPrice)}</span>}
+          </div>
           <div style={{ fontFamily: SANS, fontSize: 11, letterSpacing: 1, color: product.preOrder ? T.gold : soldOut ? "#B0503E" : T.gold, marginBottom: 24 }}>
             {product.preOrder ? "Pre-order — made once enough of you reserve" : soldOut ? "Sold out — join the waitlist" : totalStock <= 5 ? `Only ${totalStock} left` : "In stock"}
           </div>
@@ -142,9 +150,13 @@ export function Product({ product, related }: { product: SFProduct; related: SFP
                 <div>
                   <div style={{ fontFamily: SANS, fontSize: 11, letterSpacing: 1, color: T.gold, marginBottom: 10 }}>Pre-order — not yet in production</div>
                   {reserveError && <div style={{ background: "#fdecea", color: "#B0503E", padding: 10, marginBottom: 10, fontSize: 12 }}>{reserveError}</div>}
+                  <input value={reserveName} onChange={(e) => setReserveName(e.target.value)} placeholder="Your name"
+                    style={{ width: "100%", padding: "12px 14px", background: T.card, border: `1px solid ${T.border}`, fontFamily: SANS, fontSize: 13, color: T.ink, outline: "none", marginBottom: 8 }} />
                   <input value={reserveEmail} onChange={(e) => setReserveEmail(e.target.value)} placeholder="your@email.com" type="email"
                     style={{ width: "100%", padding: "12px 14px", background: T.card, border: `1px solid ${T.border}`, fontFamily: SANS, fontSize: 13, color: T.ink, outline: "none", marginBottom: 8 }} />
                   <input value={reservePhone} onChange={(e) => setReservePhone(e.target.value)} placeholder="Phone (optional)"
+                    style={{ width: "100%", padding: "12px 14px", background: T.card, border: `1px solid ${T.border}`, fontFamily: SANS, fontSize: 13, color: T.ink, outline: "none", marginBottom: 8 }} />
+                  <input value={reserveLocation} onChange={(e) => setReserveLocation(e.target.value)} placeholder="City (optional)"
                     style={{ width: "100%", padding: "12px 14px", background: T.card, border: `1px solid ${T.border}`, fontFamily: SANS, fontSize: 13, color: T.ink, outline: "none", marginBottom: 10 }} />
                   <Btn full onClick={reserve}>{reserving ? "Reserving…" : `Reserve — Size ${size}`}</Btn>
                   <p style={{ fontFamily: SANS, fontSize: 11, color: T.stone, marginTop: 8 }}>No payment now. We only go into production once enough of you commit — you'll get an early-access discount for reserving.</p>

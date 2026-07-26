@@ -1,7 +1,20 @@
 "use client";
 import { useState, useEffect } from "react";
-import { T, SERIF, SANS } from "./theme";
+import { T, SERIF, SANS, peso } from "./theme";
 import { usePrefersReducedMotion, useTilt } from "./hooks";
+
+export function PriceTag({ price, mrp, discountPercent, size = 14 }: { price: number; mrp: number | null; discountPercent: number | null; size?: number }) {
+  if (!mrp || !discountPercent) {
+    return <span style={{ fontFamily: SANS, fontSize: size }}>{peso(price)}</span>;
+  }
+  return (
+    <span style={{ display: "inline-flex", alignItems: "baseline", gap: 8, flexWrap: "wrap" }}>
+      <span style={{ fontFamily: SANS, fontSize: size * 0.86, color: T.stone, textDecoration: "line-through" }}>{peso(mrp)}</span>
+      <span style={{ fontFamily: SANS, fontSize: size, color: T.ink, fontWeight: 500 }}>{peso(price)}</span>
+      <span style={{ fontFamily: SANS, fontSize: size * 0.78, color: "#1a7a3c", fontWeight: 600 }}>{discountPercent}% off</span>
+    </span>
+  );
+}
 
 // Photo / generated-plate. Takes real image URLs (from ProductImage.url) with a
 // color-plate fallback (from Product.colorHex) — the same auto-advancing deck

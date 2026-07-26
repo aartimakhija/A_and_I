@@ -62,7 +62,11 @@ export default function BulkSelectTable({ products }: {
             <td>{p.stock}</td>
             <td>{p.status}</td>
             <td>{p.preOrder ? "Yes" : "—"}</td>
-            <td><a href={`/admin/products/${p.id}/edit`} style={{ fontSize: 12, color: "#0a0a0a" }}>Edit</a></td>
+            <td>
+              <a href={`/admin/products/${p.id}/edit`} style={{ fontSize: 12, color: "#0a0a0a" }}>Edit</a>
+              {" · "}
+              <a href={`/admin/products/${p.id}/label`} style={{ fontSize: 12, color: "#0a0a0a" }}>Label</a>
+            </td>
           </tr>
         ))}</tbody>
       </table>

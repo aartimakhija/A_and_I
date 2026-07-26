@@ -13,3 +13,8 @@ export function passportUrl(serial: string) {
 export async function passportQR(serial: string) {
   return QRCode.toDataURL(passportUrl(serial), { margin: 1, width: 320 });
 }
+
+/** General-purpose QR data URL for any URL — used by product labels, etc. */
+export async function urlQR(url: string, size = 320) {
+  return QRCode.toDataURL(url, { margin: 1, width: size });
+}

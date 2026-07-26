@@ -1,7 +1,8 @@
-// Pre-orders — validates demand before production. The "Production planning"
-// table answers the question the business plan's inventory philosophy
-// hinges on: exactly how many of each size to actually make.
+// Pre-orders — validates demand before production, and doubles as a light CRM:
+// admin reviews each request (name/email/phone/location) and can mark it
+// Contacted, Approve, or Reject before following up with the customer directly.
 import { prisma } from "@/lib/prisma";
+import PreOrderActions from "@/components/admin/PreOrderActions";
 
 export default async function AdminPreorders() {
   const [grouped, recent] = await Promise.all([
@@ -14,7 +15,6 @@ export default async function AdminPreorders() {
   });
   const byId = Object.fromEntries(products.map((p) => [p.id, p]));
 
-  // group the grouped rows by product for a readable table
   const byProduct = new Map<string, { name: string; sizes: { size: string; qty: number }[]; total: number }>();
   for (const g of grouped) {
     const name = byId[g.productId]?.name ?? "Unknown";
@@ -25,10 +25,17 @@ export default async function AdminPreorders() {
     byProduct.set(g.productId, entry);
   }
 
+  const pendingCount = recent.filter((r) => r.status === "PENDING").length;
+
   return (
     <>
       <h1>Pre-orders</h1>
       <p style={{ color: "#666", marginTop: -8 }}>Demand reserved before production — no payment taken yet, just committed interest.</p>
+      {pendingCount > 0 && (
+        <div style={{ background: "#fdf6e8", border: "1px solid #e8d9a8", padding: 12, fontSize: 13, marginTop: 12 }}>
+          {pendingCount} request{pendingCount > 1 ? "s" : ""} awaiting review — reach out to each customer directly, then mark Contacted/Approved/Rejected below.
+        </div>
+      )}
 
       <h2 style={{ fontSize: 16, marginTop: 32 }}>Production planning</h2>
       <table style={{ width: "100%", borderCollapse: "collapse", marginTop: 12, background: "#fff", border: "1px solid #eee" }}>
@@ -45,14 +52,16 @@ export default async function AdminPreorders() {
 
       <h2 style={{ fontSize: 16, marginTop: 36 }}>All requests</h2>
       <table style={{ width: "100%", borderCollapse: "collapse", marginTop: 12 }}>
-        <thead><tr>{["Date", "Piece", "Size", "Qty", "Email", "Phone", "Code", "Status"].map((h) => <th key={h} style={{ textAlign: "left", borderBottom: "1px solid #ccc", padding: 8 }}>{h}</th>)}</tr></thead>
+        <thead><tr>{["Date", "Piece", "Size", "Qty", "Name", "Email", "Phone", "Location", "Code", "Status", ""].map((h) => <th key={h} style={{ textAlign: "left", borderBottom: "1px solid #ccc", padding: 8 }}>{h}</th>)}</tr></thead>
         <tbody>{recent.map((r) => (
-          <tr key={r.id}>
+          <tr key={r.id} style={{ background: r.status === "PENDING" ? "#fdf6e8" : undefined }}>
             <td style={{ padding: 8, fontSize: 12, whiteSpace: "nowrap" }}>{new Date(r.createdAt).toLocaleDateString("en-IN")}</td>
             <td>{r.product.name}</td><td>{r.size}</td><td>{r.qty}</td>
+            <td style={{ fontSize: 13 }}>{r.name ?? "—"}</td>
             <td style={{ fontSize: 13 }}>{r.email}</td><td style={{ fontSize: 13 }}>{r.phone ?? "—"}</td>
+            <td style={{ fontSize: 13 }}>{r.location ?? "—"}</td>
             <td style={{ fontSize: 12, fontFamily: "monospace" }}>{r.discountCode}</td>
-            <td>{r.status}</td>
+            <td><PreOrderActions id={r.id} status={r.status} /></td>
           </tr>
         ))}</tbody>
       </table>

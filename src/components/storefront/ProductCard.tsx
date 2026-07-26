@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { T, SANS, SERIF, SIZES, peso } from "./theme";
+import { PriceTag } from "./primitives";
 import { useStore } from "./StoreContext";
 import type { SFProduct } from "@/lib/storefront-adapter";
 
@@ -75,7 +76,7 @@ export function ProductCard({ product }: { product: SFProduct }) {
 
       <div onClick={() => router.push(`/products/${product.slug}`)} style={{ cursor: "pointer", padding: "12px 14px 4px" }}>
         <div style={{ fontFamily: SERIF, fontStyle: "italic", fontSize: 18, color: T.ink }}>{product.name}</div>
-        <div style={{ fontFamily: SANS, fontSize: 11, letterSpacing: 1, color: T.stone, marginTop: 4 }}>{peso(product.price)}</div>
+        <div style={{ marginTop: 4 }}><PriceTag price={product.price} mrp={product.mrp} discountPercent={product.discountPercent} size={11} /></div>
       </div>
 
       <div style={{ padding: 12 }}>
