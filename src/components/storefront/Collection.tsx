@@ -124,7 +124,7 @@ export function Collection({ products, category, categories }: {
         </div>
       )}
 
-      <div style={{ display: "grid", gridTemplateColumns: `repeat(${dense ? 4 : 3},1fr)`, gap: dense ? 18 : 26, maxWidth: 1320, margin: "0 auto", padding: "0 clamp(20px,4vw,48px) clamp(64px,9vw,110px)" }} className="grid-catalogue">
+      <div style={{ display: "grid", gridTemplateColumns: `repeat(${dense ? 4 : 3},1fr)`, gap: dense ? 4 : 8, maxWidth: 1400, margin: "0 auto", padding: "0 clamp(12px,3vw,32px) clamp(64px,9vw,110px)" }} className="grid-catalogue">
         {filtered.map((d) => (
           <TiltCard rm={rm} key={d.id}>
             <ProductCard product={d} />

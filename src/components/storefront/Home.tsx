@@ -130,6 +130,30 @@ export function Home({ featured, craft, philosophyPiece, allProducts, heroImageU
         </section>
       )}
 
+      {/* EDITORIAL PAIRING — two images side by side, caption below (Kindred's
+          "Pastel Stripes" pattern: a texture/detail shot beside a full look) */}
+      {featured[2] && featured[3] && (
+        <section style={{ padding: "0" }}>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr" }} className="grid-2">
+            <div style={{ aspectRatio: "3/4", overflow: "hidden" }}>
+              {featured[2].images[0] && <img src={featured[2].images[0]} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />}
+            </div>
+            <div style={{ aspectRatio: "3/4", overflow: "hidden", background: T.darkCard }}>
+              {featured[3].images[0] && <img src={featured[3].images[0]} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />}
+            </div>
+          </div>
+          <div style={{ textAlign: "center", padding: "clamp(28px,4vw,44px) 24px", background: T.card }}>
+            <Title size="clamp(20px,2.6vw,30px)">{featured[2].colorName || featured[2].name} <span style={{ fontStyle: "italic", color: T.gold }}>& {featured[3].colorName || featured[3].name}</span></Title>
+            <div style={{ marginTop: 16 }}>
+              <button onClick={() => router.push("/shop/all")} style={{ background: "none", border: "none", cursor: "pointer", padding: 0,
+                fontFamily: SANS, fontSize: 10, letterSpacing: 2, textTransform: "uppercase", color: T.stone, borderBottom: `1px solid ${T.stone}`, paddingBottom: 3 }}>
+                Discover the edit
+              </button>
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* THE CRAFT — flip cards */}
       {craft.length > 0 && (
         <section style={{ background: T.dark, padding: "clamp(64px,9vw,120px) clamp(20px,4vw,48px)" }}>
