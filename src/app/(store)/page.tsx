@@ -2,6 +2,7 @@ import { prisma } from "@/lib/prisma";
 import { toSFProduct, PRODUCT_INCLUDE } from "@/lib/storefront-adapter";
 import { Home } from "@/components/storefront/Home";
 import { pageMetadata } from "@/lib/seo";
+import { getSiteSettings } from "@/lib/settings";
 
 export const metadata = pageMetadata({
   title: "A&I — Style With Us",
@@ -10,12 +11,10 @@ export const metadata = pageMetadata({
 });
 
 export default async function HomePage() {
-  const products = await prisma.product.findMany({
-    where: { status: "ACTIVE" },
-    include: PRODUCT_INCLUDE,
-    orderBy: { createdAt: "desc" },
-    take: 40,
-  });
+  const [products, settings] = await Promise.all([
+    prisma.product.findMany({ where: { status: "ACTIVE" }, include: PRODUCT_INCLUDE, orderBy: { createdAt: "desc" }, take: 40 }),
+    getSiteSettings(),
+  ]);
   const all = products.map(toSFProduct);
 
   // Admin-curated picks (set via each product's edit page) take priority;
@@ -30,5 +29,5 @@ export default async function HomePage() {
   const craft = all.filter((p) => p.category === "craft").slice(0, 3);
   const philosophyPiece = all.find((p) => p.category === "linen") ?? all[4] ?? null;
 
-  return <Home featured={featured} craft={craft.length ? craft : all.slice(0, 3)} philosophyPiece={philosophyPiece} allProducts={all} />;
+  return <Home featured={featured} craft={craft.length ? craft : all.slice(0, 3)} philosophyPiece={philosophyPiece} allProducts={all} heroImageUrl={settings.heroImageUrl} />;
 }

@@ -11,8 +11,8 @@ import type { SFProduct } from "@/lib/storefront-adapter";
 
 const CRAFT_NAMES = ["Bandhani", "Sharara", "Zari"];
 
-export function Home({ featured, craft, philosophyPiece, allProducts }: {
-  featured: SFProduct[]; craft: SFProduct[]; philosophyPiece: SFProduct | null; allProducts: SFProduct[];
+export function Home({ featured, craft, philosophyPiece, allProducts, heroImageUrl }: {
+  featured: SFProduct[]; craft: SFProduct[]; philosophyPiece: SFProduct | null; allProducts: SFProduct[]; heroImageUrl?: string | null;
 }) {
   const router = useRouter();
   const { rm } = useStore();
@@ -23,16 +23,22 @@ export function Home({ featured, craft, philosophyPiece, allProducts }: {
   return (
     <>
       {/* HERO — CampaignHero pattern: full-bleed image, overlaid mixed roman/italic
-          headline, underline text-CTAs, floating "shop the look" chip */}
-      <section style={{ position: "relative", minHeight: "min(92vh,780px)", background: T.dark, overflow: "hidden" }} className="hero">
-        {featured[0]?.images[0] && (
-          <img src={featured[0].images[0]} alt="" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }} />
+          headline, underline text-CTAs, floating "shop the look" chip.
+          Uses a dedicated hero banner image (Admin → Settings) when set —
+          product photos are shot as vertical 3:4 crops for cards, and
+          stretching one across a wide letterbox band crops it unpredictably
+          (often mid-torso, cutting off the face). Falls back to a featured
+          product image with a top-biased crop as a safety net. */}
+      <section style={{ position: "relative", minHeight: "min(82vh,680px)", background: T.dark, overflow: "hidden" }} className="hero">
+        {(heroImageUrl || featured[0]?.images[0]) && (
+          <img src={heroImageUrl || featured[0].images[0]} alt="" style={{ position: "absolute", inset: 0, width: "100%", height: "100%",
+            objectFit: "cover", objectPosition: heroImageUrl ? "center center" : "center 15%" }} />
         )}
         {/* Deliberate scrim (not just photo darkness) for reliable text contrast */}
         <div style={{ position: "absolute", inset: 0,
-          background: "linear-gradient(180deg, rgba(13,12,11,0.15) 0%, rgba(13,12,11,0.35) 55%, rgba(13,12,11,0.75) 100%)" }} />
+          background: "linear-gradient(100deg, rgba(13,12,11,0.75) 0%, rgba(13,12,11,0.4) 42%, rgba(13,12,11,0.15) 65%, rgba(13,12,11,0.45) 100%)" }} />
 
-        <div style={{ position: "relative", zIndex: 2, minHeight: "min(92vh,780px)", display: "flex", flexDirection: "column", justifyContent: "flex-end", padding: "clamp(32px,6vw,80px)" }}>
+        <div style={{ position: "relative", zIndex: 2, minHeight: "min(82vh,680px)", display: "flex", flexDirection: "column", justifyContent: "flex-end", padding: "clamp(32px,6vw,80px)" }}>
           <div style={layer(3, rm)}><Eyebrow light>SS'26 — The Drop</Eyebrow></div>
           <h1 style={{ ...layer(2, rm), fontFamily: SERIF, fontWeight: 300, color: T.linenLt,
             fontSize: "clamp(42px,7vw,96px)", lineHeight: 0.98, letterSpacing: "-0.02em", margin: "16px 0 0" }}>
