@@ -9,6 +9,7 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
   if (b.status) data.status = b.status; // PENDING | APPROVED | SUSPENDED
   if (b.commission !== undefined) data.commission = b.commission;
   if (b.moq !== undefined) data.moq = b.moq;
+  if (b.leadTimeDays !== undefined) data.leadTimeDays = b.leadTimeDays;
   const v = await prisma.vendor.update({ where: { id: params.id }, data });
   return NextResponse.json(v);
 }

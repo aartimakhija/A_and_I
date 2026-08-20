@@ -3,7 +3,7 @@ import { getSession } from "@/lib/rbac";
 import { prisma } from "@/lib/prisma";
 export const dynamic = "force-dynamic";
 export const metadata = { robots: { index: false, follow: false } };
-const nav = [["/vendor", "Dashboard"], ["/vendor/orders", "My Orders"], ["/vendor/products", "My Products"]];
+const nav = [["/vendor", "Dashboard"], ["/vendor/production-orders", "Production Orders"], ["/vendor/orders", "My Orders"], ["/vendor/products", "My Products"], ["/vendor/payments", "Payments"]];
 export default async function VendorLayout({ children }: { children: React.ReactNode }) {
   const s = await getSession();
   const vendor = s.vendorId ? await prisma.vendor.findUnique({ where: { id: s.vendorId } }) : null;

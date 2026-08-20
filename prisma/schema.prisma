@@ -135,6 +135,7 @@ model Vendor {
   status     VendorStatus @default(PENDING)
   commission Float        @default(0.15)   // platform cut
   moq        Int          @default(1)      // minimum order qty for production
+  leadTimeDays Int        @default(21)     // typical production turnaround, shown on vendor profile
   users      User[]
   products   Product[]
   payouts    VendorPayment[]
