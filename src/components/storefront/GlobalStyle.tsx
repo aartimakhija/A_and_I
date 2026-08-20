@@ -43,8 +43,7 @@ export function GlobalStyle() {
         .nav-links { display: none !important; }
         .nav-burger { display: inline-block !important; }
         .util-hide { display: none !important; }
-        .hero { grid-template-columns: 1fr !important; min-height: auto !important; }
-        .hero-plates { grid-template-rows: 1fr 1fr !important; min-height: 50vh; }
+        .hero { min-height: 70vh !important; }
         .grid-4 { grid-template-columns: repeat(2,1fr) !important; }
         .grid-3 { grid-template-columns: 1fr !important; }
         .grid-catalogue { grid-template-columns: repeat(2,1fr) !important; gap: 14px !important; }

@@ -4,7 +4,6 @@ import { useRouter } from "next/navigation";
 import { T, SANS, SERIF, peso } from "./theme";
 import { Photo, Eyebrow, Title, Btn, TiltCard, FlipCard } from "./primitives";
 import { layer } from "./hooks";
-import { Hero3D } from "./Hero3D";
 import { ProductCard } from "./ProductCard";
 import { SocialProof } from "./SocialProof";
 import { useStore } from "./StoreContext";
@@ -23,28 +22,56 @@ export function Home({ featured, craft, philosophyPiece, allProducts }: {
 
   return (
     <>
-      {/* HERO */}
-      <section style={{ position: "relative", minHeight: "min(88vh,760px)", background: T.dark,
-        display: "grid", gridTemplateColumns: "1.35fr 1fr", overflow: "hidden" }} className="hero">
-        <div style={{ position: "relative", padding: "clamp(40px,7vw,96px)", display: "flex",
-          flexDirection: "column", justifyContent: "center", zIndex: 2 }}>
+      {/* HERO — CampaignHero pattern: full-bleed image, overlaid mixed roman/italic
+          headline, underline text-CTAs, floating "shop the look" chip */}
+      <section style={{ position: "relative", minHeight: "min(92vh,780px)", background: T.dark, overflow: "hidden" }} className="hero">
+        {featured[0]?.images[0] && (
+          <img src={featured[0].images[0]} alt="" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }} />
+        )}
+        {/* Deliberate scrim (not just photo darkness) for reliable text contrast */}
+        <div style={{ position: "absolute", inset: 0,
+          background: "linear-gradient(180deg, rgba(13,12,11,0.15) 0%, rgba(13,12,11,0.35) 55%, rgba(13,12,11,0.75) 100%)" }} />
+
+        <div style={{ position: "relative", zIndex: 2, minHeight: "min(92vh,780px)", display: "flex", flexDirection: "column", justifyContent: "flex-end", padding: "clamp(32px,6vw,80px)" }}>
           <div style={layer(3, rm)}><Eyebrow light>SS'26 — The Drop</Eyebrow></div>
           <h1 style={{ ...layer(2, rm), fontFamily: SERIF, fontWeight: 300, color: T.linenLt,
-            fontSize: "clamp(46px,7vw,104px)", lineHeight: 0.98, letterSpacing: "-0.02em", margin: "18px 0 0" }}>
-            Style,<br /><span style={{ fontStyle: "italic", color: T.gold }}>with us.</span>
+            fontSize: "clamp(42px,7vw,96px)", lineHeight: 0.98, letterSpacing: "-0.02em", margin: "16px 0 0" }}>
+            Indian craft,<br /><span style={{ fontStyle: "italic", color: T.gold }}>reimagined.</span>
           </h1>
-          <p style={{ ...layer(2.5, rm), fontFamily: SANS, fontWeight: 300, color: "rgba(196,184,168,0.7)",
-            fontSize: 15, lineHeight: 1.7, maxWidth: 380, marginTop: 24 }}>
+          <p style={{ ...layer(2.5, rm), fontFamily: SANS, fontWeight: 300, color: "rgba(240,235,227,0.8)",
+            fontSize: 15, lineHeight: 1.7, maxWidth: 380, marginTop: 20 }}>
             Womenswear where Indian craft meets a global silhouette. Each piece made to command a room — softly.
           </p>
-          <div style={{ ...layer(2.5, rm), display: "flex", gap: 14, marginTop: 34, flexWrap: "wrap" }}>
-            <Btn variant="light" onClick={() => router.push("/shop/all")}>Explore the Drop</Btn>
-            <Btn variant="gold" onClick={() => router.push("/lookbook")}>View the Lookbook</Btn>
+          <div style={{ ...layer(2.5, rm), display: "flex", gap: 32, marginTop: 30, flexWrap: "wrap" }}>
+            <button onClick={() => router.push("/shop/all")} style={{ background: "none", border: "none", cursor: "pointer", padding: 0,
+              fontFamily: SANS, fontSize: 11, letterSpacing: 3, textTransform: "uppercase", color: T.linenLt,
+              borderBottom: "1px solid rgba(240,235,227,0.6)", paddingBottom: 4 }}>
+              Discover SS'26
+            </button>
+            <button onClick={() => router.push("/about")} style={{ background: "none", border: "none", cursor: "pointer", padding: 0,
+              fontFamily: SANS, fontSize: 11, letterSpacing: 3, textTransform: "uppercase", color: T.linenLt,
+              borderBottom: "1px solid rgba(240,235,227,0.6)", paddingBottom: 4 }}>
+              Our World
+            </button>
           </div>
         </div>
-        <div className="hero-plates" style={{ position: "relative", minHeight: 0 }}>
-          <Hero3D rm={rm} heroImage={featured[0]?.images[0]} caption={featured[0] ? `${featured[0].name} · SS'26` : undefined} />
-        </div>
+
+        {/* Floating "shop the look" chip */}
+        {featured[1] && (
+          <button onClick={() => router.push(`/products/${featured[1].slug}`)}
+            style={{ position: "absolute", zIndex: 3, right: "clamp(20px,5vw,64px)", bottom: "clamp(20px,5vw,64px)",
+              display: "flex", alignItems: "center", gap: 10, background: "rgba(251,248,245,0.94)", border: "none",
+              borderRadius: 3, padding: "8px 14px 8px 8px", cursor: "pointer", boxShadow: "0 8px 24px rgba(0,0,0,0.25)" }}>
+            <span style={{ width: 40, height: 50, overflow: "hidden", flexShrink: 0, position: "relative" }}>
+              {featured[1].images[0] && <img src={featured[1].images[0]} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />}
+            </span>
+            <span style={{ textAlign: "left" }}>
+              <span style={{ display: "block", fontFamily: SANS, fontSize: 8, letterSpacing: 1, textTransform: "uppercase", color: T.stone }}>Shop the look</span>
+              <span style={{ display: "block", fontFamily: SERIF, fontStyle: "italic", fontSize: 13, color: T.ink }}>{featured[1].name}</span>
+            </span>
+            <span style={{ fontFamily: SANS, fontSize: 16, color: T.gold, marginLeft: 4 }}>+</span>
+          </button>
+        )}
       </section>
 
       {/* MARQUEE */}
