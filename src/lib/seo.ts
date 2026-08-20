@@ -111,6 +111,7 @@ export async function buildSitemap() {
     { url: `${base}/lookbook`, changeFrequency: "weekly" as const, priority: 0.7 },
     { url: `${base}/blog`, changeFrequency: "daily" as const, priority: 0.7 },
     { url: `${base}/fit-quiz`, changeFrequency: "monthly" as const, priority: 0.4 },
+    { url: `${base}/bespoke`, changeFrequency: "monthly" as const, priority: 0.5 },
     { url: `${base}/shop/all`, changeFrequency: "daily" as const, priority: 0.9 },
   ];
   try {

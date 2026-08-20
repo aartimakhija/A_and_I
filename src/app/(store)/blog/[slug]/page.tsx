@@ -28,6 +28,13 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
   });
   if (!post || post.status !== "PUBLISHED") notFound();
 
+  const relatedRaw = await prisma.blogPost.findMany({
+    where: { status: "PUBLISHED", id: { not: post.id } },
+    orderBy: { publishedAt: "desc" },
+    select: { slug: true, title: true, coverImage: true, publishedAt: true },
+    take: 3,
+  });
+
   const products = post.products
     .filter((bp) => bp.product.status === "ACTIVE")
     .map((bp) => toSFProduct(bp.product as any));
@@ -46,6 +53,7 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
           updatedAt: post.updatedAt.toISOString(),
         }}
         products={products}
+        related={relatedRaw.map((r) => ({ slug: r.slug, title: r.title, coverImage: r.coverImage, publishedAt: r.publishedAt?.toISOString() ?? null }))}
       />
     </>
   );

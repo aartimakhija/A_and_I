@@ -6,7 +6,7 @@ import { rateLimit, clientIp } from "@/lib/rate-limit";
 const Body = z.object({
   name: z.string().min(1),
   email: z.string().email(),
-  topic: z.enum(["general", "wholesale", "press", "vendor"]).default("general"),
+  topic: z.enum(["general", "wholesale", "press", "vendor", "bespoke"]).default("general"),
   message: z.string().min(1),
 });
 

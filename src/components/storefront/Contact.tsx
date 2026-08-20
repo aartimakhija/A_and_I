@@ -1,11 +1,12 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { T, SANS, SERIF } from "./theme";
 import { Eyebrow, Title, Btn } from "./primitives";
 
 const TOPICS: [string, string][] = [
   ["general", "General enquiry"],
+  ["bespoke", "Bespoke / custom order"],
   ["wholesale", "Wholesale / stockist"],
   ["press", "Press"],
   ["vendor", "Vendor / atelier partnership"],
@@ -14,6 +15,12 @@ const TOPICS: [string, string][] = [
 export function Contact() {
   const router = useRouter();
   const [f, setF] = useState({ name: "", email: "", topic: "general", message: "" });
+  useEffect(() => {
+    try {
+      const t = new URLSearchParams(window.location.search).get("topic");
+      if (t && TOPICS.some(([id]) => id === t)) setF((prev) => ({ ...prev, topic: t }));
+    } catch {}
+  }, []);
   const [err, setErr] = useState<Record<string, string>>({});
   const [sending, setSending] = useState(false);
   const [sent, setSent] = useState(false);

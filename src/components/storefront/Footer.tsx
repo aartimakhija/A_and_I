@@ -11,7 +11,7 @@ export function Footer() {
   ].filter(([, url]) => !!url) as [string, string][];
 
   const cols: [string, [string, string][]][] = [
-    ["Shop", [["Collection", "/shop/all"], ["Lookbook", "/lookbook"], ["Journal", "/blog"], ["About", "/about"]]],
+    ["Shop", [["Collection", "/shop/all"], ["Lookbook", "/lookbook"], ["Journal", "/blog"], ["Bespoke", "/bespoke"], ["About", "/about"]]],
     ["Help", [["Shipping & Returns", "/account/orders"], ["Find your fit", "/fit-quiz"], ["Refer a friend", "/account/refer"], ["Contact", "/contact"]]],
     ...(social.length > 0 ? [["Connect", social] as [string, [string, string][]]] : []),
   ];
