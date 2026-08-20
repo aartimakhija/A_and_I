@@ -3,6 +3,7 @@ import { toSFProduct, PRODUCT_INCLUDE } from "@/lib/storefront-adapter";
 import { StoreShell } from "@/components/storefront/StoreShell";
 import { getSession } from "@/lib/rbac";
 import { getSiteSettings } from "@/lib/settings";
+import { getCategories } from "@/lib/categories";
 
 // Product/order data changes constantly and depends on a live database, so
 // this whole route group should never be statically prerendered at build
@@ -18,10 +19,11 @@ export default async function StoreLayout({ children }: { children: React.ReactN
   // via the root error.tsx boundary on whichever page actually needs data
   // that truly failed to load (e.g. a product/category page with no cache
   // to fall back on).
-  const [products, session, settings] = await Promise.all([
+  const [products, session, settings, categories] = await Promise.all([
     prisma.product.findMany({ where: { status: "ACTIVE" }, include: PRODUCT_INCLUDE, orderBy: { createdAt: "desc" } }).catch(() => []),
     getSession().catch(() => ({} as Awaited<ReturnType<typeof getSession>>)),
     getSiteSettings(),
+    getCategories().catch(() => []),
   ]);
   const catalogue = products.map(toSFProduct);
 
@@ -42,7 +44,7 @@ export default async function StoreLayout({ children }: { children: React.ReactN
   };
 
   return (
-    <StoreShell catalogue={catalogue} isLoggedIn={!!session.userId} initialSaved={initialSaved} siteSettings={siteSettings}>
+    <StoreShell catalogue={catalogue} categories={categories} isLoggedIn={!!session.userId} initialSaved={initialSaved} siteSettings={siteSettings}>
       {children}
     </StoreShell>
   );

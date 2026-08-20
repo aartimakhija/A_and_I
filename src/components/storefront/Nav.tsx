@@ -2,10 +2,11 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { T, SANS, SERIF } from "./theme";
+import { NavMegaMenu } from "./NavMegaMenu";
 import { useStore } from "./StoreContext";
 
 const links: [string, string][] = [
-  ["/", "Home"], ["/shop/all", "Collection"], ["/lookbook", "Lookbook"], ["/blog", "Journal"], ["/bespoke", "Bespoke"], ["/about", "About"], ["/contact", "Contact"],
+  ["/", "Home"], ["/lookbook", "Lookbook"], ["/blog", "Journal"], ["/bespoke", "Bespoke"], ["/about", "About"], ["/contact", "Contact"],
 ];
 
 export function Nav() {
@@ -33,7 +34,9 @@ export function Nav() {
       </Link>
 
       <div className="nav-links" style={{ display: "flex", gap: 34, alignItems: "center" }}>
-        {links.map(([href, label]) => (
+        <Link href="/" className="ulink" style={linkStyle("/")}>Home</Link>
+        <NavMegaMenu />
+        {links.slice(1).map(([href, label]) => (
           <Link key={href} href={href} className="ulink" style={linkStyle(href)}>{label}</Link>
         ))}
       </div>
@@ -61,7 +64,9 @@ export function Nav() {
         <div className="nav-mobile" style={{ position: "absolute", top: 62, left: 0, right: 0,
           background: T.bg, borderBottom: `1px solid ${T.border}`, padding: "16px 24px",
           display: "flex", flexDirection: "column", gap: 16 }}>
-          {links.map(([href, label]) => (
+          <Link href="/" onClick={() => setMenuOpen(false)} style={{ ...linkStyle("/"), textAlign: "left", fontSize: 14 }}>Home</Link>
+          <Link href="/shop/all" onClick={() => setMenuOpen(false)} style={{ ...linkStyle("/shop/all"), textAlign: "left", fontSize: 14 }}>Collection</Link>
+          {links.slice(1).map(([href, label]) => (
             <Link key={href} href={href} onClick={() => setMenuOpen(false)} style={{ ...linkStyle(href), textAlign: "left", fontSize: 14 }}>{label}</Link>
           ))}
           <button onClick={() => { setMenuOpen(false); setSearchOpen(true); }} style={{ ...linkStyle(""), textAlign: "left", fontSize: 14 }}>Search</button>

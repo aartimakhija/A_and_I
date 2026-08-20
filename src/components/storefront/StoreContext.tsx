@@ -26,6 +26,7 @@ export type SiteSettingsSlice = {
 
 type StoreState = {
   catalogue: SFProduct[]; // all ACTIVE products — powers search + wishlist drawer lookups
+  categories: { slug: string; name: string }[];
   siteSettings: SiteSettingsSlice;
   cart: CartItem[];
   addToCart: (p: SFProduct, size: string, tier?: string) => void;
@@ -54,8 +55,8 @@ const CART_KEY = "aandi:cart";
 const SAVED_KEY = "aandi:saved";
 const STYLE_KEY = "aandi:style-profile";
 
-export function StoreProviders({ catalogue, rm, isLoggedIn, initialSaved, siteSettings, children }: {
-  catalogue: SFProduct[]; rm: boolean; isLoggedIn: boolean; initialSaved: string[]; siteSettings: SiteSettingsSlice; children: ReactNode;
+export function StoreProviders({ catalogue, categories, rm, isLoggedIn, initialSaved, siteSettings, children }: {
+  catalogue: SFProduct[]; categories: { slug: string; name: string }[]; rm: boolean; isLoggedIn: boolean; initialSaved: string[]; siteSettings: SiteSettingsSlice; children: ReactNode;
 }) {
   const [cart, setCart] = useState<CartItem[]>([]);
   const [saved, setSaved] = useState<string[]>(isLoggedIn ? initialSaved : []);
@@ -111,7 +112,7 @@ export function StoreProviders({ catalogue, rm, isLoggedIn, initialSaved, siteSe
 
   return (
     <StoreCtx.Provider value={{
-      catalogue, siteSettings, cart, addToCart, removeFromCart, clearCart, subtotal, cartOpen, setCartOpen,
+      catalogue, categories, siteSettings, cart, addToCart, removeFromCart, clearCart, subtotal, cartOpen, setCartOpen,
       saved, toggleSaved, savedOpen, setSavedOpen, searchOpen, setSearchOpen, menuOpen, setMenuOpen,
       stylistOpen, setStylistOpen, styleProfile, setStyleProfile, rm,
     }}>

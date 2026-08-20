@@ -54,8 +54,8 @@ function useCaptureReferral() {
   }, [pathname]);
 }
 
-export function StoreShell({ catalogue, isLoggedIn, initialSaved, siteSettings, children }: {
-  catalogue: SFProduct[]; isLoggedIn: boolean; initialSaved: string[]; siteSettings: SiteSettingsSlice; children: ReactNode;
+export function StoreShell({ catalogue, categories, isLoggedIn, initialSaved, siteSettings, children }: {
+  catalogue: SFProduct[]; categories: { slug: string; name: string }[]; isLoggedIn: boolean; initialSaved: string[]; siteSettings: SiteSettingsSlice; children: ReactNode;
 }) {
   const rm = usePrefersReducedMotion();
   useParallax(rm);
@@ -63,7 +63,7 @@ export function StoreShell({ catalogue, isLoggedIn, initialSaved, siteSettings, 
   useCaptureReferral();
 
   return (
-    <StoreProviders catalogue={catalogue} rm={rm} isLoggedIn={isLoggedIn} initialSaved={initialSaved} siteSettings={siteSettings}>
+    <StoreProviders catalogue={catalogue} categories={categories} rm={rm} isLoggedIn={isLoggedIn} initialSaved={initialSaved} siteSettings={siteSettings}>
       <div style={{ background: T.bg, minHeight: "100vh", color: T.ink, fontFamily: SANS, display: "flex", flexDirection: "column" }}>
         <GlobalStyle />
         <div className="fx-grain" />
