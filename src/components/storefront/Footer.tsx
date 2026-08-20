@@ -17,8 +17,15 @@ export function Footer() {
   ];
 
   return (
-    <footer style={{ background: T.dark, padding: "clamp(48px,7vw,72px) clamp(20px,4vw,48px) 36px", marginTop: "auto" }}>
-      <div style={{ maxWidth: 1320, margin: "0 auto" }}>
+    <footer style={{ position: "relative", padding: "clamp(48px,7vw,72px) clamp(20px,4vw,48px) 36px", marginTop: "auto",
+      background: siteSettings.footerImageUrl ? undefined : T.dark, overflow: "hidden" }}>
+      {siteSettings.footerImageUrl && (
+        <>
+          <img src={siteSettings.footerImageUrl} alt="" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }} />
+          <div style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg, rgba(13,12,11,0.55) 0%, rgba(13,12,11,0.8) 60%, rgba(13,12,11,0.92) 100%)" }} />
+        </>
+      )}
+      <div style={{ position: "relative", zIndex: 1, maxWidth: 1320, margin: "0 auto" }}>
         <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr 1fr 1fr", gap: 40, marginBottom: 44 }} className="grid-foot">
           <div>
             {siteSettings.logoUrl ? (

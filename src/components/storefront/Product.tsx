@@ -78,7 +78,7 @@ export function Product({ product, related, defaultDeliveryNotes }: { product: S
         maxWidth: 1320, margin: "0 auto", padding: "24px clamp(20px,4vw,48px) clamp(56px,8vw,96px)", alignItems: "start" }} className="pdp">
         <div style={{ position: "sticky", top: 80, cursor: product.images.length ? "zoom-in" : "default" }} className="pdp-gallery"
           onClick={() => product.images.length && (setLbIndex(0), setLightbox(true))}>
-          <Photo images={product.images} color={product.color} name={product.name} ratio="4/5" reveal />
+          <Photo images={product.images} color={product.color} name={product.name} ratio="4/5" reveal showIndex />
         </div>
         <div>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>

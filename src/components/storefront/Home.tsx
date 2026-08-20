@@ -109,6 +109,25 @@ export function Home({ featured, craft, philosophyPiece, allProducts, heroImageU
         </section>
       )}
 
+      {/* CAMPAIGN BANNER — oversized overlapping display numeral, matching the
+          spec's --xxxl-text-font-size (~250px) token used for "SS26"/"404" */}
+      {featured[0] && (
+        <section onClick={() => router.push("/shop/all")} style={{ position: "relative", height: "min(70vh,560px)", overflow: "hidden", cursor: "pointer" }}>
+          {featured[0].images[0] && <img src={featured[0].images[0]} alt="" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }} />}
+          <div style={{ position: "absolute", inset: 0, background: "linear-gradient(0deg, rgba(13,12,11,0.55) 0%, rgba(13,12,11,0.05) 60%)" }} />
+          <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "flex-end", padding: "0 clamp(16px,4vw,40px)" }}>
+            <span style={{ fontFamily: SERIF, fontStyle: "italic", fontWeight: 300, color: "rgba(240,235,227,0.92)",
+              fontSize: "clamp(120px,22vw,280px)", lineHeight: 0.75, letterSpacing: "-0.03em", marginBottom: "clamp(-10px,-1vw,10px)" }}>
+              SS'26
+            </span>
+          </div>
+          <div style={{ position: "absolute", top: "clamp(24px,4vw,48px)", left: "clamp(16px,4vw,40px)" }}>
+            <Eyebrow light>Discover the</Eyebrow>
+            <div style={{ fontFamily: SERIF, fontStyle: "italic", fontSize: "clamp(22px,3vw,34px)", color: T.linenLt, marginTop: 6 }}>Within the Garden</div>
+          </div>
+        </section>
+      )}
+
       {/* PHILOSOPHY */}
       {philosophyPiece && (
         <section style={{ background: T.card }}>

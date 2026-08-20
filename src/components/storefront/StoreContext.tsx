@@ -21,7 +21,7 @@ export type StyleProfile = { answers: FitAnswers; recommendedSize: Size; note: s
 export type SiteSettingsSlice = {
   announcementText: string | null; socialInstagram: string | null; socialWhatsapp: string | null;
   socialPinterest: string | null; socialFacebook: string | null; socialTwitter: string | null;
-  contactEmail: string | null; contactPhone: string | null; logoUrl: string | null;
+  contactEmail: string | null; contactPhone: string | null; logoUrl: string | null; footerImageUrl: string | null;
 };
 
 type StoreState = {

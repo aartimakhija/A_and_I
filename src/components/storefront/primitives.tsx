@@ -19,8 +19,8 @@ export function PriceTag({ price, mrp, discountPercent, size = 14 }: { price: nu
 // Photo / generated-plate. Takes real image URLs (from ProductImage.url) with a
 // color-plate fallback (from Product.colorHex) — the same auto-advancing deck
 // behaviour as the original, just fed by the DB instead of a hardcoded IMG map.
-export function Photo({ images = [], color = T.stone, name = "", ratio = "3/4", style, eyebrow, fit = "cover", reveal = false }:
-  { images?: string[]; color?: string; name?: string; ratio?: string; style?: React.CSSProperties; eyebrow?: string; fit?: string; reveal?: boolean }) {
+export function Photo({ images = [], color = T.stone, name = "", ratio = "3/4", style, eyebrow, fit = "cover", reveal = false, showIndex = false }:
+  { images?: string[]; color?: string; name?: string; ratio?: string; style?: React.CSSProperties; eyebrow?: string; fit?: string; reveal?: boolean; showIndex?: boolean }) {
   const rm = usePrefersReducedMotion();
   const [i, setI] = useState(0);
   const [bad, setBad] = useState<Record<number, boolean>>({});
@@ -46,6 +46,12 @@ export function Photo({ images = [], color = T.stone, name = "", ratio = "3/4", 
             objectFit: fit as any, objectPosition: "center",
             opacity: idx === i ? 1 : 0, transition: rm ? "none" : "opacity 0.85s ease" }} />
       ))}
+      {images.length > 1 && showIndex && (
+        <span style={{ position: "absolute", top: 10, left: 10, zIndex: 4, fontFamily: SANS, fontSize: 10, letterSpacing: 1,
+          color: "rgba(255,255,255,0.85)", background: "rgba(13,12,11,0.35)", padding: "3px 8px", borderRadius: 2 }}>
+          {i + 1} / {images.length}
+        </span>
+      )}
       {images.length > 1 && (
         <div style={{ position: "absolute", bottom: 9, left: 0, right: 0, zIndex: 4, display: "flex", gap: 5, justifyContent: "center" }}>
           {images.map((_, idx) => (
