@@ -11,9 +11,16 @@ import { getSiteSettings } from "@/lib/settings";
 export const dynamic = "force-dynamic";
 
 export default async function StoreLayout({ children }: { children: React.ReactNode }) {
+  // Every call here is individually guarded: a transient DB hiccup (Neon
+  // waking from idle, a brief connection blip) should degrade the page —
+  // empty catalogue, logged-out state — never take down the whole site with
+  // Next's generic crash screen. Real, sustained DB outages still surface
+  // via the root error.tsx boundary on whichever page actually needs data
+  // that truly failed to load (e.g. a product/category page with no cache
+  // to fall back on).
   const [products, session, settings] = await Promise.all([
-    prisma.product.findMany({ where: { status: "ACTIVE" }, include: PRODUCT_INCLUDE, orderBy: { createdAt: "desc" } }),
-    getSession(),
+    prisma.product.findMany({ where: { status: "ACTIVE" }, include: PRODUCT_INCLUDE, orderBy: { createdAt: "desc" } }).catch(() => []),
+    getSession().catch(() => ({} as Awaited<ReturnType<typeof getSession>>)),
     getSiteSettings(),
   ]);
   const catalogue = products.map(toSFProduct);
@@ -22,8 +29,9 @@ export default async function StoreLayout({ children }: { children: React.ReactN
   // fetched here (server-side) so it's present on first paint, no extra round-trip.
   let initialSaved: string[] = [];
   if (session.userId) {
-    const rows = await prisma.wishlist.findMany({ where: { userId: session.userId }, select: { productId: true } });
-    initialSaved = rows.map((r) => r.productId);
+    initialSaved = await prisma.wishlist.findMany({ where: { userId: session.userId }, select: { productId: true } })
+      .then((rows) => rows.map((r) => r.productId))
+      .catch(() => []);
   }
 
   const siteSettings = {
