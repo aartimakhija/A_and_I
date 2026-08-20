@@ -10,12 +10,16 @@ export function ProductCard({ product }: { product: SFProduct }) {
   const router = useRouter();
   const { addToCart, saved, toggleSaved } = useStore();
   const [imgIndex, setImgIndex] = useState(0);
+  const [hovered, setHovered] = useState(false);
   const [expanded, setExpanded] = useState(false);
   const [added, setAdded] = useState(false);
   const images = product.images;
   const inStockSizes = new Set(product.variants.filter((v) => v.stock > 0).map((v) => v.size));
   const soldOut = inStockSizes.size === 0;
   const isSaved = saved.includes(product.id);
+  // Kindred-spec hover behavior: swap to the second image on hover (desktop),
+  // independent of the manual arrow navigation for browsing beyond image 2.
+  const displayIndex = hovered && images.length > 1 && imgIndex === 0 ? 1 : imgIndex;
 
   function pick(size: string) {
     addToCart(product, size);
@@ -45,13 +49,21 @@ export function ProductCard({ product }: { product: SFProduct }) {
         padding: "5px 10px", borderRadius: 3 }}>
         {soldOut ? "Sold out" : "Ready to ship"}
       </span>
+      {product.limitedEdition && !soldOut && (
+        <span style={{ position: "absolute", top: 10, left: 10, zIndex: 3, transform: "translateY(28px)",
+          background: "#e8c9d0", color: "#5a2e38", fontFamily: SANS, fontSize: 9, letterSpacing: 1.5, textTransform: "uppercase",
+          padding: "5px 10px", borderRadius: 3 }}>
+          Limited Edition
+        </span>
+      )}
 
-      <div style={{ position: "relative", cursor: "pointer" }} onClick={() => router.push(`/products/${product.slug}`)}>
+      <div style={{ position: "relative", cursor: "pointer" }} onClick={() => router.push(`/products/${product.slug}`)}
+        onMouseEnter={() => setHovered(true)} onMouseLeave={() => setHovered(false)}>
         <div style={{ position: "relative", width: "100%", aspectRatio: "3/4", overflow: "hidden",
           background: `radial-gradient(120% 90% at 28% 18%, ${product.color}40 0%, transparent 55%), linear-gradient(155deg, ${product.color}26 0%, ${T.darkCard} 120%)` }}>
           {images.length > 0 && (
-            <img src={images[imgIndex]} alt={product.name} loading="lazy"
-              style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }} />
+            <img src={images[displayIndex]} alt={product.name} loading="lazy"
+              style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", transition: "opacity 0.2s" }} />
           )}
           {images.length === 0 && (
             <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "flex-end", padding: 16 }}>

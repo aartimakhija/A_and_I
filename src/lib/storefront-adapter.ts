@@ -8,6 +8,11 @@ export type SFProduct = {
   slug: string;
   name: string;
   story: string | null;
+  features: string | null;
+  fitNotes: string | null;
+  careNotes: string | null;
+  deliveryNotes: string | null;
+  limitedEdition: boolean;
   category: string;
   color: string;
   colorName: string | null;
@@ -22,7 +27,9 @@ export type SFProduct = {
 };
 
 type PrismaProductWithRelations = {
-  id: string; slug: string; name: string; story: string | null; category: string;
+  id: string; slug: string; name: string; story: string | null;
+  features: string | null; fitNotes: string | null; careNotes: string | null; deliveryNotes: string | null; limitedEdition: boolean;
+  category: string;
   colorHex: string; colorName: string | null; basePrice: number; discountPercent: number | null; status: string; preOrder: boolean;
   images: { url: string; position: number }[];
   variants: { size: string; stock: number }[];
@@ -38,6 +45,7 @@ export function toSFProduct(p: PrismaProductWithRelations): SFProduct {
     slug: p.slug,
     name: p.name,
     story: p.story,
+    features: p.features, fitNotes: p.fitNotes, careNotes: p.careNotes, deliveryNotes: p.deliveryNotes, limitedEdition: p.limitedEdition,
     category: p.category,
     color: p.colorHex,
     colorName: p.colorName,

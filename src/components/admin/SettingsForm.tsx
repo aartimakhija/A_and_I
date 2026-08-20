@@ -5,6 +5,7 @@ type Settings = {
   siteName: string; tagline: string | null; description: string | null;
   faviconUrl: string | null; logoUrl: string | null; ogImageUrl: string | null;
   announcementText: string | null;
+  defaultDeliveryNotes: string | null;
   socialInstagram: string | null; socialWhatsapp: string | null; socialPinterest: string | null;
   socialFacebook: string | null; socialTwitter: string | null;
   contactEmail: string | null; contactPhone: string | null;
@@ -97,6 +98,12 @@ export default function SettingsForm({ initial }: { initial: Settings }) {
         <div style={sectionTitle}>Announcement bar</div>
         <label style={label}>Message shown at the top of every page</label>
         <input style={field} value={s.announcementText ?? ""} onChange={set("announcementText")} />
+      </div>
+
+      <div style={section}>
+        <div style={sectionTitle}>Product defaults</div>
+        <label style={label}>Default delivery text (used on the Delivery tab of every product, unless overridden per product)</label>
+        <textarea style={{ ...field, minHeight: 60 }} value={s.defaultDeliveryNotes ?? ""} onChange={set("defaultDeliveryNotes")} />
       </div>
 
       <div style={section}>

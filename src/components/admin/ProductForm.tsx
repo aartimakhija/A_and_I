@@ -11,7 +11,9 @@ type Props = {
   materials: MaterialOption[];
   isAdmin: boolean;
   product?: {
-    id: string; slug: string; name: string; story: string | null; category: string;
+    id: string; slug: string; name: string; story: string | null;
+    features: string | null; fitNotes: string | null; careNotes: string | null; deliveryNotes: string | null; limitedEdition: boolean;
+    category: string;
     colorHex: string; colorName: string | null; basePrice: number; discountPercent: number | null; costPrice: number | null; vendorCost: number | null; status: string;
     vendorId: string; images: ImageRow[]; featured: boolean; featuredOrder: number; lookbookOrder: number | null; preOrder: boolean;
     variants: { size: string; stock: number }[];
@@ -27,6 +29,11 @@ export default function ProductForm({ vendors, categories, materials, isAdmin, p
   const [name, setName] = useState(product?.name ?? "");
   const [slug, setSlug] = useState(product?.slug ?? "");
   const [story, setStory] = useState(product?.story ?? "");
+  const [features, setFeatures] = useState(product?.features ?? "");
+  const [fitNotes, setFitNotes] = useState(product?.fitNotes ?? "");
+  const [careNotes, setCareNotes] = useState(product?.careNotes ?? "");
+  const [deliveryNotes, setDeliveryNotes] = useState(product?.deliveryNotes ?? "");
+  const [limitedEdition, setLimitedEdition] = useState(product?.limitedEdition ?? false);
   const [category, setCategory] = useState(product?.category ?? categories[0]?.slug ?? "");
   const [colorHex, setColorHex] = useState(product?.colorHex ?? "#8A7A6A");
   const [colorName, setColorName] = useState(product?.colorName ?? "");
@@ -83,6 +90,7 @@ export default function ProductForm({ vendors, categories, materials, isAdmin, p
     setError("");
     const payload = {
       name, slug: slug || name.toLowerCase().replace(/[^a-z0-9]+/g, "-"), story, category,
+      features: features || null, fitNotes: fitNotes || null, careNotes: careNotes || null, deliveryNotes: deliveryNotes || null, limitedEdition,
       colorHex, colorName, basePrice: Math.round(parseFloat(basePrice || "0") * 100), status,
       discountPercent: discountPercent ? Math.min(99, Math.max(0, parseInt(discountPercent, 10))) : null,
       costPrice: costPrice ? Math.round(parseFloat(costPrice) * 100) : null,
@@ -125,7 +133,24 @@ export default function ProductForm({ vendors, categories, materials, isAdmin, p
       <input style={field} value={slug} onChange={(e) => setSlug(e.target.value)} placeholder="auto-generated from name if blank" />
 
       <label style={label}>Story</label>
-      <textarea style={{ ...field, minHeight: 80 }} value={story} onChange={(e) => setStory(e.target.value)} />
+      <textarea style={{ ...field, minHeight: 80 }} value={story} onChange={(e) => setStory(e.target.value)} placeholder="Narrative/description tab on the product page" />
+
+      <label style={label}>Features (optional)</label>
+      <textarea style={{ ...field, minHeight: 60 }} value={features} onChange={(e) => setFeatures(e.target.value)} placeholder="e.g. Adjustable drawstring waist, side pockets, mother-of-pearl buttons" />
+
+      <label style={label}>Fit (optional)</label>
+      <textarea style={{ ...field, minHeight: 60 }} value={fitNotes} onChange={(e) => setFitNotes(e.target.value)} placeholder="e.g. True to size. Model is 5'6&quot; wearing size M." />
+
+      <label style={label}>Care (optional)</label>
+      <textarea style={{ ...field, minHeight: 60 }} value={careNotes} onChange={(e) => setCareNotes(e.target.value)} placeholder="e.g. Dry clean only. Iron on reverse." />
+
+      <label style={label}>Delivery (optional — leave blank to use the sitewide default)</label>
+      <textarea style={{ ...field, minHeight: 60 }} value={deliveryNotes} onChange={(e) => setDeliveryNotes(e.target.value)} />
+
+      <div style={{ display: "flex", alignItems: "center", gap: 10, marginTop: 16 }}>
+        <input type="checkbox" id="limitedEdition" checked={limitedEdition} onChange={(e) => setLimitedEdition(e.target.checked)} />
+        <label htmlFor="limitedEdition" style={{ fontSize: 13 }}>Limited Edition (shows a badge on the storefront)</label>
+      </div>
 
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
         <div>

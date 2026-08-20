@@ -6,7 +6,10 @@ import { useStore } from "./StoreContext";
 
 export function CartDrawer() {
   const router = useRouter();
-  const { cart, cartOpen, setCartOpen, removeFromCart, subtotal } = useStore();
+  const { cart, cartOpen, setCartOpen, removeFromCart, subtotal, catalogue, addToCart } = useStore();
+
+  const inCartIds = new Set(cart.map((i) => i.productId));
+  const recommendations = catalogue.filter((p) => !inCartIds.has(p.id) && p.variants.some((v) => v.stock > 0)).slice(0, 4);
 
   return (
     <>
@@ -40,6 +43,35 @@ export function CartDrawer() {
                 </div>
               </div>
             ))
+          )}
+
+          {cart.length > 0 && recommendations.length > 0 && (
+            <div style={{ marginTop: 20, paddingTop: 18, borderTop: `1px solid ${T.border}` }}>
+              <div style={{ fontFamily: SANS, fontSize: 10, letterSpacing: 2, textTransform: "uppercase", color: T.stone, marginBottom: 12 }}>
+                We think you would like
+              </div>
+              <div style={{ display: "flex", gap: 12, overflowX: "auto", paddingBottom: 6 }}>
+                {recommendations.map((p) => {
+                  const firstSize = p.variants.find((v) => v.stock > 0)?.size;
+                  return (
+                    <div key={p.id} style={{ width: 96, flexShrink: 0 }}>
+                      <div onClick={() => { setCartOpen(false); router.push(`/products/${p.slug}`); }} style={{ cursor: "pointer" }}>
+                        <Photo images={p.images} color={p.color} ratio="3/4" />
+                        <div style={{ fontFamily: SERIF, fontStyle: "italic", fontSize: 12, color: T.ink, marginTop: 6, lineHeight: 1.2 }}>{p.name}</div>
+                        <div style={{ fontFamily: SANS, fontSize: 10, color: T.stone, marginTop: 2 }}>{peso(p.price)}</div>
+                      </div>
+                      {firstSize && (
+                        <button onClick={() => addToCart(p, firstSize)}
+                          style={{ marginTop: 6, width: "100%", padding: "6px 0", fontFamily: SANS, fontSize: 9, letterSpacing: 1,
+                            textTransform: "uppercase", border: `1px solid ${T.border}`, background: "none", color: T.ink, cursor: "pointer" }}>
+                          + Add
+                        </button>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
           )}
         </div>
         {cart.length > 0 && (

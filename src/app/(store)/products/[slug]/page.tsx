@@ -3,6 +3,7 @@ import { productJsonLd, pageMetadata, breadcrumbJsonLd } from "@/lib/seo";
 import { toSFProduct, PRODUCT_INCLUDE } from "@/lib/storefront-adapter";
 import { Product } from "@/components/storefront/Product";
 import { Breadcrumb } from "@/components/storefront/Breadcrumb";
+import { getSiteSettings } from "@/lib/settings";
 import { notFound } from "next/navigation";
 
 const CAT_LABEL: Record<string, string> = { ready: "Ready-to-Wear", craft: "Indian Craft", linen: "Linen" };
@@ -19,7 +20,10 @@ export async function generateMetadata({ params }: { params: { slug: string } })
 }
 
 export default async function ProductPage({ params }: { params: { slug: string } }) {
-  const p = await prisma.product.findUnique({ where: { slug: params.slug }, include: PRODUCT_INCLUDE });
+  const [p, settings] = await Promise.all([
+    prisma.product.findUnique({ where: { slug: params.slug }, include: PRODUCT_INCLUDE }),
+    getSiteSettings(),
+  ]);
   if (!p) notFound();
 
   const relatedRaw = await prisma.product.findMany({
@@ -39,7 +43,7 @@ export default async function ProductPage({ params }: { params: { slug: string }
         breadcrumbJsonLd([{ name: "Home", path: "/" }, { name: "Collection", path: "/shop/all" }, { name: catLabel, path: `/shop/${p.category}` }, { name: p.name, path: `/products/${p.slug}` }])
       ) }} />
       <Breadcrumb items={[{ name: "Home", path: "/" }, { name: "Collection", path: "/shop/all" }, { name: catLabel, path: `/shop/${p.category}` }, { name: p.name, path: `/products/${p.slug}` }]} />
-      <Product product={product} related={related} />
+      <Product product={product} related={related} defaultDeliveryNotes={settings.defaultDeliveryNotes} />
     </>
   );
 }

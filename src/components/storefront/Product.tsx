@@ -5,10 +5,11 @@ import { T, SANS, SERIF, peso, CAT_LABEL, SIZES } from "./theme";
 import { Photo, Eyebrow, Title, Btn, TiltCard, PriceTag } from "./primitives";
 import { Lightbox } from "./Lightbox";
 import { SizeChartButton } from "./SizeChartButton";
+import { AccordionTabStrip } from "./AccordionTabStrip";
 import { useStore } from "./StoreContext";
 import type { SFProduct } from "@/lib/storefront-adapter";
 
-export function Product({ product, related }: { product: SFProduct; related: SFProduct[] }) {
+export function Product({ product, related, defaultDeliveryNotes }: { product: SFProduct; related: SFProduct[]; defaultDeliveryNotes?: string | null }) {
   const router = useRouter();
   const { rm, addToCart, saved, toggleSaved, styleProfile } = useStore();
   const recommended = styleProfile?.recommendedSize;
@@ -94,7 +95,13 @@ export function Product({ product, related }: { product: SFProduct; related: SFP
           <div style={{ fontFamily: SANS, fontSize: 11, letterSpacing: 1, color: product.preOrder ? T.gold : soldOut ? "#B0503E" : T.gold, marginBottom: 24 }}>
             {product.preOrder ? "Pre-order — made once enough of you reserve" : soldOut ? "Sold out — join the waitlist" : totalStock <= 5 ? `Only ${totalStock} left` : "In stock"}
           </div>
-          {product.story && <p style={{ fontFamily: SANS, fontWeight: 300, fontSize: 15, lineHeight: 1.8, color: T.mid, maxWidth: 460 }}>{product.story}</p>}
+          <AccordionTabStrip tabs={[
+            { label: "Description", content: product.story ?? "" },
+            { label: "Features", content: product.features ?? "" },
+            { label: "Fit", content: product.fitNotes ?? "" },
+            { label: "Care", content: product.careNotes ?? "" },
+            { label: "Delivery", content: product.deliveryNotes ?? defaultDeliveryNotes ?? "" },
+          ]} />
 
           {(!soldOut || product.preOrder) && (
             <>

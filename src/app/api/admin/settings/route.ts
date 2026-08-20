@@ -10,7 +10,7 @@ export async function GET() {
 }
 
 const FIELDS = [
-  "siteName", "tagline", "description", "faviconUrl", "logoUrl", "ogImageUrl", "announcementText",
+  "siteName", "tagline", "description", "faviconUrl", "logoUrl", "ogImageUrl", "announcementText", "defaultDeliveryNotes",
   "socialInstagram", "socialWhatsapp", "socialPinterest", "socialFacebook", "socialTwitter",
   "contactEmail", "contactPhone", "gaMeasurementId", "googleSiteVerification", "bingSiteVerification",
 ];
