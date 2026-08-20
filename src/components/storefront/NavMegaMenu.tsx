@@ -21,7 +21,7 @@ export function NavMegaMenu() {
   });
 
   const explore: [string, string][] = [
-    ["/shop/all", "Shop All"], ["/lookbook", "Lookbook"], ["/blog", "Journal"], ["/bespoke", "Bespoke"],
+    ["/shop/all", "Shop All"], ["/shop/all?availability=in", "Ready to Ship"], ["/lookbook", "Lookbook"], ["/blog", "Journal"], ["/bespoke", "Bespoke"],
   ];
 
   return (

@@ -17,12 +17,10 @@ const FAQS = [
 ];
 
 export default async function AboutPage() {
-  const products = await prisma.product.findMany({
-    where: { status: "ACTIVE" },
-    include: PRODUCT_INCLUDE,
-    orderBy: { createdAt: "desc" },
-    take: 12,
-  });
+  const [products, totalCount] = await Promise.all([
+    prisma.product.findMany({ where: { status: "ACTIVE" }, include: PRODUCT_INCLUDE, orderBy: { createdAt: "desc" }, take: 12 }),
+    prisma.product.count({ where: { status: "ACTIVE" } }), // the real total — the 12-item fetch above is only for sample imagery
+  ]);
   const all = products.map(toSFProduct);
   const originPiece = all.find((p) => p.category === "craft") ?? all[0] ?? null;
   const processPieces = all.filter((p) => p.id !== originPiece?.id).slice(0, 3);
@@ -31,7 +29,7 @@ export default async function AboutPage() {
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd(FAQS)) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd([{ name: "Home", path: "/" }, { name: "About", path: "/about" }])) }} />
-      <About originPiece={originPiece} processPieces={processPieces} pieceCount={all.length} faqs={FAQS} />
+      <About originPiece={originPiece} processPieces={processPieces} pieceCount={totalCount} faqs={FAQS} />
     </>
   );
 }

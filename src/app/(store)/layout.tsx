@@ -37,7 +37,8 @@ export default async function StoreLayout({ children }: { children: React.ReactN
   }
 
   const siteSettings = {
-    announcementText: settings.announcementText, socialInstagram: settings.socialInstagram,
+    announcementText: settings.announcementText, nextDropAt: settings.nextDropAt?.toISOString() ?? null,
+    socialInstagram: settings.socialInstagram,
     socialWhatsapp: settings.socialWhatsapp, socialPinterest: settings.socialPinterest,
     socialFacebook: settings.socialFacebook, socialTwitter: settings.socialTwitter,
     contactEmail: settings.contactEmail, contactPhone: settings.contactPhone, logoUrl: settings.logoUrl, footerImageUrl: settings.footerImageUrl,

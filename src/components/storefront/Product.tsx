@@ -7,6 +7,7 @@ import { Lightbox } from "./Lightbox";
 import { SizeChartButton } from "./SizeChartButton";
 import { AccordionTabStrip } from "./AccordionTabStrip";
 import { useStore } from "./StoreContext";
+import { getAvailability } from "@/lib/availability";
 import type { SFProduct } from "@/lib/storefront-adapter";
 
 export function Product({ product, related, defaultDeliveryNotes }: { product: SFProduct; related: SFProduct[]; defaultDeliveryNotes?: string | null }) {
@@ -28,8 +29,9 @@ export function Product({ product, related, defaultDeliveryNotes }: { product: S
   const [reserved, setReserved] = useState<{ discountCode: string } | null>(null);
   const [reserveError, setReserveError] = useState("");
 
-  const totalStock = product.variants.reduce((s, v) => s + v.stock, 0);
-  const soldOut = product.status === "SOLD_OUT" || totalStock === 0;
+  const availability = getAvailability(product);
+  const totalStock = availability.totalStock;
+  const soldOut = availability.status === "SOLD_OUT";
   const tierAdd = product.tiers.find((t) => t.label === tier)?.priceAdd ?? 0;
   const finalPrice = product.price + tierAdd;
   const isSaved = saved.includes(product.id);
@@ -92,9 +94,12 @@ export function Product({ product, related, defaultDeliveryNotes }: { product: S
               ? <PriceTag price={product.price} mrp={product.mrp} discountPercent={product.discountPercent} size={16} />
               : <span style={{ fontFamily: SANS, fontSize: 16, letterSpacing: 1, color: T.mid }}>{peso(finalPrice)}</span>}
           </div>
-          <div style={{ fontFamily: SANS, fontSize: 11, letterSpacing: 1, color: product.preOrder ? T.gold : soldOut ? "#B0503E" : T.gold, marginBottom: 24 }}>
-            {product.preOrder ? "Pre-order — made once enough of you reserve" : soldOut ? "Sold out — join the waitlist" : totalStock <= 5 ? `Only ${totalStock} left` : "In stock"}
+          <div style={{ fontFamily: SANS, fontSize: 11, letterSpacing: 1, color: availability.status === "SOLD_OUT" ? "#B0503E" : T.gold, marginBottom: 24 }}>
+            {availability.status === "PRE_ORDER" ? "Pre-order — made once enough of you reserve" : availability.status === "SOLD_OUT" ? "Sold out — join the waitlist" : availability.label}
           </div>
+          <p style={{ fontFamily: SANS, fontSize: 12.5, color: T.stone, marginBottom: 20 }}>
+            Dispatched in 3–5 days · Free shipping over ₹5,000 · Returns within 7 days
+          </p>
           <AccordionTabStrip tabs={[
             { label: "Description", content: product.story ?? "" },
             { label: "Features", content: product.features ?? "" },

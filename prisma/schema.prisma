@@ -635,6 +635,7 @@ model SiteSettings {
   heroImageUrl           String?                                  // dedicated home-hero banner photo — falls back to a featured product image if unset
   footerImageUrl         String?                                  // scenic full-bleed footer background — falls back to a flat dark color if unset
   announcementText       String?  @default("Made in India, in small runs")
+  nextDropAt             DateTime?                                // countdown target — hidden entirely if unset or in the past, never frozen at zero
   defaultDeliveryNotes   String?  @default("Made-to-order pieces have a production time of 3–4 weeks. Ready-to-ship items dispatch within 1–2 working days.")
   socialInstagram        String?
   socialWhatsapp         String?

@@ -1,9 +1,10 @@
 "use client";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { T, SANS } from "./theme";
 import { Eyebrow, Title, TiltCard } from "./primitives";
 import { ProductCard } from "./ProductCard";
+import { getAvailability } from "@/lib/availability";
 import { useStore } from "./StoreContext";
 import type { SFProduct } from "@/lib/storefront-adapter";
 
@@ -21,6 +22,12 @@ export function Collection({ products, category, categories }: {
   const [selectedColors, setSelectedColors] = useState<Set<string>>(new Set());
   const [selectedSizes, setSelectedSizes] = useState<Set<string>>(new Set());
   const [availability, setAvailability] = useState<Set<string>>(new Set()); // "in" | "out"
+  useEffect(() => {
+    try {
+      const q = new URLSearchParams(window.location.search).get("availability");
+      if (q === "in" || q === "out") { setAvailability(new Set([q])); setFiltersOpen(true); }
+    } catch {}
+  }, []);
 
   const colorOptions = useMemo(() => [...new Set(products.map((p) => p.colorName).filter(Boolean))].sort() as string[], [products]);
   const sizeOptions = useMemo(() => SIZE_ORDER.filter((s) => products.some((p) => p.variants.some((v) => v.size === s))), [products]);
@@ -28,7 +35,7 @@ export function Collection({ products, category, categories }: {
   const filtered = useMemo(() => products.filter((p) => {
     if (selectedColors.size > 0 && (!p.colorName || !selectedColors.has(p.colorName))) return false;
     if (selectedSizes.size > 0 && !p.variants.some((v) => selectedSizes.has(v.size) && v.stock > 0)) return false;
-    const inStock = p.variants.some((v) => v.stock > 0);
+    const inStock = getAvailability(p).canAddToBag;
     if (availability.size > 0) {
       const matchesIn = availability.has("in") && inStock;
       const matchesOut = availability.has("out") && !inStock;
@@ -105,7 +112,7 @@ export function Collection({ products, category, categories }: {
             )}
             <div>
               <div style={{ fontFamily: SANS, fontSize: 10, letterSpacing: 1.5, textTransform: "uppercase", color: T.stone, marginBottom: 8 }}>Availability</div>
-              {[["in", "In stock"], ["out", "Out of stock"]].map(([key, label]) => (
+              {[["in", "Ready to ship"], ["out", "Sold out"]].map(([key, label]) => (
                 <label key={key} style={checkboxRow}>
                   <input type="checkbox" checked={availability.has(key)} onChange={() => toggleInSet(setAvailability, key)} />
                   {label}

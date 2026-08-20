@@ -19,7 +19,7 @@ export type CartItem = {
 export type StyleProfile = { answers: FitAnswers; recommendedSize: Size; note: string };
 
 export type SiteSettingsSlice = {
-  announcementText: string | null; socialInstagram: string | null; socialWhatsapp: string | null;
+  announcementText: string | null; nextDropAt: string | null; socialInstagram: string | null; socialWhatsapp: string | null;
   socialPinterest: string | null; socialFacebook: string | null; socialTwitter: string | null;
   contactEmail: string | null; contactPhone: string | null; logoUrl: string | null; footerImageUrl: string | null;
 };

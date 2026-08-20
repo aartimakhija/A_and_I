@@ -10,4 +10,6 @@ export const SANS = "'Jost', system-ui, sans-serif";
 export const SIZES = ["XS", "S", "M", "L", "XL"];
 export const CAT_LABEL: Record<string, string> = { ready: "Ready-to-Wear", craft: "Indian Craft", linen: "Linen" };
 export const peso = (n: number) => "₹" + Math.round(n).toLocaleString("en-IN");
-export const DROP_AT = new Date("2026-08-15T18:00:00").getTime();
+// Next-drop countdown is now admin-configurable (SiteSettings.nextDropAt) —
+// see Announce.tsx. No hardcoded fallback date on purpose: a stale one is
+// exactly what caused the frozen "00D 00H 00M 00S" bug.

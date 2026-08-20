@@ -5,6 +5,7 @@ type Settings = {
   siteName: string; tagline: string | null; description: string | null;
   faviconUrl: string | null; logoUrl: string | null; ogImageUrl: string | null; heroImageUrl: string | null; footerImageUrl: string | null;
   announcementText: string | null;
+  nextDropAt: string | null;
   defaultDeliveryNotes: string | null;
   socialInstagram: string | null; socialWhatsapp: string | null; socialPinterest: string | null;
   socialFacebook: string | null; socialTwitter: string | null;
@@ -100,6 +101,8 @@ export default function SettingsForm({ initial }: { initial: Settings }) {
         <div style={sectionTitle}>Announcement bar</div>
         <label style={label}>Message shown at the top of every page</label>
         <input style={field} value={s.announcementText ?? ""} onChange={set("announcementText")} />
+        <label style={label}>Next drop date (leave blank to hide the countdown entirely — a stopped clock is worse than no clock)</label>
+        <input style={field} type="datetime-local" value={s.nextDropAt ? s.nextDropAt.slice(0, 16) : ""} onChange={set("nextDropAt")} />
       </div>
 
       <div style={section}>

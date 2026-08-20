@@ -21,6 +21,7 @@ export async function PATCH(req: NextRequest) {
   const b = await req.json();
   const data: any = {};
   for (const f of FIELDS) if (b[f] !== undefined) data[f] = b[f] || null;
+  if (b.nextDropAt !== undefined) data.nextDropAt = b.nextDropAt ? new Date(b.nextDropAt) : null;
 
   const updated = await prisma.siteSettings.update({ where: { id: "singleton" }, data });
   return NextResponse.json(updated);

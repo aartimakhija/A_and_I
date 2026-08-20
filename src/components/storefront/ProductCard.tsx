@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { T, SANS, SERIF, SIZES, peso } from "./theme";
 import { PriceTag } from "./primitives";
 import { useStore } from "./StoreContext";
+import { getAvailability } from "@/lib/availability";
 import type { SFProduct } from "@/lib/storefront-adapter";
 
 export function ProductCard({ product }: { product: SFProduct }) {
@@ -15,7 +16,7 @@ export function ProductCard({ product }: { product: SFProduct }) {
   const [added, setAdded] = useState(false);
   const images = product.images;
   const inStockSizes = new Set(product.variants.filter((v) => v.stock > 0).map((v) => v.size));
-  const soldOut = inStockSizes.size === 0;
+  const availability = getAvailability(product);
   const isSaved = saved.includes(product.id);
   // Kindred-spec hover behavior: swap to the second image on hover (desktop),
   // independent of the manual arrow navigation for browsing beyond image 2.
@@ -34,6 +35,14 @@ export function ProductCard({ product }: { product: SFProduct }) {
     background: "rgba(255,255,255,0.85)", color: T.ink, fontSize: 15, lineHeight: 1,
     display: "flex", alignItems: "center", justifyContent: "center",
   };
+  const badgeBg = availability.status === "SOLD_OUT" ? "rgba(28,26,24,0.85)"
+    : availability.status === "PRE_ORDER" ? "rgba(196,169,106,0.94)"
+    : availability.status === "LOW_STOCK" ? "rgba(176,80,62,0.92)"
+    : "rgba(240,235,227,0.92)";
+  const badgeFg = availability.status === "SOLD_OUT" ? T.linenLt
+    : availability.status === "PRE_ORDER" ? T.ink
+    : availability.status === "LOW_STOCK" ? "#fff"
+    : T.ink;
 
   return (
     <div style={{ position: "relative", borderRadius: 12, overflow: "hidden", border: `1px solid ${T.border}`, background: T.card }}>
@@ -44,12 +53,14 @@ export function ProductCard({ product }: { product: SFProduct }) {
         {isSaved ? "♥" : "♡"}
       </button>
 
-      <span style={{ position: "absolute", top: 10, left: 10, zIndex: 3, background: soldOut ? "rgba(28,26,24,0.85)" : "rgba(240,235,227,0.92)",
-        color: soldOut ? T.linenLt : T.ink, fontFamily: SANS, fontSize: 9, letterSpacing: 1.5, textTransform: "uppercase",
-        padding: "5px 10px", borderRadius: 3 }}>
-        {soldOut ? "Sold out" : "Ready to ship"}
+      {/* Single badge, single source of truth — see src/lib/availability.ts.
+          This is the exact fix for the audit's #1 flagged bug: a grid badge
+          and a PDP status line that could disagree with each other. */}
+      <span style={{ position: "absolute", top: 10, left: 10, zIndex: 3, background: badgeBg, color: badgeFg,
+        fontFamily: SANS, fontSize: 9, letterSpacing: 1.5, textTransform: "uppercase", padding: "5px 10px", borderRadius: 3 }}>
+        {availability.label}
       </span>
-      {product.limitedEdition && !soldOut && (
+      {product.limitedEdition && availability.status !== "SOLD_OUT" && (
         <span style={{ position: "absolute", top: 10, left: 10, zIndex: 3, transform: "translateY(28px)",
           background: "#e8c9d0", color: "#5a2e38", fontFamily: SANS, fontSize: 9, letterSpacing: 1.5, textTransform: "uppercase",
           padding: "5px 10px", borderRadius: 3 }}>
@@ -92,15 +103,21 @@ export function ProductCard({ product }: { product: SFProduct }) {
       </div>
 
       <div style={{ padding: 12 }}>
-        {!expanded ? (
-          <button
-            disabled={soldOut}
-            onClick={(e) => { e.stopPropagation(); if (!soldOut) setExpanded(true); }}
+        {availability.status === "PRE_ORDER" ? (
+          <button onClick={(e) => { e.stopPropagation(); router.push(`/products/${product.slug}`); }}
             style={{ width: "100%", padding: "11px 14px", fontFamily: SANS, fontSize: 10, letterSpacing: 2, textTransform: "uppercase",
-              cursor: soldOut ? "default" : "pointer", border: "none",
-              background: added ? T.gold : soldOut ? T.border : T.ink,
-              color: added ? T.ink : soldOut ? T.stone : T.linenLt, transition: "background 0.2s" }}>
-            {added ? "Added ✓" : soldOut ? "Sold out" : "Add to bag +"}
+              cursor: "pointer", border: `1px solid ${T.ink}`, background: "transparent", color: T.ink }}>
+            Reserve now
+          </button>
+        ) : !expanded ? (
+          <button
+            disabled={!availability.canAddToBag}
+            onClick={(e) => { e.stopPropagation(); if (availability.canAddToBag) setExpanded(true); }}
+            style={{ width: "100%", padding: "11px 14px", fontFamily: SANS, fontSize: 10, letterSpacing: 2, textTransform: "uppercase",
+              cursor: availability.canAddToBag ? "pointer" : "default", border: "none",
+              background: added ? T.gold : !availability.canAddToBag ? T.border : T.ink,
+              color: added ? T.ink : !availability.canAddToBag ? T.stone : T.linenLt, transition: "background 0.2s" }}>
+            {added ? "Added ✓" : !availability.canAddToBag ? "Sold out" : "Add to bag +"}
           </button>
         ) : (
           <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }} onClick={(e) => e.stopPropagation()}>
