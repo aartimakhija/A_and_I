@@ -18,9 +18,25 @@ export function ProductCard({ product }: { product: SFProduct }) {
   const inStockSizes = new Set(product.variants.filter((v) => v.stock > 0).map((v) => v.size));
   const availability = getAvailability(product);
   const isSaved = saved.includes(product.id);
-  // Kindred-spec hover behavior: swap to the second image on hover (desktop),
-  // independent of the manual arrow navigation for browsing beyond image 2.
   const displayIndex = hovered && images.length > 1 && imgIndex === 0 ? 1 : imgIndex;
+
+  // Reduced-chrome principle (per the design audit): restraint is itself a
+  // luxury/trust signal. A plain in-stock card carries no badge at all —
+  // only genuinely exception-worthy states (sold out, pre-order, low stock,
+  // limited edition) earn one, and never more than one at a time.
+  const badge = availability.status === "SOLD_OUT" ? "Sold out"
+    : availability.status === "PRE_ORDER" ? "Pre-order"
+    : availability.status === "LOW_STOCK" ? availability.label
+    : product.limitedEdition ? "Limited Edition"
+    : null;
+  const badgeBg = availability.status === "SOLD_OUT" ? "rgba(28,26,24,0.85)"
+    : availability.status === "PRE_ORDER" ? "rgba(196,169,106,0.94)"
+    : availability.status === "LOW_STOCK" ? "rgba(176,80,62,0.92)"
+    : "rgba(232,201,208,0.95)"; // Limited Edition
+  const badgeFg = availability.status === "SOLD_OUT" ? T.linenLt
+    : availability.status === "LOW_STOCK" ? "#fff"
+    : availability.status === "PRE_ORDER" ? T.ink
+    : "#5a2e38"; // Limited Edition
 
   function pick(size: string) {
     addToCart(product, size);
@@ -34,42 +50,30 @@ export function ProductCard({ product }: { product: SFProduct }) {
     width: 28, height: 28, borderRadius: "50%", border: "none", cursor: "pointer",
     background: "rgba(255,255,255,0.85)", color: T.ink, fontSize: 15, lineHeight: 1,
     display: "flex", alignItems: "center", justifyContent: "center",
+    opacity: hovered ? 1 : 0, transition: "opacity 0.2s",
   };
-  const badgeBg = availability.status === "SOLD_OUT" ? "rgba(28,26,24,0.85)"
-    : availability.status === "PRE_ORDER" ? "rgba(196,169,106,0.94)"
-    : availability.status === "LOW_STOCK" ? "rgba(176,80,62,0.92)"
-    : "rgba(240,235,227,0.92)";
-  const badgeFg = availability.status === "SOLD_OUT" ? T.linenLt
-    : availability.status === "PRE_ORDER" ? T.ink
-    : availability.status === "LOW_STOCK" ? "#fff"
-    : T.ink;
 
   return (
-    <div style={{ position: "relative", borderRadius: 12, overflow: "hidden", border: `1px solid ${T.border}`, background: T.card }}>
+    <div style={{ position: "relative", borderRadius: 2, overflow: "hidden", background: "transparent" }}
+      onMouseEnter={() => setHovered(true)} onMouseLeave={() => setHovered(false)}>
       <button onClick={(e) => { e.stopPropagation(); toggleSaved(product.id); }} aria-label="Save to wishlist"
         style={{ position: "absolute", top: 10, right: 10, zIndex: 3, background: "rgba(248,246,243,0.85)",
           border: "none", borderRadius: "50%", width: 30, height: 30, cursor: "pointer", fontSize: 15,
-          color: isSaved ? T.gold : T.stone, display: "flex", alignItems: "center", justifyContent: "center" }}>
+          color: isSaved ? T.gold : T.stone, display: "flex", alignItems: "center", justifyContent: "center",
+          opacity: hovered || isSaved ? 1 : 0, transition: "opacity 0.2s" }}>
         {isSaved ? "♥" : "♡"}
       </button>
 
       {/* Single badge, single source of truth — see src/lib/availability.ts.
-          This is the exact fix for the audit's #1 flagged bug: a grid badge
-          and a PDP status line that could disagree with each other. */}
-      <span style={{ position: "absolute", top: 10, left: 10, zIndex: 3, background: badgeBg, color: badgeFg,
-        fontFamily: SANS, fontSize: 9, letterSpacing: 1.5, textTransform: "uppercase", padding: "5px 10px", borderRadius: 3 }}>
-        {availability.label}
-      </span>
-      {product.limitedEdition && availability.status !== "SOLD_OUT" && (
-        <span style={{ position: "absolute", top: 10, left: 10, zIndex: 3, transform: "translateY(28px)",
-          background: "#e8c9d0", color: "#5a2e38", fontFamily: SANS, fontSize: 9, letterSpacing: 1.5, textTransform: "uppercase",
-          padding: "5px 10px", borderRadius: 3 }}>
-          Limited Edition
+          Never more than one, and none at all for a plain in-stock piece. */}
+      {badge && (
+        <span style={{ position: "absolute", top: 10, left: 10, zIndex: 3, background: badgeBg, color: badgeFg,
+          fontFamily: SANS, fontSize: 9, letterSpacing: 1.5, textTransform: "uppercase", padding: "5px 10px", borderRadius: 3 }}>
+          {badge}
         </span>
       )}
 
-      <div style={{ position: "relative", cursor: "pointer" }} onClick={() => router.push(`/products/${product.slug}`)}
-        onMouseEnter={() => setHovered(true)} onMouseLeave={() => setHovered(false)}>
+      <div style={{ position: "relative", cursor: "pointer" }} onClick={() => router.push(`/products/${product.slug}`)}>
         <div style={{ position: "relative", width: "100%", aspectRatio: "3/4", overflow: "hidden",
           background: `radial-gradient(120% 90% at 28% 18%, ${product.color}40 0%, transparent 55%), linear-gradient(155deg, ${product.color}26 0%, ${T.darkCard} 120%)` }}>
           {images.length > 0 && (
@@ -88,7 +92,8 @@ export function ProductCard({ product }: { product: SFProduct }) {
               onClick={(e) => { e.stopPropagation(); setImgIndex((i) => (i - 1 + images.length) % images.length); }}>‹</button>
             <button aria-label="Next image" style={{ ...arrowBtn, right: 8 }}
               onClick={(e) => { e.stopPropagation(); setImgIndex((i) => (i + 1) % images.length); }}>›</button>
-            <div style={{ position: "absolute", bottom: 8, left: 0, right: 0, zIndex: 2, display: "flex", gap: 4, justifyContent: "center" }}>
+            <div style={{ position: "absolute", bottom: 8, left: 0, right: 0, zIndex: 2, display: "flex", gap: 4, justifyContent: "center",
+              opacity: hovered ? 1 : 0, transition: "opacity 0.2s" }}>
               {images.map((_, i) => (
                 <span key={i} style={{ width: 5, height: 5, borderRadius: "50%", background: i === imgIndex ? "#fff" : "rgba(255,255,255,0.4)" }} />
               ))}
@@ -97,12 +102,12 @@ export function ProductCard({ product }: { product: SFProduct }) {
         )}
       </div>
 
-      <div onClick={() => router.push(`/products/${product.slug}`)} style={{ cursor: "pointer", padding: "12px 14px 4px" }}>
+      <div onClick={() => router.push(`/products/${product.slug}`)} style={{ cursor: "pointer", padding: "12px 2px 4px" }}>
         <div style={{ fontFamily: SERIF, fontStyle: "italic", fontSize: 18, color: T.ink }}>{product.name}</div>
         <div style={{ marginTop: 4 }}><PriceTag price={product.price} mrp={product.mrp} discountPercent={product.discountPercent} size={11} /></div>
       </div>
 
-      <div style={{ padding: 12 }}>
+      <div style={{ padding: "12px 2px 0" }}>
         {availability.status === "PRE_ORDER" ? (
           <button onClick={(e) => { e.stopPropagation(); router.push(`/products/${product.slug}`); }}
             style={{ width: "100%", padding: "11px 14px", fontFamily: SANS, fontSize: 10, letterSpacing: 2, textTransform: "uppercase",

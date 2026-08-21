@@ -42,6 +42,8 @@ export function GlobalStyle() {
       @media (max-width: 900px) {
         .nav-links { display: none !important; }
         .nav-burger { display: inline-block !important; }
+        .pdp-sticky-bar { display: block !important; }
+        body:has(.pdp-sticky-bar) { padding-bottom: 76px; }
         .util-hide { display: none !important; }
         .hero { min-height: 70vh !important; }
         .grid-4 { grid-template-columns: repeat(2,1fr) !important; }

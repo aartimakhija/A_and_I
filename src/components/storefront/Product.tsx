@@ -189,16 +189,6 @@ export function Product({ product, related, defaultDeliveryNotes }: { product: S
             )}
           </div>
 
-          <div style={{ marginTop: 34, borderTop: `1px solid ${T.border}`, paddingTop: 22 }}>
-            {[["Fabric & care", "Small-batch, hand-finished. Dry clean only."],
-              ["Fit", "True to size. Model wears M."],
-              ["Shipping", "Dispatched in 3–5 days. Free over ₹5,000."]].map(([h, b]) => (
-              <div key={h} style={{ marginBottom: 16 }}>
-                <div style={{ fontFamily: SANS, fontSize: 10, letterSpacing: 2, textTransform: "uppercase", color: T.ink, marginBottom: 4 }}>{h}</div>
-                <div style={{ fontFamily: SANS, fontWeight: 300, fontSize: 13, color: T.stone, lineHeight: 1.6 }}>{b}</div>
-              </div>
-            ))}
-          </div>
         </div>
       </section>
 
@@ -222,6 +212,19 @@ export function Product({ product, related, defaultDeliveryNotes }: { product: S
           </div>
         </section>
       )}
+
+      {/* Mobile-only sticky CTA — the primary action stays thumb-reachable
+          regardless of scroll depth, mirroring whichever action is live above. */}
+      <div className="pdp-sticky-bar" style={{ display: "none", position: "fixed", bottom: 0, left: 0, right: 0, zIndex: 40,
+        background: T.bg, borderTop: `1px solid ${T.border}`, padding: "12px 16px", boxShadow: "0 -8px 24px rgba(0,0,0,0.08)" }}>
+        {product.preOrder ? (
+          reserved ? null : <Btn full onClick={reserve}>{reserving ? "Reserving…" : `Reserve — Size ${size}`}</Btn>
+        ) : soldOut ? (
+          notified ? null : <Btn full onClick={requestNotify}>Notify me</Btn>
+        ) : (
+          <Btn full onClick={() => addToCart(product, size, tier)}>Add to bag — {peso(finalPrice)}</Btn>
+        )}
+      </div>
     </>
   );
 }
