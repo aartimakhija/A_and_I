@@ -113,6 +113,15 @@ export async function buildSitemap() {
     { url: `${base}/fit-quiz`, changeFrequency: "monthly" as const, priority: 0.4 },
     { url: `${base}/bespoke`, changeFrequency: "monthly" as const, priority: 0.5 },
     { url: `${base}/shop/all`, changeFrequency: "daily" as const, priority: 0.9 },
+    { url: `${base}/craft`, changeFrequency: "monthly" as const, priority: 0.4 },
+    { url: `${base}/founder`, changeFrequency: "monthly" as const, priority: 0.4 },
+    { url: `${base}/faq`, changeFrequency: "monthly" as const, priority: 0.5 },
+    { url: `${base}/size-fit`, changeFrequency: "monthly" as const, priority: 0.5 },
+    { url: `${base}/shipping-returns`, changeFrequency: "monthly" as const, priority: 0.5 },
+    { url: `${base}/gifting`, changeFrequency: "monthly" as const, priority: 0.4 },
+    { url: `${base}/press`, changeFrequency: "monthly" as const, priority: 0.3 },
+    { url: `${base}/sustainability`, changeFrequency: "monthly" as const, priority: 0.4 },
+    { url: `${base}/visit`, changeFrequency: "monthly" as const, priority: 0.4 },
   ];
   try {
     const { getCategories } = await import("@/lib/categories");

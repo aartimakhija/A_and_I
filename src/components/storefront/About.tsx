@@ -24,10 +24,12 @@ export function About({ originPiece, processPieces, pieceCount, faqs }: {
   return (
     <>
       <section className="bg-paper px-6 py-20 text-center text-paper-foreground md:py-32">
-        <span className="eyebrow text-paper-foreground/70">Est. for the woman who decides</span>
-        <h1 className="display-xl mt-4">We don&apos;t follow<br /><span className="gold-italic">the season.</span></h1>
+        <span className="eyebrow text-paper-foreground/70">Founded by Artee Makhija</span>
+        <h1 className="display-xl mt-4">One founder,<br /><span className="gold-italic">one point of view.</span></h1>
         <p className="mx-auto mt-6 max-w-lg text-[15px] font-light leading-loose text-paper-foreground/70">
-          A&amp;I began with a simple frustration: clothes that were either beautifully Indian or quietly global, never both at once. So we made both — in the same piece.
+          A&amp;I began with a simple frustration: wanting clothes that felt considered without feeling
+          precious — beautifully Indian or quietly global, never both at once. So Artee began building
+          the house she wanted to exist.
         </p>
       </section>
 
@@ -39,15 +41,22 @@ export function About({ originPiece, processPieces, pieceCount, faqs }: {
         )}
         <div>
           <span className="eyebrow">How it started</span>
-          <h2 className="display-md mt-2.5">Two women, one<br /><span className="gold-italic">closet problem.</span></h2>
+          <h2 className="display-md mt-2.5">The house she wanted<br /><span className="gold-italic">to exist.</span></h2>
           <p className="mt-5 max-w-md text-[15px] font-light leading-loose text-muted-foreground">
-            A&amp;I didn&apos;t start as a business plan. It started as two friends standing in front of a closet full of clothes and still feeling like there was nothing to wear — everything was either loud heritage or quiet minimalism, never a version of both that felt like <i>us</i>.
+            A&amp;I was founded by Artee Makhija. It began with a simple frustration: wanting clothes
+            that felt considered without feeling precious, and finding too few pieces that brought
+            together contemporary silhouettes, distinctive materials and Indian craft in the way she
+            imagined — everything was either loud heritage or quiet minimalism, never a version of
+            both that felt like <i>her</i>.
           </p>
           <p className="mt-4 max-w-md text-[15px] font-light leading-loose text-muted-foreground">
-            So we went looking for the ateliers who still do it the old way — hand-tied bandhani, mirror-work set disc by disc, zari woven on a slow loom — and asked them to help us cut it into something that belonged as easily in Jaipur as it did anywhere else in the world.
+            So she went looking for the ateliers who still do it the old way — hand-tied bandhani,
+            mirror-work set disc by disc, zari woven on a slow loom — and asked them to help her cut it
+            into something contemporary, made with intention.
           </p>
           <p className="mt-4 max-w-md text-[15px] font-light leading-loose text-muted-foreground">
-            {pieceCount > 0 ? `${pieceCount} pieces later, ` : "One collection later, "}that&apos;s still the only rule we follow: if it doesn&apos;t feel like both halves of us, it doesn&apos;t get made.
+            {pieceCount > 0 ? `${pieceCount} pieces later, ` : "One collection later, "}that&apos;s
+            still the only rule she follows: if it doesn&apos;t earn its place on the rail, it isn&apos;t made.
           </p>
           <div className="mt-7"><button onClick={() => router.push("/lookbook")} className="btn-outline-ink">See it styled</button></div>
         </div>

@@ -11,8 +11,9 @@ export function Footer() {
   ].filter(([, url]) => !!url) as [string, string][];
 
   const cols: [string, [string, string][]][] = [
-    ["Shop", [["Collection", "/shop/all"], ["Lookbook", "/lookbook"], ["Journal", "/blog"], ["Bespoke", "/bespoke"], ["About", "/about"]]],
-    ["Help", [["Shipping & Returns", "/account/orders"], ["Find your fit", "/fit-quiz"], ["Refer a friend", "/account/refer"], ["Contact", "/contact"]]],
+    ["Shop", [["Collection", "/shop/all"], ["Lookbook", "/lookbook"], ["Journal", "/blog"], ["Bespoke", "/bespoke"], ["Gifting", "/gifting"]]],
+    ["Studio", [["The founder", "/founder"], ["The craft", "/craft"], ["Responsibility", "/sustainability"], ["Visit", "/visit"], ["About", "/about"]]],
+    ["Help", [["Size & fit", "/size-fit"], ["Shipping & returns", "/shipping-returns"], ["FAQ", "/faq"], ["Refer a friend", "/account/refer"], ["Press", "/press"], ["Contact", "/contact"]]],
     ...(social.length > 0 ? [["Connect", social] as [string, [string, string][]]] : []),
   ];
 
@@ -25,7 +26,7 @@ export function Footer() {
         </>
       )}
       <div className="relative z-[1] mx-auto max-w-[1320px]">
-        <div className="mb-11 grid grid-cols-2 gap-10 md:grid-cols-[2fr_1fr_1fr_1fr]">
+        <div className="mb-11 grid grid-cols-2 gap-10 md:grid-cols-[1.6fr_1fr_1fr_1fr_1fr]">
           <div className="col-span-2 md:col-span-1">
             {siteSettings.logoUrl ? (
               <div className="relative h-[30px] w-[110px]">
