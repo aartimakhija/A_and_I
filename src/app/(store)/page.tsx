@@ -34,7 +34,7 @@ export default async function HomePage() {
   const collections: CollectionCard[] = categories.map((c) => ({
     slug: c.slug,
     name: c.name,
-    imageUrl: all.find((p) => p.category === c.slug)?.images[0] ?? null,
+    imageUrl: c.coverImageUrl ?? all.find((p) => p.category === c.slug)?.images[0] ?? null,
   }));
 
   return <HomeV2 featured={featured} philosophyPiece={philosophyPiece} collections={collections} heroImageUrl={settings.heroImageUrl} />;

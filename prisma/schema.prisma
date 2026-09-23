@@ -569,11 +569,13 @@ model WebhookEvent {                                   // idempotency for paymen
 // than a hard foreign key, so existing product rows never need a migration
 // when categories are renamed or reorganized.
 model Category {
-  id       String  @id @default(cuid())
-  name     String
-  slug     String  @unique
-  position Int     @default(0)
-  active   Boolean @default(true)
+  id            String  @id @default(cuid())
+  name          String
+  slug          String  @unique
+  position      Int     @default(0)
+  active        Boolean @default(true)
+  coverImageUrl String? // curated collection-card image for the homepage/shop grid; falls back to a product photo when unset
+  description   String? // short editorial blurb, e.g. for a future collection landing page or SEO meta
 }
 
 // Purchase orders — admin generates an editable, printable PO per vendor to

@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
-type Category = { id: string; name: string; slug: string; position: number; active: boolean };
+type Category = { id: string; name: string; slug: string; position: number; active: boolean; coverImageUrl?: string | null; description?: string | null };
 
 export default function CategoriesManager({ initial, productCounts }: { initial: Category[]; productCounts: Record<string, number> }) {
   const router = useRouter();
@@ -65,11 +65,11 @@ export default function CategoriesManager({ initial, productCounts }: { initial:
     <div style={{ maxWidth: 720 }}>
       {error && <div style={{ background: "#fdecea", color: "#B0503E", padding: 12, marginBottom: 16, fontSize: 13 }}>{error}</div>}
       <p style={{ fontSize: 13, color: "#666", marginTop: 0 }}>
-        These are the only categories your storefront's collection filters and product-edit dropdown will offer. Deactivating hides a category from the site without deleting it or touching its products.
+        These are the only categories your storefront's collection filters and product-edit dropdown will offer. Deactivating hides a category from the site without deleting it or touching its products. Set a cover image to control what shows on the homepage collection grid — leave it blank to fall back to a product photo automatically.
       </p>
 
       <table style={{ width: "100%", borderCollapse: "collapse", background: "#fff", border: "1px solid #eee", marginTop: 12 }}>
-        <thead><tr>{["Name", "Slug", "Products", "Active", ""].map((h) => <th key={h} style={{ textAlign: "left", padding: 8, borderBottom: "1px solid #eee", fontSize: 12 }}>{h}</th>)}</tr></thead>
+        <thead><tr>{["Name", "Slug", "Cover image URL", "Description", "Products", "Active", ""].map((h) => <th key={h} style={{ textAlign: "left", padding: 8, borderBottom: "1px solid #eee", fontSize: 12 }}>{h}</th>)}</tr></thead>
         <tbody>
           {categories.map((c) => (
             <tr key={c.id}>
@@ -77,6 +77,22 @@ export default function CategoriesManager({ initial, productCounts }: { initial:
                 <input defaultValue={c.name} style={field} onBlur={(e) => e.target.value !== c.name && update(c.id, { name: e.target.value })} />
               </td>
               <td style={{ padding: 8, fontFamily: "monospace", fontSize: 12, color: "#666" }}>{c.slug}</td>
+              <td style={{ padding: 8 }}>
+                <input
+                  defaultValue={c.coverImageUrl ?? ""}
+                  placeholder="https://..."
+                  style={{ ...field, width: 180 }}
+                  onBlur={(e) => e.target.value !== (c.coverImageUrl ?? "") && update(c.id, { coverImageUrl: e.target.value || null })}
+                />
+              </td>
+              <td style={{ padding: 8 }}>
+                <input
+                  defaultValue={c.description ?? ""}
+                  placeholder="Short blurb"
+                  style={{ ...field, width: 160 }}
+                  onBlur={(e) => e.target.value !== (c.description ?? "") && update(c.id, { description: e.target.value || null })}
+                />
+              </td>
               <td style={{ padding: 8 }}>{productCounts[c.slug] ?? 0}</td>
               <td style={{ padding: 8 }}>
                 <input type="checkbox" checked={c.active} onChange={(e) => update(c.id, { active: e.target.checked })} />

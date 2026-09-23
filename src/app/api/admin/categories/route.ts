@@ -16,7 +16,14 @@ export async function POST(req: NextRequest) {
   const slug = (b.slug || b.name).toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
   const maxPos = await prisma.category.aggregate({ _max: { position: true } });
   const category = await prisma.category.create({
-    data: { name: b.name, slug, position: (maxPos._max.position ?? -1) + 1, active: b.active ?? true },
+    data: {
+      name: b.name,
+      slug,
+      position: (maxPos._max.position ?? -1) + 1,
+      active: b.active ?? true,
+      coverImageUrl: b.coverImageUrl ?? null,
+      description: b.description ?? null,
+    },
   });
   return NextResponse.json(category, { status: 201 });
 }

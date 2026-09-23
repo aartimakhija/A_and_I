@@ -6,7 +6,7 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
   await requireRole(["ADMIN"]);
   const b = await req.json();
   const data: any = {};
-  for (const f of ["name", "slug", "position", "active"]) if (b[f] !== undefined) data[f] = b[f];
+  for (const f of ["name", "slug", "position", "active", "coverImageUrl", "description"]) if (b[f] !== undefined) data[f] = b[f];
   const category = await prisma.category.update({ where: { id: params.id }, data });
   return NextResponse.json(category);
 }
