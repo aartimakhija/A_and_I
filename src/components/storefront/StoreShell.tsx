@@ -12,7 +12,6 @@ import { SearchOverlay } from "./SearchOverlay";
 import { SavedDrawer } from "./SavedDrawer";
 import { ExitPopup } from "./ExitPopup";
 import { StylistWidget } from "./StylistWidget";
-import { T, SANS } from "./theme";
 import type { SFProduct } from "@/lib/storefront-adapter";
 import type { SiteSettingsSlice } from "./StoreContext";
 
@@ -64,13 +63,13 @@ export function StoreShell({ catalogue, categories, isLoggedIn, initialSaved, si
 
   return (
     <StoreProviders catalogue={catalogue} categories={categories} rm={rm} isLoggedIn={isLoggedIn} initialSaved={initialSaved} siteSettings={siteSettings}>
-      <div style={{ background: T.bg, minHeight: "100vh", color: T.ink, fontFamily: SANS, display: "flex", flexDirection: "column" }}>
+      <div className="flex min-h-screen flex-col bg-background text-foreground">
         <GlobalStyle />
         <div className="fx-grain" />
         <div className="fx-vignette" />
         <Announce />
         <Nav />
-        <main style={{ flex: 1 }}>{children}</main>
+        <main className="flex-1">{children}</main>
         <Footer />
         <CartDrawer />
         <SavedDrawer />

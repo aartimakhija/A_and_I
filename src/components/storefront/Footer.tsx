@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import { T, SANS, SERIF } from "./theme";
+import Image from "next/image";
 import { useStore } from "./StoreContext";
 
 export function Footer() {
@@ -17,53 +17,52 @@ export function Footer() {
   ];
 
   return (
-    <footer style={{ position: "relative", padding: "clamp(48px,7vw,72px) clamp(20px,4vw,48px) 36px", marginTop: "auto",
-      background: siteSettings.footerImageUrl ? undefined : T.dark, overflow: "hidden" }}>
+    <footer className="relative mt-auto overflow-hidden bg-paper px-5 pb-9 pt-12 text-paper-foreground md:px-12 md:pt-16">
       {siteSettings.footerImageUrl && (
         <>
-          <img src={siteSettings.footerImageUrl} alt="" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }} />
-          <div style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg, rgba(13,12,11,0.55) 0%, rgba(13,12,11,0.8) 60%, rgba(13,12,11,0.92) 100%)" }} />
+          <Image src={siteSettings.footerImageUrl} alt="" fill sizes="100vw" className="object-cover" />
+          <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(13,12,11,0.55)_0%,rgba(13,12,11,0.8)_60%,rgba(13,12,11,0.92)_100%)]" />
         </>
       )}
-      <div style={{ position: "relative", zIndex: 1, maxWidth: 1320, margin: "0 auto" }}>
-        <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr 1fr 1fr", gap: 40, marginBottom: 44 }} className="grid-foot">
-          <div>
+      <div className="relative z-[1] mx-auto max-w-[1320px]">
+        <div className="mb-11 grid grid-cols-2 gap-10 md:grid-cols-[2fr_1fr_1fr_1fr]">
+          <div className="col-span-2 md:col-span-1">
             {siteSettings.logoUrl ? (
-              <img src={siteSettings.logoUrl} alt="A&I" style={{ height: 30, objectFit: "contain" }} />
+              <div className="relative h-[30px] w-[110px]">
+                <Image src={siteSettings.logoUrl} alt="A&I" fill sizes="110px" className="object-contain object-left" />
+              </div>
             ) : (
-              <div style={{ fontFamily: SERIF, fontSize: 30, color: T.linenLt }}>A <span style={{ color: T.gold, fontStyle: "italic" }}>&amp;</span> I</div>
+              <div className="font-display text-3xl text-paper-foreground">A <span className="gold-italic">&amp;</span> I</div>
             )}
-            <p style={{ fontFamily: SANS, fontWeight: 300, fontSize: 13, lineHeight: 1.7, color: "rgba(196,184,168,0.55)", maxWidth: 280, marginTop: 12 }}>
+            <p className="mt-3 max-w-[280px] text-[13px] font-light leading-relaxed text-paper-foreground/55">
               Womenswear where Indian craft meets a global silhouette. Made in small runs, by named hands.
             </p>
             {siteSettings.contactEmail && (
-              <a href={`mailto:${siteSettings.contactEmail}`} style={{ display: "block", marginTop: 14, fontFamily: SANS, fontSize: 12, color: "rgba(196,184,168,0.6)", textDecoration: "none" }}>
+              <a href={`mailto:${siteSettings.contactEmail}`} className="mt-3.5 block text-xs text-paper-foreground/60">
                 {siteSettings.contactEmail}
               </a>
             )}
           </div>
           {cols.map(([h, links]) => (
             <div key={h}>
-              <div style={{ fontFamily: SANS, fontSize: 9, letterSpacing: 3, textTransform: "uppercase", color: T.gold, marginBottom: 14 }}>{h}</div>
+              <div className="mb-3.5 text-[9px] uppercase tracking-[0.25em] text-primary">{h}</div>
               {links.map(([label, href]) => (
                 href.startsWith("http") ? (
-                  <a key={label} href={href} target="_blank" rel="noopener noreferrer" className="ulink" style={{ display: "block", marginBottom: 9, textDecoration: "none",
-                    fontFamily: SANS, fontWeight: 300, fontSize: 12, color: "rgba(196,184,168,0.6)", transition: "color 0.2s" }}>{label}</a>
+                  <a key={label} href={href} target="_blank" rel="noopener noreferrer" className="link-underline mb-2 block text-xs font-light text-paper-foreground/60">{label}</a>
                 ) : (
-                  <Link key={label} href={href} className="ulink" style={{ display: "block", marginBottom: 9, textDecoration: "none",
-                    fontFamily: SANS, fontWeight: 300, fontSize: 12, color: "rgba(196,184,168,0.6)", transition: "color 0.2s" }}>{label}</Link>
+                  <Link key={label} href={href} className="link-underline mb-2 block text-xs font-light text-paper-foreground/60">{label}</Link>
                 )
               ))}
             </div>
           ))}
         </div>
-        <div style={{ borderTop: `1px solid ${T.darkBorder}`, paddingTop: 22, display: "flex", justifyContent: "space-between", flexWrap: "wrap", gap: 10 }}>
-          <span style={{ fontFamily: SANS, fontSize: 10, letterSpacing: 1, color: "rgba(196,184,168,0.35)" }}>© {new Date().getFullYear()} A&I — Style With Us</span>
-          <div style={{ display: "flex", gap: 18 }}>
-            <Link href="/privacy" style={{ fontFamily: SANS, fontSize: 10, letterSpacing: 1, color: "rgba(196,184,168,0.5)", textDecoration: "none" }}>Privacy Policy</Link>
-            <Link href="/terms" style={{ fontFamily: SANS, fontSize: 10, letterSpacing: 1, color: "rgba(196,184,168,0.5)", textDecoration: "none" }}>Terms of Service</Link>
+        <div className="flex flex-wrap items-center justify-between gap-2.5 border-t border-white/10 pt-5">
+          <span className="text-[10px] text-paper-foreground/35">© {new Date().getFullYear()} A&I — Style With Us</span>
+          <div className="flex gap-4.5">
+            <Link href="/privacy" className="text-[10px] text-paper-foreground/50">Privacy Policy</Link>
+            <Link href="/terms" className="text-[10px] text-paper-foreground/50">Terms of Service</Link>
           </div>
-          <span style={{ fontFamily: SANS, fontSize: 10, letterSpacing: 1, color: "rgba(196,184,168,0.35)" }}>Made in India</span>
+          <span className="text-[10px] text-paper-foreground/35">Made in India</span>
         </div>
       </div>
     </footer>

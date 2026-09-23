@@ -1,7 +1,6 @@
 "use client";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { T, SANS, SERIF } from "./theme";
 import { NavMegaMenu } from "./NavMegaMenu";
 import { useStore } from "./StoreContext";
 
@@ -13,64 +12,49 @@ export function Nav() {
   const pathname = usePathname();
   const { cart, setCartOpen, saved, setSavedOpen, setSearchOpen, menuOpen, setMenuOpen } = useStore();
 
-  const linkStyle = (href: string): React.CSSProperties => {
+  const navLinkClass = (href: string) => {
     const active = href === "/" ? pathname === "/" : pathname?.startsWith(href.split("/").slice(0, 2).join("/"));
-    return {
-      fontFamily: SANS, fontSize: 11, letterSpacing: 2, textTransform: "uppercase",
-      fontWeight: active ? 400 : 300, color: active ? T.ink : T.stone,
-      background: "none", border: "none", cursor: "pointer", padding: 0, transition: "color 0.25s",
-    };
+    return `link-underline micro ${active ? "font-normal text-foreground" : "font-light text-muted-foreground"}`;
   };
 
   return (
-    <nav style={{ position: "sticky", top: 0, zIndex: 50, background: "rgba(248,246,243,0.86)",
-      backdropFilter: "blur(14px)", borderBottom: `1px solid ${T.border}`,
-      display: "flex", alignItems: "center", justifyContent: "space-between",
-      padding: "0 clamp(20px,4vw,48px)", height: 62 }}>
-      <Link href="/" style={{ background: "none", border: "none", cursor: "pointer", textDecoration: "none",
-        fontFamily: SERIF, fontSize: 24, letterSpacing: 1, color: T.ink, display: "flex", alignItems: "baseline", gap: 8 }}>
-        A&nbsp;<span style={{ color: T.gold, fontStyle: "italic" }}>&amp;</span>&nbsp;I
-        <span style={{ fontFamily: SANS, fontSize: 8, letterSpacing: 3, color: T.stone, textTransform: "uppercase", marginLeft: 4 }}>Style with us</span>
+    <nav className="sticky top-0 z-50 flex h-[62px] items-center justify-between border-b border-border bg-background/85 px-5 backdrop-blur-md md:px-12">
+      <Link href="/" className="flex items-baseline gap-2 font-display text-2xl tracking-wide text-foreground">
+        A&nbsp;<span className="gold-italic">&amp;</span>&nbsp;I
+        <span className="ml-1 text-[8px] uppercase tracking-[0.3em] text-muted-foreground">Style with us</span>
       </Link>
 
-      <div className="nav-links" style={{ display: "flex", gap: 34, alignItems: "center" }}>
-        <Link href="/" className="ulink" style={linkStyle("/")}>Home</Link>
+      <div className="hidden items-center gap-8 md:flex">
+        <Link href="/" className={navLinkClass("/")}>Home</Link>
         <NavMegaMenu />
         {links.slice(1).map(([href, label]) => (
-          <Link key={href} href={href} className="ulink" style={linkStyle(href)}>{label}</Link>
+          <Link key={href} href={href} className={navLinkClass(href)}>{label}</Link>
         ))}
       </div>
 
-      <div style={{ display: "flex", alignItems: "center", gap: 18 }}>
-        <button onClick={() => setSearchOpen(true)} className="util-hide" style={{ background: "none", border: "none", cursor: "pointer",
-          fontFamily: SANS, fontSize: 11, letterSpacing: 2, textTransform: "uppercase", color: T.stone }}>Search</button>
-        <button onClick={() => setSavedOpen(true)} className="util-hide" style={{ background: "none", border: "none", cursor: "pointer",
-          fontFamily: SANS, fontSize: 11, letterSpacing: 2, textTransform: "uppercase", color: T.stone }}>
+      <div className="flex items-center gap-4.5">
+        <button onClick={() => setSearchOpen(true)} className="micro hidden text-muted-foreground md:inline">Search</button>
+        <button onClick={() => setSavedOpen(true)} className="micro hidden text-muted-foreground md:inline">
           Saved{saved.length > 0 ? ` (${saved.length})` : ""}
         </button>
-        <button onClick={() => setCartOpen(true)} style={{ background: "none", border: "none", cursor: "pointer",
-          fontFamily: SANS, fontSize: 11, letterSpacing: 2, textTransform: "uppercase", color: T.ink, position: "relative" }}>
+        <button onClick={() => setCartOpen(true)} className="micro relative text-foreground">
           Bag
-          {cart.length > 0 && <span style={{ marginLeft: 6, fontSize: 10, color: T.gold }}>({cart.length})</span>}
+          {cart.length > 0 && <span className="ml-1.5 text-[10px] text-primary">({cart.length})</span>}
         </button>
-        <button className="nav-burger" onClick={() => setMenuOpen(!menuOpen)} aria-label="Menu"
-          style={{ display: "none", background: "none", border: "none", cursor: "pointer",
-            fontFamily: SANS, fontSize: 11, letterSpacing: 2, textTransform: "uppercase", color: T.ink }}>
+        <button onClick={() => setMenuOpen(!menuOpen)} aria-label="Menu" className="micro text-foreground md:hidden">
           {menuOpen ? "Close" : "Menu"}
         </button>
       </div>
 
       {menuOpen && (
-        <div className="nav-mobile" style={{ position: "absolute", top: 62, left: 0, right: 0,
-          background: T.bg, borderBottom: `1px solid ${T.border}`, padding: "16px 24px",
-          display: "flex", flexDirection: "column", gap: 16 }}>
-          <Link href="/" onClick={() => setMenuOpen(false)} style={{ ...linkStyle("/"), textAlign: "left", fontSize: 14 }}>Home</Link>
-          <Link href="/shop/all" onClick={() => setMenuOpen(false)} style={{ ...linkStyle("/shop/all"), textAlign: "left", fontSize: 14 }}>Collection</Link>
+        <div className="absolute inset-x-0 top-[62px] flex flex-col gap-4 border-b border-border bg-background px-6 py-4">
+          <Link href="/" onClick={() => setMenuOpen(false)} className={`${navLinkClass("/")} text-left text-sm`}>Home</Link>
+          <Link href="/shop/all" onClick={() => setMenuOpen(false)} className={`${navLinkClass("/shop/all")} text-left text-sm`}>Collection</Link>
           {links.slice(1).map(([href, label]) => (
-            <Link key={href} href={href} onClick={() => setMenuOpen(false)} style={{ ...linkStyle(href), textAlign: "left", fontSize: 14 }}>{label}</Link>
+            <Link key={href} href={href} onClick={() => setMenuOpen(false)} className={`${navLinkClass(href)} text-left text-sm`}>{label}</Link>
           ))}
-          <button onClick={() => { setMenuOpen(false); setSearchOpen(true); }} style={{ ...linkStyle(""), textAlign: "left", fontSize: 14 }}>Search</button>
-          <button onClick={() => { setMenuOpen(false); setSavedOpen(true); }} style={{ ...linkStyle(""), textAlign: "left", fontSize: 14 }}>
+          <button onClick={() => { setMenuOpen(false); setSearchOpen(true); }} className="micro text-left text-sm text-muted-foreground">Search</button>
+          <button onClick={() => { setMenuOpen(false); setSavedOpen(true); }} className="micro text-left text-sm text-muted-foreground">
             Saved{saved.length > 0 ? ` (${saved.length})` : ""}
           </button>
         </div>

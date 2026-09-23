@@ -1,7 +1,7 @@
 "use client";
 import { useState, useRef } from "react";
 import Link from "next/link";
-import { T, SANS, SERIF } from "./theme";
+import Image from "next/image";
 import { useStore } from "./StoreContext";
 
 export function NavMegaMenu() {
@@ -25,41 +25,34 @@ export function NavMegaMenu() {
   ];
 
   return (
-    <div onMouseEnter={openNow} onMouseLeave={closeSoon} style={{ position: "relative" }}>
-      <Link href="/shop/all" className="ulink" style={{
-        fontFamily: SANS, fontSize: 11, letterSpacing: 2, textTransform: "uppercase", fontWeight: 300, color: T.stone,
-        textDecoration: "none",
-      }}>
+    <div onMouseEnter={openNow} onMouseLeave={closeSoon} className="relative">
+      <Link href="/shop/all" className="link-underline micro font-light text-muted-foreground">
         Collection
       </Link>
       {open && (
-        <div style={{ position: "absolute", top: 28, left: "50%", transform: "translateX(-50%)", zIndex: 55,
-          background: T.bg, border: `1px solid ${T.border}`, boxShadow: "0 20px 50px rgba(0,0,0,0.12)",
-          padding: "32px 36px", display: "grid", gridTemplateColumns: "160px 160px 1fr", gap: 40, width: "min(720px,90vw)" }}>
+        <div className="absolute left-1/2 top-7 z-[55] grid w-[min(720px,90vw)] -translate-x-1/2 grid-cols-[160px_160px_1fr] gap-10 border border-border bg-background p-8 shadow-[0_20px_50px_rgba(0,0,0,0.12)]">
           <div>
-            <div style={{ fontFamily: SANS, fontSize: 10, letterSpacing: 1.5, textTransform: "uppercase", color: T.stone, marginBottom: 12 }}>Explore</div>
+            <div className="eyebrow-muted mb-3">Explore</div>
             {explore.map(([href, label]) => (
-              <Link key={href} href={href} onClick={() => setOpen(false)} className="ulink" style={{ display: "block", marginBottom: 10,
-                fontFamily: SERIF, fontStyle: "italic", fontSize: 15, color: T.ink, textDecoration: "none" }}>
+              <Link key={href} href={href} onClick={() => setOpen(false)} className="link-underline mb-2.5 block font-display italic text-[15px]">
                 {label}
               </Link>
             ))}
           </div>
           <div>
-            <div style={{ fontFamily: SANS, fontSize: 10, letterSpacing: 1.5, textTransform: "uppercase", color: T.stone, marginBottom: 12 }}>Categories</div>
+            <div className="eyebrow-muted mb-3">Categories</div>
             {categories.map((c) => (
-              <Link key={c.slug} href={`/shop/${c.slug}`} onClick={() => setOpen(false)} className="ulink" style={{ display: "block", marginBottom: 10,
-                fontFamily: SANS, fontSize: 13, fontWeight: 300, color: T.mid, textDecoration: "none" }}>
+              <Link key={c.slug} href={`/shop/${c.slug}`} onClick={() => setOpen(false)} className="link-underline mb-2.5 block text-[13px] font-light text-muted-foreground">
                 {c.name}
               </Link>
             ))}
           </div>
           {tileCategories.length > 0 && (
-            <div style={{ display: "grid", gridTemplateColumns: `repeat(${tileCategories.length},1fr)`, gap: 12 }}>
+            <div className="grid gap-3" style={{ gridTemplateColumns: `repeat(${tileCategories.length},1fr)` }}>
               {tileCategories.map((c) => (
-                <Link key={c.slug} href={`/shop/${c.slug}`} onClick={() => setOpen(false)} style={{ position: "relative", display: "block", aspectRatio: "3/4", overflow: "hidden", background: T.darkCard }}>
-                  {c.image && <img src={c.image} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />}
-                  <span style={{ position: "absolute", bottom: 10, left: 10, fontFamily: SERIF, fontStyle: "italic", fontSize: 14, color: "#fff", textShadow: "0 2px 8px rgba(0,0,0,0.5)" }}>
+                <Link key={c.slug} href={`/shop/${c.slug}`} onClick={() => setOpen(false)} className="relative block aspect-3/4 overflow-hidden bg-paper">
+                  {c.image && <Image src={c.image} alt="" fill sizes="200px" className="object-cover" />}
+                  <span className="absolute bottom-2.5 left-2.5 font-display text-sm italic text-white [text-shadow:0_2px_8px_rgba(0,0,0,0.5)]">
                     {c.name}
                   </span>
                 </Link>

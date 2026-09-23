@@ -1,5 +1,4 @@
 "use client";
-import { T, SANS } from "./theme";
 import { Countdown } from "./primitives";
 import { useStore } from "./StoreContext";
 
@@ -13,18 +12,16 @@ export function Announce() {
   const showCountdown = dropAt !== null && dropAt > Date.now();
 
   return (
-    <div style={{ background: T.olive, color: T.linenLt, textAlign: "center", padding: "8px 14px",
-      fontFamily: SANS, fontSize: 10, letterSpacing: 2, textTransform: "uppercase",
-      display: "flex", alignItems: "center", justifyContent: "center", gap: 24, flexWrap: "wrap" }}>
-      <span style={{ opacity: 0.85 }}>{siteSettings.announcementText || "Made in India, in small runs"}</span>
+    <div className="micro flex flex-wrap items-center justify-center gap-6 bg-paper px-3.5 py-2 text-center text-paper-foreground">
+      <span className="opacity-85">{siteSettings.announcementText || "Made in India, in small runs"}</span>
       {showCountdown && (
         <>
-          <span style={{ opacity: 0.4 }}>·</span>
-          <span style={{ opacity: 0.9 }}><Countdown target={dropAt!} /></span>
+          <span className="opacity-40">·</span>
+          <span className="opacity-90"><Countdown target={dropAt!} /></span>
         </>
       )}
-      <span style={{ opacity: 0.4 }}>·</span>
-      <span style={{ opacity: 0.85 }}>India / ₹ INR</span>
+      <span className="opacity-40">·</span>
+      <span className="opacity-85">India / ₹ INR</span>
     </div>
   );
 }
