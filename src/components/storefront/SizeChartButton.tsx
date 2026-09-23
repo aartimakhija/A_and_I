@@ -1,6 +1,5 @@
 "use client";
 import { useState } from "react";
-import { T, SANS, SERIF } from "./theme";
 
 // Mapped from standard extended alpha sizing (bust/waist/hips in inches).
 // One shared chart across categories for now — see note in the PDP about
@@ -17,42 +16,40 @@ export function SizeChartButton({ category }: { category?: string }) {
   const [open, setOpen] = useState(false);
   return (
     <>
-      <button onClick={() => setOpen(true)} style={{ background: "none", border: "none", cursor: "pointer",
-        fontFamily: SANS, fontSize: 11, color: T.stone, textDecoration: "underline", padding: 0 }}>
+      <button onClick={() => setOpen(true)} className="text-xs text-muted-foreground underline">
         Size chart
       </button>
       {open && (
-        <div style={{ position: "fixed", inset: 0, zIndex: 99, display: "flex", alignItems: "center", justifyContent: "center", padding: 20 }}
-          onClick={() => setOpen(false)}>
-          <div style={{ position: "absolute", inset: 0, background: "rgba(10,10,10,0.55)" }} />
-          <div onClick={(e) => e.stopPropagation()} style={{ position: "relative", background: T.bg, width: "min(560px,94vw)", maxHeight: "85vh", overflowY: "auto", padding: "clamp(24px,4vw,36px)" }}>
-            <button onClick={() => setOpen(false)} style={{ position: "absolute", top: 14, right: 16, background: "none", border: "none", cursor: "pointer", fontSize: 22, color: T.stone }}>×</button>
-            <div style={{ fontFamily: SERIF, fontStyle: "italic", fontSize: 24, color: T.ink, marginBottom: 4 }}>Size chart</div>
-            <p style={{ fontFamily: SANS, fontSize: 12.5, color: T.stone, marginBottom: 18 }}>
-              Measurements in inches. All A&I pieces run true to size unless noted otherwise on the product page.
+        <div className="fixed inset-0 z-[99] flex items-center justify-center p-5" onClick={() => setOpen(false)}>
+          <div className="absolute inset-0 bg-black/55" />
+          <div onClick={(e) => e.stopPropagation()} className="relative max-h-[85vh] w-[min(560px,94vw)] overflow-y-auto bg-background p-7">
+            <button onClick={() => setOpen(false)} className="absolute right-4 top-3.5 text-2xl text-muted-foreground">×</button>
+            <div className="gold-italic font-display text-2xl">Size chart</div>
+            <p className="mb-4 mt-1 text-xs text-muted-foreground">
+              Measurements in inches. All A&amp;I pieces run true to size unless noted otherwise on the product page.
             </p>
-            <table style={{ width: "100%", borderCollapse: "collapse" }}>
+            <table className="w-full border-collapse">
               <thead>
                 <tr>
                   {["Size", "US size", "Bust", "Waist", "Hips"].map((h) => (
-                    <th key={h} style={{ textAlign: "left", padding: "8px 10px", borderBottom: `1px solid ${T.ink}`, fontFamily: SANS, fontSize: 10, letterSpacing: 1, textTransform: "uppercase", color: T.ink }}>{h}</th>
+                    <th key={h} className="eyebrow-muted border-b border-foreground py-2 px-2.5 text-left">{h}</th>
                   ))}
                 </tr>
               </thead>
               <tbody>
                 {ROWS.map((r) => (
                   <tr key={r.size}>
-                    <td style={{ padding: "9px 10px", borderBottom: `1px solid ${T.border}`, fontFamily: SERIF, fontStyle: "italic", fontSize: 15, color: T.ink }}>{r.size}</td>
-                    <td style={{ padding: "9px 10px", borderBottom: `1px solid ${T.border}`, fontFamily: SANS, fontSize: 13, color: T.mid }}>{r.usSize}</td>
-                    <td style={{ padding: "9px 10px", borderBottom: `1px solid ${T.border}`, fontFamily: SANS, fontSize: 13, color: T.mid }}>{r.bust}</td>
-                    <td style={{ padding: "9px 10px", borderBottom: `1px solid ${T.border}`, fontFamily: SANS, fontSize: 13, color: T.mid }}>{r.waist}</td>
-                    <td style={{ padding: "9px 10px", borderBottom: `1px solid ${T.border}`, fontFamily: SANS, fontSize: 13, color: T.mid }}>{r.hips}</td>
+                    <td className="border-b border-border py-2.5 px-2.5 font-display text-base text-foreground">{r.size}</td>
+                    <td className="border-b border-border px-2.5 py-2.5 text-sm text-muted-foreground">{r.usSize}</td>
+                    <td className="border-b border-border px-2.5 py-2.5 text-sm text-muted-foreground">{r.bust}</td>
+                    <td className="border-b border-border px-2.5 py-2.5 text-sm text-muted-foreground">{r.waist}</td>
+                    <td className="border-b border-border px-2.5 py-2.5 text-sm text-muted-foreground">{r.hips}</td>
                   </tr>
                 ))}
               </tbody>
             </table>
-            <p style={{ fontFamily: SANS, fontSize: 11.5, color: T.stone, marginTop: 16, lineHeight: 1.6 }}>
-              Between sizes, or not sure? <a href="/fit-quiz" style={{ color: T.gold }}>Take the two-minute Fit Quiz</a> for a personal recommendation.
+            <p className="mt-4 text-[11.5px] leading-relaxed text-muted-foreground">
+              Between sizes, or not sure? <a href="/fit-quiz" className="text-primary">Take the two-minute Fit Quiz</a> for a personal recommendation.
             </p>
           </div>
         </div>
