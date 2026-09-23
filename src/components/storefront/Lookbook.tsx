@@ -1,9 +1,9 @@
 "use client";
 import { useRouter } from "next/navigation";
-import { T, SANS, SERIF, peso } from "./theme";
-import { Photo, Eyebrow, Title, Btn } from "./primitives";
+import Image from "next/image";
 import { layer } from "./hooks";
 import { useStore } from "./StoreContext";
+import { formatINR } from "@/lib/format";
 import type { SFProduct } from "@/lib/storefront-adapter";
 
 const LOOKS = [
@@ -35,9 +35,9 @@ const LOOKS = [
 ];
 
 const Row = ({ label, children }: { label: string; children: React.ReactNode }) => (
-  <div style={{ display: "grid", gridTemplateColumns: "110px 1fr", gap: 16, padding: "16px 0", borderTop: `1px solid ${T.border}` }} className="style-row">
-    <span style={{ fontFamily: SANS, fontSize: 9, letterSpacing: 2.5, textTransform: "uppercase", color: T.gold, fontWeight: 400, paddingTop: 2 }}>{label}</span>
-    <span style={{ fontFamily: SANS, fontWeight: 300, fontSize: 14, lineHeight: 1.65, color: T.mid }}>{children}</span>
+  <div className="grid grid-cols-[100px_1fr] gap-4 border-t border-border py-4">
+    <span className="eyebrow pt-0.5">{label}</span>
+    <span className="text-sm font-light leading-relaxed text-muted-foreground">{children}</span>
   </div>
 );
 
@@ -48,10 +48,10 @@ export function Lookbook({ products }: { products: SFProduct[] }) {
 
   return (
     <>
-      <header style={{ textAlign: "center", padding: "clamp(48px,7vw,90px) 24px clamp(20px,3vw,36px)" }}>
-        <Eyebrow>SS'26 · The Styling Edit</Eyebrow>
-        <Title as="h1">The <span style={{ fontStyle: "italic", color: T.gold }}>Lookbook</span></Title>
-        <p style={{ fontFamily: SANS, fontWeight: 300, color: T.mid, fontSize: 15, lineHeight: 1.7, maxWidth: 440, margin: "16px auto 0" }}>
+      <header className="shell pb-6 pt-16 text-center md:pb-9 md:pt-20">
+        <span className="eyebrow">SS&apos;26 · The Styling Edit</span>
+        <h1 className="display-lg mt-2">The <span className="gold-italic">Lookbook</span></h1>
+        <p className="mx-auto mt-4 max-w-sm text-[15px] font-light leading-relaxed text-muted-foreground">
           Styled head to toe — the bag, the jewellery, the shoes. Everything you need to wear them out the door.
         </p>
       </header>
@@ -60,26 +60,29 @@ export function Lookbook({ products }: { products: SFProduct[] }) {
         const d = look.product;
         const flip = i % 2 === 1;
         return (
-          <section key={d.id} style={{ background: i % 2 === 0 ? "#fff" : T.linen }}>
-            <div style={{ maxWidth: 1240, margin: "0 auto", padding: "clamp(40px,6vw,84px) clamp(20px,4vw,48px)",
-              display: "grid", gridTemplateColumns: "1fr 1fr", gap: "clamp(28px,4vw,64px)", alignItems: "center" }} className="grid-2">
-              <div className="look-img" style={{ order: flip ? 2 : 1, cursor: "pointer" }} onClick={() => router.push(`/products/${d.slug}`)}>
-                <div style={layer(2.6, rm)}>
-                  <Photo images={d.images} color={d.color} name={d.name} ratio="4/5" fit="contain" reveal eyebrow={`Look ${String(i + 1).padStart(2, "0")}`} />
-                </div>
-              </div>
-              <div className="look-txt" style={{ order: flip ? 1 : 2 }}>
-                <div style={{ fontFamily: SERIF, fontSize: "clamp(40px,5vw,68px)", color: T.gold, lineHeight: 1, opacity: 0.5 }}>{String(i + 1).padStart(2, "0")}</div>
-                <div style={{ marginTop: 10 }}><Eyebrow>{look.occasion}</Eyebrow></div>
-                <h2 style={{ fontFamily: SERIF, fontWeight: 300, fontSize: "clamp(28px,3.6vw,46px)", lineHeight: 1.04, color: T.ink, margin: "8px 0 14px" }}>{d.name}</h2>
-                <p style={{ fontFamily: SANS, fontWeight: 300, fontSize: 15, lineHeight: 1.75, color: T.mid, maxWidth: 460 }}>{look.intent}</p>
-                <div style={{ marginTop: 22 }}>
+          <section key={d.id} className={i % 2 === 0 ? "bg-background" : "bg-secondary"}>
+            <div className="shell grid items-center gap-8 py-10 md:grid-cols-2 md:gap-16 md:py-20">
+              <button
+                className={`relative aspect-4/5 overflow-hidden bg-card ${flip ? "md:order-2" : "md:order-1"}`}
+                onClick={() => router.push(`/products/${d.slug}`)}
+                style={layer(2.6, rm)}
+              >
+                {d.images[0] && <Image src={d.images[0]} alt={d.name} fill sizes="(max-width: 768px) 100vw, 45vw" className="object-contain" />}
+              </button>
+              <div className={flip ? "md:order-1" : "md:order-2"}>
+                <div className="font-display text-5xl leading-none text-primary/50 md:text-6xl">{String(i + 1).padStart(2, "0")}</div>
+                <div className="mt-2.5"><span className="eyebrow">{look.occasion}</span></div>
+                <h2 className="display-md my-3.5">{d.name}</h2>
+                <p className="max-w-md text-[15px] font-light leading-loose text-muted-foreground">{look.intent}</p>
+                <div className="mt-5.5">
                   <Row label="The bag">{look.bag}</Row>
                   <Row label="The jewellery">{look.jewels}</Row>
                   <Row label="On your feet">{look.feet}</Row>
                 </div>
-                <div style={{ marginTop: 28 }}>
-                  <Btn variant="ghost" onClick={() => router.push(`/products/${d.slug}`)}>Shop this look — {peso(d.price)}</Btn>
+                <div className="mt-7">
+                  <button onClick={() => router.push(`/products/${d.slug}`)} className="btn-outline-ink">
+                    Shop this look — {formatINR(d.price)}
+                  </button>
                 </div>
               </div>
             </div>
@@ -87,7 +90,7 @@ export function Lookbook({ products }: { products: SFProduct[] }) {
         );
       })}
       {looks.length === 0 && (
-        <p style={{ textAlign: "center", color: T.stone, padding: "40px 24px" }}>Add products to the catalogue to populate the lookbook.</p>
+        <p className="px-6 py-10 text-center text-muted-foreground">Add products to the catalogue to populate the lookbook.</p>
       )}
     </>
   );

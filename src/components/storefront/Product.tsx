@@ -1,11 +1,11 @@
 "use client";
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { SIZES } from "./theme";
 import { Lightbox } from "./Lightbox";
 import { SizeChartButton } from "./SizeChartButton";
 import { AccordionTabStrip } from "./AccordionTabStrip";
+import { ProductStory } from "./ProductStory";
 import { useStore } from "./StoreContext";
 import { getAvailability } from "@/lib/availability";
 import { formatINR } from "@/lib/format";
@@ -13,9 +13,11 @@ import { ProductCard } from "@/components/site/ProductCard";
 import type { SFProduct } from "@/lib/storefront-adapter";
 
 const CAT_LABEL: Record<string, string> = { ready: "Ready-to-Wear", craft: "Indian Craft", linen: "Linen" };
+const VIEW_LABELS = ["View 01", "View 02", "View 03", "Detail"];
 
-export function Product({ product, related, defaultDeliveryNotes }: { product: SFProduct; related: SFProduct[]; defaultDeliveryNotes?: string | null }) {
-  const router = useRouter();
+export function Product({
+  product, related, paired, defaultDeliveryNotes,
+}: { product: SFProduct; related: SFProduct[]; paired?: SFProduct[]; defaultDeliveryNotes?: string | null }) {
   const { addToCart, saved, toggleSaved, styleProfile } = useStore();
   const recommended = styleProfile?.recommendedSize;
   const recommendedInStock = recommended && product.variants.find((v) => v.size === recommended && v.stock > 0);
@@ -76,51 +78,50 @@ export function Product({ product, related, defaultDeliveryNotes }: { product: S
         <Lightbox imgs={product.images} index={activeImg} setIndex={setActiveImg} onClose={() => setLightbox(false)} name={product.name} />
       )}
 
-      <div className="shell pt-5">
-        <button onClick={() => router.push(`/shop/${product.category}`)} className="micro text-muted-foreground hover:text-foreground">
-          ← Back to collection
-        </button>
-      </div>
-
-      <section className="shell grid items-start gap-8 py-6 pb-16 md:grid-cols-[1.1fr_1fr] md:gap-14 md:pb-24">
-        {/* Gallery: sticky main image + thumbnail rail, click to open lightbox */}
-        <div className="md:sticky md:top-24">
-          <button
-            type="button"
-            onClick={() => product.images.length && setLightbox(true)}
-            className="relative block aspect-4/5 w-full overflow-hidden bg-secondary"
-            style={!product.images.length ? { background: `linear-gradient(155deg, ${product.color}26 0%, var(--paper) 120%)` } : undefined}
-            aria-label="Open full-screen view"
+      <section id="pdp-top" className="shell grid gap-8 py-8 pb-16 md:grid-cols-[1.1fr_1fr] md:gap-14 md:pb-24">
+        {/* Gallery: stacked catalogue views on desktop, swipeable on mobile —
+            click any view to open it full-screen in the lightbox. */}
+        <div>
+          <div
+            className="flex snap-x snap-mandatory gap-3 overflow-x-auto pb-2 md:block md:space-y-4 md:overflow-visible"
+            aria-label={`${product.name} catalogue views`}
           >
-            {product.images[activeImg] && (
-              <Image src={product.images[activeImg]} alt={product.name} fill sizes="(max-width: 768px) 100vw, 55vw" className="object-cover" priority />
+            {product.images.length ? (
+              product.images.map((src, i) => (
+                <figure key={src + i} className="relative min-w-[82%] shrink-0 snap-center md:min-w-0 md:shrink">
+                  <button
+                    type="button"
+                    onClick={() => { setActiveImg(i); setLightbox(true); }}
+                    className="card-zoom relative block aspect-4/5 w-full overflow-hidden bg-secondary"
+                    aria-label="Open full-screen view"
+                  >
+                    <Image src={src} alt={`${product.name}${product.colorName ? ` in ${product.colorName}` : ""}`} fill sizes="(max-width: 768px) 100vw, 55vw" className="object-cover" priority={i === 0} />
+                  </button>
+                  <figcaption className="micro pointer-events-none absolute left-0 top-0 bg-background/85 px-3 py-2 text-muted-foreground">
+                    {VIEW_LABELS[i] ?? `View ${i + 1}`}
+                  </figcaption>
+                </figure>
+              ))
+            ) : (
+              <div className="aspect-4/5 w-full" style={{ background: `linear-gradient(155deg, ${product.color}26 0%, var(--paper) 120%)` }} />
             )}
-          </button>
-          {product.images.length > 1 && (
-            <div className="mt-3 flex gap-2 overflow-x-auto">
-              {product.images.map((src, i) => (
-                <button
-                  key={src + i}
-                  onClick={() => setActiveImg(i)}
-                  className={`relative aspect-4/5 w-16 shrink-0 overflow-hidden bg-secondary transition-opacity ${i === activeImg ? "opacity-100 ring-1 ring-foreground" : "opacity-60 hover:opacity-100"}`}
-                >
-                  <Image src={src} alt="" fill sizes="64px" className="object-cover" />
-                </button>
-              ))}
-            </div>
-          )}
+          </div>
+          {product.images.length > 1 && <p className="micro -mt-1 text-muted-foreground md:hidden">Swipe for more views</p>}
         </div>
 
-        <div>
+        <div className="md:sticky md:top-24 md:self-start">
           <div className="flex items-start justify-between">
             <span className="eyebrow">{catLabel}</span>
             <button onClick={() => toggleSaved(product.id)} aria-label="Save to wishlist" className={`text-xl leading-none ${isSaved ? "text-primary" : "text-muted-foreground"}`}>
               {isSaved ? "♥" : "♡"}
             </button>
           </div>
-          <h1 className="display-lg my-2.5">{product.name}</h1>
+          <h1 className="display-lg mt-2.5">
+            {product.name}
+            {product.colorName && <span className="text-muted-foreground"> | {product.colorName}</span>}
+          </h1>
 
-          <div className="mb-2">
+          <div className="mb-2 mt-3">
             {finalPrice === product.price ? (
               product.mrp && product.discountPercent ? (
                 <span className="inline-flex flex-wrap items-baseline gap-2">
@@ -136,21 +137,19 @@ export function Product({ product, related, defaultDeliveryNotes }: { product: S
             )}
           </div>
 
-          <div className={`micro mb-6 ${availability.status === "SOLD_OUT" ? "text-destructive" : "text-primary"}`}>
+          <div className={`micro mb-2 ${availability.status === "SOLD_OUT" ? "text-destructive" : "text-primary"}`}>
             {availability.status === "PRE_ORDER" ? "Pre-order — made once enough of you reserve" : availability.status === "SOLD_OUT" ? "Sold out — join the waitlist" : availability.label}
           </div>
 
-          <p className="mb-5 text-xs text-muted-foreground">
+          {product.silhouette && (
+            <p className="mb-5 text-sm text-muted-foreground">
+              <span className="text-foreground">Silhouette:</span> {product.silhouette}
+            </p>
+          )}
+
+          <p className="mb-2 text-xs text-muted-foreground">
             Dispatched in 3–5 days · Free shipping over ₹5,000 · Returns within 7 days
           </p>
-
-          <AccordionTabStrip tabs={[
-            { label: "Description", content: product.story ?? "" },
-            { label: "Features", content: product.features ?? "" },
-            { label: "Fit", content: product.fitNotes ?? "" },
-            { label: "Care", content: product.careNotes ?? "" },
-            { label: "Delivery", content: product.deliveryNotes ?? defaultDeliveryNotes ?? "" },
-          ]} />
 
           {(!soldOut || product.preOrder) && (
             <>
@@ -243,17 +242,38 @@ export function Product({ product, related, defaultDeliveryNotes }: { product: S
               </button>
             )}
           </div>
+
+          <AccordionTabStrip tabs={[
+            { label: "Description", content: product.story ?? "" },
+            { label: "Features", content: product.features ?? "" },
+            { label: "Fit", content: product.fitNotes ?? "" },
+            { label: "Care", content: product.careNotes ?? "" },
+            { label: "Delivery", content: product.deliveryNotes ?? defaultDeliveryNotes ?? "" },
+          ]} />
         </div>
       </section>
 
+      <ProductStory product={product} />
+
+      {paired && paired.length > 0 && (
+        <section className="shell border-t border-border py-16 md:py-20">
+          <span className="eyebrow">Complete the look</span>
+          <h2 className="display-md mt-2 italic">Better paired with</h2>
+          <div className="mt-10 grid grid-cols-2 gap-x-8 gap-y-12 lg:grid-cols-3">
+            {paired.map((p) => (
+              <ProductCard key={p.id} product={p} />
+            ))}
+          </div>
+        </section>
+      )}
+
       {related.length > 0 && (
-        <section className="bg-card py-16 md:py-24">
+        <section className="bg-card border-t border-border py-16 md:py-20">
           <div className="shell">
-            <div className="mb-8">
-              <span className="eyebrow">Complete the look</span>
-              <h2 className="display-md mt-2">You may also <span className="gold-italic">like</span></h2>
-            </div>
-            <div className="grid grid-cols-2 gap-4 md:grid-cols-4 md:gap-6">
+            <h2 className="display-lg">
+              We think you&apos;d <span className="gold-italic">like.</span>
+            </h2>
+            <div className="mt-12 grid grid-cols-1 gap-x-8 gap-y-14 sm:grid-cols-2 lg:grid-cols-4">
               {related.map((r) => (
                 <ProductCard key={r.id} product={r} />
               ))}

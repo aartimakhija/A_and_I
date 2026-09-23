@@ -1,41 +1,75 @@
 "use client";
-import { useRouter } from "next/navigation";
-import { T, SANS, SERIF } from "./theme";
-import { Eyebrow, Title } from "./primitives";
+import Link from "next/link";
+import Image from "next/image";
 
 type Post = { id: string; slug: string; title: string; subtitle: string | null; coverImage: string | null; authorName: string; publishedAt: string | null };
 
+function dateLabel(iso: string | null) {
+  return iso ? new Date(iso).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" }) : "";
+}
+
 export function BlogList({ posts }: { posts: Post[] }) {
-  const router = useRouter();
+  const [lead, ...rest] = posts;
 
   return (
     <>
-      <header style={{ textAlign: "center", padding: "clamp(48px,7vw,90px) 24px clamp(28px,4vw,48px)" }}>
-        <Eyebrow>Notes from the studio</Eyebrow>
-        <Title as="h1">The <span style={{ fontStyle: "italic", color: T.gold }}>Journal</span></Title>
-        <p style={{ fontFamily: SANS, fontWeight: 300, color: T.mid, fontSize: 15, lineHeight: 1.7, maxWidth: 440, margin: "16px auto 0" }}>
-          Craft notes, styling edits, and the stories behind the pieces.
+      <section className="shell py-20">
+        <p className="eyebrow">Notes from the studio</p>
+        <h1 className="display-xl mt-6">
+          The <span className="gold-italic">journal.</span>
+        </h1>
+        <p className="mt-7 max-w-xl text-muted-foreground">
+          Craft notes, styling edits, and the stories behind the pieces — from the A&amp;I studio.
         </p>
-      </header>
+      </section>
 
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 28, maxWidth: 1180, margin: "0 auto", padding: "0 clamp(20px,4vw,48px) clamp(64px,9vw,110px)" }} className="grid-3">
-        {posts.map((p) => (
-          <button key={p.id} onClick={() => router.push(`/blog/${p.slug}`)}
-            style={{ textAlign: "left", background: "none", border: "none", cursor: "pointer", padding: 0 }}>
-            <div style={{ aspectRatio: "4/3", background: p.coverImage ? undefined : `linear-gradient(155deg, ${T.linen}, ${T.darkCard})`, overflow: "hidden" }}>
-              {p.coverImage && <img src={p.coverImage} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />}
+      {posts.length === 0 && (
+        <p className="shell pb-24 text-muted-foreground">Nothing published yet — check back soon.</p>
+      )}
+
+      {lead && (
+        <section className="shell pb-20">
+          <Link href={`/blog/${lead.slug}`} className="group grid items-center gap-12 lg:grid-cols-[1.15fr_1fr]">
+            <div className="card-zoom relative aspect-4/3 overflow-hidden bg-secondary">
+              {lead.coverImage && <Image src={lead.coverImage} alt="" fill sizes="(max-width: 1024px) 100vw, 60vw" className="object-cover" priority />}
             </div>
-            <div style={{ padding: "16px 2px" }}>
-              <div style={{ fontFamily: SANS, fontSize: 10, letterSpacing: 1.5, textTransform: "uppercase", color: T.stone, marginBottom: 6 }}>
-                {p.publishedAt ? new Date(p.publishedAt).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" }) : ""} · {p.authorName}
+            <div>
+              <p className="eyebrow">
+                {dateLabel(lead.publishedAt)} · {lead.authorName}
+              </p>
+              <h2 className="display-lg mt-5 group-hover:text-primary">{lead.title}</h2>
+              {lead.subtitle && <p className="mt-6 text-muted-foreground">{lead.subtitle}</p>}
+              <span className="link-underline micro mt-8 inline-block text-primary">Read the story</span>
+            </div>
+          </Link>
+        </section>
+      )}
+
+      {rest.length > 0 && (
+        <section className="shell grid gap-x-8 gap-y-14 pb-24 sm:grid-cols-2 lg:grid-cols-3">
+          {rest.map((p) => (
+            <Link key={p.id} href={`/blog/${p.slug}`} className="group block">
+              <div className="card-zoom relative aspect-4/5 overflow-hidden bg-secondary">
+                {p.coverImage && <Image src={p.coverImage} alt="" fill sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw" className="object-cover" />}
               </div>
-              <div style={{ fontFamily: SERIF, fontStyle: "italic", fontSize: 22, color: T.ink, lineHeight: 1.2 }}>{p.title}</div>
-              {p.subtitle && <p style={{ fontFamily: SANS, fontWeight: 300, fontSize: 13, color: T.mid, marginTop: 8, lineHeight: 1.6 }}>{p.subtitle}</p>}
-            </div>
-          </button>
-        ))}
-      </div>
-      {posts.length === 0 && <p style={{ textAlign: "center", color: T.stone, padding: "0 24px 80px" }}>Nothing published yet — check back soon.</p>}
+              <p className="eyebrow mt-5">{dateLabel(p.publishedAt)} · {p.authorName}</p>
+              <h3 className="display-md mt-3 text-xl group-hover:text-primary">{p.title}</h3>
+              {p.subtitle && <p className="mt-3 text-sm text-muted-foreground">{p.subtitle}</p>}
+            </Link>
+          ))}
+        </section>
+      )}
+
+      <section className="bg-secondary">
+        <div className="shell flex flex-wrap items-center justify-between gap-8 py-20">
+          <h2 className="display-lg max-w-lg">
+            Come see what <span className="gold-italic">we made this season.</span>
+          </h2>
+          <Link href="/shop/all" className="btn-solid-gold">
+            Explore the collection
+          </Link>
+        </div>
+      </section>
     </>
   );
 }

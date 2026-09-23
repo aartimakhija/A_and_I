@@ -1,8 +1,6 @@
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { T, SANS, SERIF } from "./theme";
-import { Eyebrow, Title, Btn } from "./primitives";
 import { recommendSize, SIZES, type FitAnswers } from "@/lib/fit";
 import { useStore } from "./StoreContext";
 
@@ -25,58 +23,54 @@ export function FitQuiz() {
     fetch("/api/fit-profile", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(answers) }).catch(() => {});
   }
 
-  const field: React.CSSProperties = { width: "100%", padding: "12px 14px", marginTop: 6, fontFamily: SANS, fontSize: 14, color: T.ink, background: T.card, border: `1px solid ${T.border}`, outline: "none" };
-  const label: React.CSSProperties = { fontFamily: SANS, fontSize: 9, letterSpacing: 2, textTransform: "uppercase", color: T.stone };
-
   return (
     <>
-      <header style={{ textAlign: "center", padding: "clamp(48px,7vw,90px) 24px clamp(20px,3vw,32px)" }}>
-        <Eyebrow>Two minutes, no measuring tape</Eyebrow>
-        <Title as="h1">Find your <span style={{ fontStyle: "italic", color: T.gold }}>fit</span></Title>
-        <p style={{ fontFamily: SANS, fontWeight: 300, color: T.mid, fontSize: 15, lineHeight: 1.7, maxWidth: 440, margin: "16px auto 0" }}>
-          A few quick details, and we'll suggest your size across the collection — no body scan, nothing intrusive.
+      <header className="shell pb-5 pt-16 text-center md:pb-8 md:pt-20">
+        <span className="eyebrow">Two minutes, no measuring tape</span>
+        <h1 className="display-lg mt-2">Find your <span className="gold-italic">fit</span></h1>
+        <p className="mx-auto mt-4 max-w-sm text-[15px] font-light leading-relaxed text-muted-foreground">
+          A few quick details, and we&apos;ll suggest your size across the collection — no body scan, nothing intrusive.
         </p>
       </header>
 
-      <section style={{ maxWidth: 480, margin: "0 auto", padding: "0 24px clamp(64px,9vw,110px)" }}>
+      <section className="shell max-w-md pb-20 md:pb-28">
         {result ? (
-          <div style={{ textAlign: "center", padding: "20px 0" }}>
-            <div style={{ width: 64, height: 64, borderRadius: "50%", margin: "0 auto 20px", border: `1px solid ${T.gold}`,
-              display: "flex", alignItems: "center", justifyContent: "center", fontFamily: SERIF, fontStyle: "italic", fontSize: 24, color: T.gold }}>{result.size}</div>
-            <p style={{ fontFamily: SANS, fontSize: 14, color: T.mid, lineHeight: 1.7, maxWidth: 380, margin: "0 auto" }}>{result.note}</p>
-            <p style={{ fontFamily: SANS, fontSize: 12, color: T.stone, marginTop: 14 }}>We'll use this to pre-select your size across the site, and to give our stylist better context when you ask for recommendations.</p>
-            <div style={{ marginTop: 24, display: "flex", gap: 12, justifyContent: "center" }}>
-              <Btn onClick={() => router.push("/shop/all")}>Shop the collection</Btn>
-              <Btn variant="ghost" onClick={() => setResult(null)}>Retake quiz</Btn>
+          <div className="py-5 text-center">
+            <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-full border border-primary font-display text-2xl italic text-primary">{result.size}</div>
+            <p className="mx-auto max-w-sm text-sm leading-relaxed text-muted-foreground">{result.note}</p>
+            <p className="mt-3.5 text-xs text-muted-foreground">We&apos;ll use this to pre-select your size across the site, and to give our stylist better context when you ask for recommendations.</p>
+            <div className="mt-6 flex justify-center gap-3">
+              <button onClick={() => router.push("/shop/all")} className="btn-solid-gold">Shop the collection</button>
+              <button onClick={() => setResult(null)} className="btn-outline-ink">Retake quiz</button>
             </div>
           </div>
         ) : (
-          <form onSubmit={submit} style={{ display: "flex", flexDirection: "column", gap: 18 }}>
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
+          <form onSubmit={submit} className="flex flex-col gap-4.5">
+            <div className="grid grid-cols-2 gap-3.5">
               <label>
-                <span style={label}>Height (cm)</span>
-                <input style={field} type="number" min={130} max={210} value={heightCm} onChange={(e) => setHeightCm(e.target.value)} required />
+                <span className="eyebrow-muted">Height (cm)</span>
+                <input className="mt-1.5 w-full border border-border bg-card px-3.5 py-3 text-sm outline-none focus:border-primary" type="number" min={130} max={210} value={heightCm} onChange={(e) => setHeightCm(e.target.value)} required />
               </label>
               <label>
-                <span style={label}>Weight (kg)</span>
-                <input style={field} type="number" min={35} max={160} value={weightKg} onChange={(e) => setWeightKg(e.target.value)} required />
+                <span className="eyebrow-muted">Weight (kg)</span>
+                <input className="mt-1.5 w-full border border-border bg-card px-3.5 py-3 text-sm outline-none focus:border-primary" type="number" min={35} max={160} value={weightKg} onChange={(e) => setWeightKg(e.target.value)} required />
               </label>
             </div>
             <label>
-              <span style={label}>Your usual size (any brand)</span>
-              <select style={field} value={usualSize} onChange={(e) => setUsualSize(e.target.value as FitAnswers["usualSize"])}>
+              <span className="eyebrow-muted">Your usual size (any brand)</span>
+              <select className="mt-1.5 w-full border border-border bg-card px-3.5 py-3 text-sm outline-none focus:border-primary" value={usualSize} onChange={(e) => setUsualSize(e.target.value as FitAnswers["usualSize"])}>
                 {SIZES.map((s) => <option key={s} value={s}>{s}</option>)}
               </select>
             </label>
             <label>
-              <span style={label}>How do you like things to fit?</span>
-              <select style={field} value={fitPreference} onChange={(e) => setFitPreference(e.target.value as FitAnswers["fitPreference"])}>
+              <span className="eyebrow-muted">How do you like things to fit?</span>
+              <select className="mt-1.5 w-full border border-border bg-card px-3.5 py-3 text-sm outline-none focus:border-primary" value={fitPreference} onChange={(e) => setFitPreference(e.target.value as FitAnswers["fitPreference"])}>
                 <option value="fitted">Fitted / structured</option>
                 <option value="true-to-size">True to size</option>
                 <option value="loose">Loose / relaxed</option>
               </select>
             </label>
-            <Btn full onClick={() => {}}>Get my size</Btn>
+            <button type="submit" className="btn-solid-gold w-full">Get my size</button>
           </form>
         )}
       </section>

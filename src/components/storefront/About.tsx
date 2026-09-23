@@ -1,7 +1,6 @@
 "use client";
 import { useRouter } from "next/navigation";
-import { T, SANS, SERIF } from "./theme";
-import { Photo, Eyebrow, Title, Btn } from "./primitives";
+import Image from "next/image";
 import type { SFProduct } from "@/lib/storefront-adapter";
 
 const PILLARS = [
@@ -24,105 +23,103 @@ export function About({ originPiece, processPieces, pieceCount, faqs }: {
 
   return (
     <>
-      {/* HERO */}
-      <section style={{ background: T.dark, padding: "clamp(64px,10vw,140px) 24px", textAlign: "center" }}>
-        <Eyebrow light>Est. for the woman who decides</Eyebrow>
-        <Title as="h1" light size="clamp(34px,6vw,72px)">We don't follow<br /><span style={{ fontStyle: "italic", color: T.gold }}>the season.</span></Title>
-        <p style={{ fontFamily: SANS, fontWeight: 300, color: "rgba(196,184,168,0.7)", fontSize: 15, lineHeight: 1.8, maxWidth: 520, margin: "26px auto 0" }}>
-          A&I began with a simple frustration: clothes that were either beautifully Indian or quietly global, never both at once. So we made both — in the same piece.
+      <section className="bg-paper px-6 py-20 text-center text-paper-foreground md:py-32">
+        <span className="eyebrow text-paper-foreground/70">Est. for the woman who decides</span>
+        <h1 className="display-xl mt-4">We don&apos;t follow<br /><span className="gold-italic">the season.</span></h1>
+        <p className="mx-auto mt-6 max-w-lg text-[15px] font-light leading-loose text-paper-foreground/70">
+          A&amp;I began with a simple frustration: clothes that were either beautifully Indian or quietly global, never both at once. So we made both — in the same piece.
         </p>
       </section>
 
-      {/* ORIGIN STORY */}
-      <section style={{ maxWidth: 1180, margin: "0 auto", padding: "clamp(56px,8vw,100px) clamp(20px,4vw,48px)",
-        display: "grid", gridTemplateColumns: "1fr 1.15fr", gap: "clamp(32px,5vw,72px)", alignItems: "center" }} className="grid-2">
-        {originPiece && <Photo images={originPiece.images} color={originPiece.color} name={originPiece.name} ratio="4/5" />}
+      <section className="shell grid items-center gap-8 py-14 md:grid-cols-[1fr_1.15fr] md:gap-16 md:py-24">
+        {originPiece?.images[0] && (
+          <div className="relative aspect-4/5 overflow-hidden bg-secondary">
+            <Image src={originPiece.images[0]} alt={originPiece.name} fill sizes="(max-width: 768px) 100vw, 45vw" className="object-cover" />
+          </div>
+        )}
         <div>
-          <Eyebrow>How it started</Eyebrow>
-          <Title size="clamp(26px,3.6vw,42px)" style={{ marginTop: 10 }}>Two women, one<br /><span style={{ fontStyle: "italic", color: T.gold }}>closet problem.</span></Title>
-          <p style={{ fontFamily: SANS, fontWeight: 300, fontSize: 15, lineHeight: 1.85, color: T.mid, marginTop: 20, maxWidth: 460 }}>
-            A&I didn't start as a business plan. It started as two friends standing in front of a closet full of clothes and still feeling like there was nothing to wear — everything was either loud heritage or quiet minimalism, never a version of both that felt like <i>us</i>.
+          <span className="eyebrow">How it started</span>
+          <h2 className="display-md mt-2.5">Two women, one<br /><span className="gold-italic">closet problem.</span></h2>
+          <p className="mt-5 max-w-md text-[15px] font-light leading-loose text-muted-foreground">
+            A&amp;I didn&apos;t start as a business plan. It started as two friends standing in front of a closet full of clothes and still feeling like there was nothing to wear — everything was either loud heritage or quiet minimalism, never a version of both that felt like <i>us</i>.
           </p>
-          <p style={{ fontFamily: SANS, fontWeight: 300, fontSize: 15, lineHeight: 1.85, color: T.mid, marginTop: 16, maxWidth: 460 }}>
+          <p className="mt-4 max-w-md text-[15px] font-light leading-loose text-muted-foreground">
             So we went looking for the ateliers who still do it the old way — hand-tied bandhani, mirror-work set disc by disc, zari woven on a slow loom — and asked them to help us cut it into something that belonged as easily in Jaipur as it did anywhere else in the world.
           </p>
-          <p style={{ fontFamily: SANS, fontWeight: 300, fontSize: 15, lineHeight: 1.85, color: T.mid, marginTop: 16, maxWidth: 460 }}>
-            {pieceCount > 0 ? `${pieceCount} pieces later, ` : "One collection later, "}that's still the only rule we follow: if it doesn't feel like both halves of us, it doesn't get made.
+          <p className="mt-4 max-w-md text-[15px] font-light leading-loose text-muted-foreground">
+            {pieceCount > 0 ? `${pieceCount} pieces later, ` : "One collection later, "}that&apos;s still the only rule we follow: if it doesn&apos;t feel like both halves of us, it doesn&apos;t get made.
           </p>
-          <div style={{ marginTop: 28 }}><Btn variant="ghost" onClick={() => router.push("/lookbook")}>See it styled</Btn></div>
+          <div className="mt-7"><button onClick={() => router.push("/lookbook")} className="btn-outline-ink">See it styled</button></div>
         </div>
       </section>
 
-      {/* PILLARS */}
-      <section style={{ background: T.linen, padding: "clamp(56px,8vw,100px) clamp(20px,4vw,48px)" }}>
-        <div style={{ maxWidth: 1180, margin: "0 auto" }}>
-          <div style={{ textAlign: "center", marginBottom: 48 }}>
-            <Eyebrow>What we won't compromise on</Eyebrow>
-            <Title size="clamp(26px,3.6vw,42px)" style={{ marginTop: 10 }}>Three rules, <span style={{ fontStyle: "italic", color: T.gold }}>no exceptions.</span></Title>
+      <section className="bg-secondary px-6 py-14 md:py-24">
+        <div className="mx-auto max-w-5xl">
+          <div className="mb-12 text-center">
+            <span className="eyebrow">What we won&apos;t compromise on</span>
+            <h2 className="display-md mt-2.5">Three rules, <span className="gold-italic">no exceptions.</span></h2>
           </div>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 32 }} className="grid-3">
+          <div className="grid gap-8 md:grid-cols-3">
             {PILLARS.map((p) => (
               <div key={p.n}>
-                <div style={{ fontFamily: SERIF, fontSize: 40, color: T.gold, opacity: 0.5, lineHeight: 1 }}>{p.n}</div>
-                <div style={{ fontFamily: SERIF, fontStyle: "italic", fontSize: 22, color: T.ink, margin: "10px 0 10px" }}>{p.h}</div>
-                <p style={{ fontFamily: SANS, fontWeight: 300, fontSize: 14, lineHeight: 1.75, color: T.mid }}>{p.b}</p>
+                <div className="font-display text-4xl leading-none text-primary/50">{p.n}</div>
+                <div className="my-2.5 font-display text-xl italic">{p.h}</div>
+                <p className="text-sm font-light leading-relaxed text-muted-foreground">{p.b}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* PROCESS TIMELINE */}
-      <section style={{ padding: "clamp(56px,8vw,100px) clamp(20px,4vw,48px)" }}>
-        <div style={{ maxWidth: 1180, margin: "0 auto" }}>
-          <div style={{ textAlign: "center", marginBottom: 48 }}>
-            <Eyebrow>From atelier to you</Eyebrow>
-            <Title size="clamp(26px,3.6vw,42px)" style={{ marginTop: 10 }}>How a piece <span style={{ fontStyle: "italic", color: T.gold }}>comes to life.</span></Title>
+      <section className="px-6 py-14 md:py-24">
+        <div className="mx-auto max-w-5xl">
+          <div className="mb-12 text-center">
+            <span className="eyebrow">From atelier to you</span>
+            <h2 className="display-md mt-2.5">How a piece <span className="gold-italic">comes to life.</span></h2>
           </div>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 24 }} className="grid-4">
-            {PROCESS.map((p, i) => (
-              <div key={p.n} style={{ borderTop: `2px solid ${T.gold}`, paddingTop: 18, position: "relative" }}>
-                <div style={{ fontFamily: SANS, fontSize: 11, letterSpacing: 2, color: T.stone }}>{p.n}</div>
-                <div style={{ fontFamily: SERIF, fontStyle: "italic", fontSize: 21, color: T.ink, margin: "8px 0 10px" }}>{p.h}</div>
-                <p style={{ fontFamily: SANS, fontWeight: 300, fontSize: 13.5, lineHeight: 1.7, color: T.mid }}>{p.b}</p>
+          <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-4">
+            {PROCESS.map((p) => (
+              <div key={p.n} className="border-t-2 border-primary pt-4.5">
+                <div className="micro text-muted-foreground">{p.n}</div>
+                <div className="my-2 font-display text-lg italic">{p.h}</div>
+                <p className="text-[13.5px] font-light leading-relaxed text-muted-foreground">{p.b}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* PROCESS GALLERY (real pieces, if available) */}
       {processPieces.length > 0 && (
-        <section style={{ display: "grid", gridTemplateColumns: `repeat(${processPieces.length},1fr)`, gap: 4 }}>
+        <section className="grid gap-1" style={{ gridTemplateColumns: `repeat(${processPieces.length},1fr)` }}>
           {processPieces.map((p) => (
-            <div key={p.id} onClick={() => router.push(`/products/${p.slug}`)} style={{ cursor: "pointer" }}>
-              <Photo images={p.images} color={p.color} name={p.name} ratio="4/5" eyebrow="Made by hand" />
-            </div>
+            <button key={p.id} onClick={() => router.push(`/products/${p.slug}`)} className="relative aspect-4/5 bg-secondary">
+              {p.images[0] && <Image src={p.images[0]} alt={p.name} fill sizes="(max-width: 768px) 100vw, 33vw" className="object-cover" />}
+            </button>
           ))}
         </section>
       )}
 
-      {/* FAQ */}
-      <section style={{ maxWidth: 760, margin: "0 auto", padding: "clamp(48px,7vw,90px) clamp(20px,4vw,48px)" }}>
-        <div style={{ textAlign: "center", marginBottom: 40 }}>
-          <Eyebrow>Questions we hear often</Eyebrow>
-          <Title size="clamp(24px,3.4vw,38px)" style={{ marginTop: 10 }}>Frequently <span style={{ fontStyle: "italic", color: T.gold }}>asked.</span></Title>
+      <section className="shell max-w-3xl py-12 md:py-20">
+        <div className="mb-10 text-center">
+          <span className="eyebrow">Questions we hear often</span>
+          <h2 className="display-md mt-2.5">Frequently <span className="gold-italic">asked.</span></h2>
         </div>
-        <div style={{ display: "flex", flexDirection: "column", gap: 28 }}>
+        <div className="flex flex-col gap-7">
           {faqs.map((f) => (
             <div key={f.question}>
-              <h3 style={{ fontFamily: SERIF, fontStyle: "italic", fontSize: 19, color: T.ink, margin: "0 0 8px" }}>{f.question}</h3>
-              <p style={{ fontFamily: SANS, fontWeight: 300, fontSize: 14, lineHeight: 1.7, color: T.mid, margin: 0 }}>{f.answer}</p>
+              <h3 className="mb-2 font-display text-lg italic">{f.question}</h3>
+              <p className="m-0 text-sm font-light leading-relaxed text-muted-foreground">{f.answer}</p>
             </div>
           ))}
         </div>
       </section>
 
-      {/* CLOSING CTA */}
-      <section style={{ background: T.dark, padding: "clamp(56px,8vw,100px) 24px", textAlign: "center" }}>
-        <Eyebrow light>Made in India, worn anywhere</Eyebrow>
-        <Title light size="clamp(28px,4vw,48px)" style={{ marginTop: 10 }}>Come see what<br /><span style={{ fontStyle: "italic", color: T.gold }}>we made this season.</span></Title>
-        <div style={{ marginTop: 30 }}><Btn variant="light" onClick={() => router.push("/shop/all")}>Shop the collection</Btn></div>
+      <section className="bg-paper px-6 py-14 text-center text-paper-foreground md:py-24">
+        <span className="eyebrow text-paper-foreground/70">Made in India, worn anywhere</span>
+        <h2 className="display-lg mt-2.5">Come see what<br /><span className="gold-italic">we made this season.</span></h2>
+        <div className="mt-7">
+          <button onClick={() => router.push("/shop/all")} className="btn-solid-gold">Shop the collection</button>
+        </div>
       </section>
     </>
   );

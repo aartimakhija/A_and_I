@@ -1,8 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { T, SANS, SERIF } from "./theme";
-import { Eyebrow, Title, Btn } from "./primitives";
 
 const TOPICS: [string, string][] = [
   ["general", "General enquiry"],
@@ -55,55 +53,48 @@ export function Contact() {
     }
   }
 
-  const field: React.CSSProperties = {
-    width: "100%", padding: "12px 14px", marginTop: 6, fontFamily: SANS, fontSize: 14,
-    color: T.ink, background: T.card, border: `1px solid ${T.border}`, outline: "none",
-  };
-  const label: React.CSSProperties = { fontFamily: SANS, fontSize: 9, letterSpacing: 2, textTransform: "uppercase", color: T.stone };
-
   return (
     <>
-      <header style={{ textAlign: "center", padding: "clamp(48px,7vw,90px) 24px clamp(28px,4vw,48px)" }}>
-        <Eyebrow>We'd love to hear from you</Eyebrow>
-        <Title as="h1">Get in <span style={{ fontStyle: "italic", color: T.gold }}>touch</span></Title>
-        <p style={{ fontFamily: SANS, fontWeight: 300, color: T.mid, fontSize: 15, lineHeight: 1.7, maxWidth: 460, margin: "16px auto 0" }}>
+      <header className="shell pb-7 pt-16 text-center md:pb-12 md:pt-20">
+        <span className="eyebrow">We&apos;d love to hear from you</span>
+        <h1 className="display-lg mt-2">Get in <span className="gold-italic">touch</span></h1>
+        <p className="mx-auto mt-4 max-w-md text-[15px] font-light leading-relaxed text-muted-foreground">
           Questions about an order, a wholesale enquiry, or want to collaborate with our ateliers — write to us below.
         </p>
       </header>
 
-      <section style={{ maxWidth: 640, margin: "0 auto", padding: "0 24px clamp(64px,9vw,110px)" }}>
+      <section className="shell max-w-xl pb-20 md:pb-28">
         {sent ? (
-          <div style={{ textAlign: "center", padding: "40px 0" }}>
-            <div style={{ width: 56, height: 56, borderRadius: "50%", margin: "0 auto 22px", border: `1px solid ${T.gold}`,
-              display: "flex", alignItems: "center", justifyContent: "center", color: T.gold, fontSize: 24 }}>✓</div>
-            <p style={{ fontFamily: SERIF, fontStyle: "italic", fontSize: 22, color: T.ink }}>Thank you — we'll be in touch soon.</p>
-            <div style={{ marginTop: 24 }}><Btn variant="ghost" onClick={() => router.push("/")}>Back to home</Btn></div>
+          <div className="py-10 text-center">
+            <div className="mx-auto mb-5.5 flex h-14 w-14 items-center justify-center rounded-full border border-primary text-xl text-primary">✓</div>
+            <p className="gold-italic font-display text-xl">Thank you — we&apos;ll be in touch soon.</p>
+            <div className="mt-6"><button onClick={() => router.push("/")} className="btn-outline-ink">Back to home</button></div>
           </div>
         ) : (
-          <form onSubmit={submit} style={{ display: "flex", flexDirection: "column", gap: 18 }}>
-            {apiError && <div style={{ background: "#fdecea", color: "#B0503E", padding: 12, fontSize: 13 }}>{apiError}</div>}
+          <form onSubmit={submit} className="flex flex-col gap-4.5">
+            {apiError && <div className="bg-destructive/10 p-3 text-sm text-destructive">{apiError}</div>}
             <label>
-              <span style={label}>Name</span>
-              <input style={{ ...field, borderColor: err.name ? "#B0503E" : T.border }} value={f.name} onChange={set("name")} />
-              {err.name && <span style={{ fontSize: 11, color: "#B0503E" }}>{err.name}</span>}
+              <span className="eyebrow-muted">Name</span>
+              <input className={`mt-1.5 w-full border bg-card px-3.5 py-3 text-sm outline-none ${err.name ? "border-destructive" : "border-border focus:border-primary"}`} value={f.name} onChange={set("name")} />
+              {err.name && <span className="text-[11px] text-destructive">{err.name}</span>}
             </label>
             <label>
-              <span style={label}>Email</span>
-              <input type="email" style={{ ...field, borderColor: err.email ? "#B0503E" : T.border }} value={f.email} onChange={set("email")} />
-              {err.email && <span style={{ fontSize: 11, color: "#B0503E" }}>{err.email}</span>}
+              <span className="eyebrow-muted">Email</span>
+              <input type="email" className={`mt-1.5 w-full border bg-card px-3.5 py-3 text-sm outline-none ${err.email ? "border-destructive" : "border-border focus:border-primary"}`} value={f.email} onChange={set("email")} />
+              {err.email && <span className="text-[11px] text-destructive">{err.email}</span>}
             </label>
             <label>
-              <span style={label}>Topic</span>
-              <select style={field} value={f.topic} onChange={set("topic")}>
+              <span className="eyebrow-muted">Topic</span>
+              <select className="mt-1.5 w-full border border-border bg-card px-3.5 py-3 text-sm outline-none focus:border-primary" value={f.topic} onChange={set("topic")}>
                 {TOPICS.map(([id, l]) => <option key={id} value={id}>{l}</option>)}
               </select>
             </label>
             <label>
-              <span style={label}>Message</span>
-              <textarea style={{ ...field, minHeight: 130, borderColor: err.message ? "#B0503E" : T.border }} value={f.message} onChange={set("message")} />
-              {err.message && <span style={{ fontSize: 11, color: "#B0503E" }}>{err.message}</span>}
+              <span className="eyebrow-muted">Message</span>
+              <textarea className={`mt-1.5 min-h-[130px] w-full border bg-card px-3.5 py-3 text-sm outline-none ${err.message ? "border-destructive" : "border-border focus:border-primary"}`} value={f.message} onChange={set("message")} />
+              {err.message && <span className="text-[11px] text-destructive">{err.message}</span>}
             </label>
-            <Btn full onClick={() => {}}>{sending ? "Sending…" : "Send message"}</Btn>
+            <button type="submit" className="btn-solid-gold w-full">{sending ? "Sending…" : "Send message"}</button>
           </form>
         )}
       </section>
@@ -112,12 +103,8 @@ export function Contact() {
           marketplace backend. The link itself is public; /admin is what's
           actually gated (by role + login), so an unauthenticated or non-admin
           visitor lands on /login or is redirected home rather than seeing anything. */}
-      <div style={{ borderTop: `1px solid ${T.border}`, padding: "28px 24px 60px", textAlign: "center" }}>
-        <button
-          onClick={() => router.push("/admin")}
-          style={{ background: "none", border: "none", cursor: "pointer", fontFamily: SANS, fontSize: 9,
-            letterSpacing: 2.5, textTransform: "uppercase", color: T.stone, borderBottom: `1px solid ${T.border}`, paddingBottom: 3 }}
-        >
+      <div className="border-t border-border py-7 text-center">
+        <button onClick={() => router.push("/admin")} className="border-b border-border pb-1 text-[9px] uppercase tracking-[0.2em] text-muted-foreground">
           Studio &amp; Partner Access
         </button>
       </div>

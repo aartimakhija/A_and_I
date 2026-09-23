@@ -31,9 +31,16 @@ export default async function ProductPage({ params }: { params: { slug: string }
     include: PRODUCT_INCLUDE,
     take: 4,
   });
+  const pairedRaw = p.pairWith.length
+    ? await prisma.product.findMany({
+        where: { slug: { in: p.pairWith }, status: "ACTIVE" },
+        include: PRODUCT_INCLUDE,
+      })
+    : [];
 
   const product = toSFProduct(p);
   const related = relatedRaw.map(toSFProduct);
+  const paired = pairedRaw.map(toSFProduct);
   const catLabel = CAT_LABEL[p.category] ?? p.category;
 
   return (
@@ -43,7 +50,7 @@ export default async function ProductPage({ params }: { params: { slug: string }
         breadcrumbJsonLd([{ name: "Home", path: "/" }, { name: "Collection", path: "/shop/all" }, { name: catLabel, path: `/shop/${p.category}` }, { name: p.name, path: `/products/${p.slug}` }])
       ) }} />
       <Breadcrumb items={[{ name: "Home", path: "/" }, { name: "Collection", path: "/shop/all" }, { name: catLabel, path: `/shop/${p.category}` }, { name: p.name, path: `/products/${p.slug}` }]} />
-      <Product product={product} related={related} defaultDeliveryNotes={settings.defaultDeliveryNotes} />
+      <Product product={product} related={related} paired={paired} defaultDeliveryNotes={settings.defaultDeliveryNotes} />
     </>
   );
 }
