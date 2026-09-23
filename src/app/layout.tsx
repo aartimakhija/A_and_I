@@ -1,6 +1,26 @@
+import "./globals.css";
+import { Bodoni_Moda, Manrope } from "next/font/google";
 import { organizationJsonLd, websiteJsonLd } from "@/lib/seo";
 import { getSiteSettings } from "@/lib/settings";
 import Script from "next/script";
+
+// Self-hosted brand fonts for the re-skinned design (A&I "Ink, Marigold, Raw
+// Ivory" system — see app/globals.css). next/font downloads + subsets these
+// at build time and serves them from our own domain, so there's no external
+// request to Google Fonts and no font-related layout shift.
+const bodoniModa = Bodoni_Moda({
+  subsets: ["latin"],
+  weight: ["400", "500", "600"],
+  style: ["normal", "italic"],
+  variable: "--font-display-src",
+  display: "swap",
+});
+const manrope = Manrope({
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700"],
+  variable: "--font-sans-src",
+  display: "swap",
+});
 
 // This layout now reads SiteSettings from the database for metadata/GA4/
 // favicon — which means it can never be safely prerendered at build time
@@ -33,8 +53,8 @@ export async function generateMetadata() {
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const s = await getSiteSettings();
   return (
-    <html lang="en">
-      <body style={{ margin: 0, fontFamily: "system-ui, sans-serif" }}>
+    <html lang="en" className={`${bodoniModa.variable} ${manrope.variable}`}>
+      <body>
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd()) }} />
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd()) }} />
         {s.gaMeasurementId && (
