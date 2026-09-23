@@ -1,2 +1,7 @@
 node_modules
 public/uploads/products/1784839753011-lavender-lies-0.jpg
+.env
+.env.local
+.env*.local
+.DS_Store
+**/.DS_Store
