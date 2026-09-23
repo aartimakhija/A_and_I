@@ -1,21 +1,23 @@
 "use client";
 import { useState, useMemo, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { T, SANS } from "./theme";
-import { Eyebrow, Title, TiltCard } from "./primitives";
-import { ProductCard } from "./ProductCard";
+import { ProductCard } from "@/components/site/ProductCard";
 import { getAvailability } from "@/lib/availability";
-import { useStore } from "./StoreContext";
 import type { SFProduct } from "@/lib/storefront-adapter";
 
 const SIZE_ORDER = ["XS", "S", "M", "L", "XL"];
 
+/** Storefront collection/PLP grid (re-skinned in the new design system).
+ * Same data contract and filter behaviour as before this port: category
+ * chips still route to /shop/[slug], colour/size/availability filters and
+ * the grid-density toggle are all unchanged — only the visual language
+ * moved from inline styles onto the new Tailwind tokens. */
 export function Collection({ products, category, categories }: {
   products: SFProduct[]; category: string; categories: { slug: string; name: string }[];
 }) {
   const router = useRouter();
-  const { rm } = useStore();
   const filters = [{ slug: "all", name: "View All" }, ...categories];
+  const label = category === "all" ? "The Collection" : categories.find((c) => c.slug === category)?.name ?? category;
 
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [dense, setDense] = useState(false); // grid-view toggle: 3-col (default) vs 4-col (dense)
@@ -54,45 +56,48 @@ export function Collection({ products, category, categories }: {
   function clearAll() { setSelectedColors(new Set()); setSelectedSizes(new Set()); setAvailability(new Set()); }
   const activeCount = selectedColors.size + selectedSizes.size + availability.size;
 
-  const chipBtn = (active: boolean): React.CSSProperties => ({
-    fontFamily: SANS, fontSize: 9, letterSpacing: 3, textTransform: "uppercase", cursor: "pointer",
-    color: active ? T.ink : T.stone, background: active ? T.linen : "transparent",
-    border: `1px solid ${active ? T.ink : T.border}`, padding: "9px 18px", transition: "all 0.25s",
-  });
-  const checkboxRow: React.CSSProperties = { display: "flex", alignItems: "center", gap: 8, fontFamily: SANS, fontSize: 13, color: T.mid, padding: "5px 0", cursor: "pointer" };
+  const chip = (active: boolean) =>
+    `micro border px-4 py-2 transition-colors ${active ? "border-foreground bg-foreground text-background" : "border-border text-muted-foreground hover:border-foreground hover:text-foreground"}`;
+  const checkboxRow = "flex cursor-pointer items-center gap-2 py-1 text-sm text-foreground";
 
   return (
     <>
-      <header style={{ textAlign: "center", padding: "clamp(36px,5vw,64px) 24px clamp(20px,3vw,32px)" }}>
-        <Eyebrow>SS'26 — {products.length} pieces</Eyebrow>
-        <Title as="h1" size="clamp(28px,4vw,48px)">The <span style={{ fontStyle: "italic", color: T.gold }}>Collection</span></Title>
+      <header className="shell flex flex-col items-center gap-3 pb-8 pt-16 text-center md:pt-20">
+        <span className="eyebrow">SS&apos;26 — {products.length} pieces</span>
+        <h1 className="display-lg">
+          {category === "all" ? (
+            <>The <span className="gold-italic">Collection</span></>
+          ) : (
+            label
+          )}
+        </h1>
       </header>
-      <div style={{ display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap", padding: "0 24px 20px" }}>
+
+      <div className="shell flex flex-wrap justify-center gap-3 pb-5">
         {filters.map((f) => (
-          <button key={f.slug} onClick={() => router.push(`/shop/${f.slug}`)} style={chipBtn(category === f.slug)}>
+          <button key={f.slug} onClick={() => router.push(`/shop/${f.slug}`)} className={chip(category === f.slug)}>
             {f.name}
           </button>
         ))}
       </div>
 
-      <div style={{ display: "flex", justifyContent: "center", gap: 10, padding: "0 24px 24px" }}>
-        <button onClick={() => setFiltersOpen((o) => !o)} style={chipBtn(filtersOpen || activeCount > 0)}>
+      <div className="shell flex justify-center gap-2.5 pb-6">
+        <button onClick={() => setFiltersOpen((o) => !o)} className={chip(filtersOpen || activeCount > 0)}>
           Filters{activeCount > 0 ? ` (${activeCount})` : ""}
         </button>
-        <button onClick={() => setDense((d) => !d)} style={chipBtn(dense)} aria-label="Toggle grid density">
+        <button onClick={() => setDense((d) => !d)} className={chip(dense)} aria-label="Toggle grid density">
           {dense ? "Grid: Compact" : "Grid: Standard"}
         </button>
       </div>
 
       {filtersOpen && (
-        <div style={{ maxWidth: 900, margin: "0 auto", padding: "0 24px 28px" }}>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(160px,1fr))", gap: 24,
-            border: `1px solid ${T.border}`, padding: "20px 24px", background: T.card }}>
+        <div className="shell mx-auto mb-7 max-w-3xl">
+          <div className="grid grid-cols-2 gap-6 border border-border bg-card p-6 sm:grid-cols-3">
             {colorOptions.length > 0 && (
               <div>
-                <div style={{ fontFamily: SANS, fontSize: 10, letterSpacing: 1.5, textTransform: "uppercase", color: T.stone, marginBottom: 8 }}>Colour</div>
+                <div className="eyebrow-muted mb-2">Colour</div>
                 {colorOptions.map((c) => (
-                  <label key={c} style={checkboxRow}>
+                  <label key={c} className={checkboxRow}>
                     <input type="checkbox" checked={selectedColors.has(c)} onChange={() => toggleInSet(setSelectedColors, c)} />
                     {c}
                   </label>
@@ -101,9 +106,9 @@ export function Collection({ products, category, categories }: {
             )}
             {sizeOptions.length > 0 && (
               <div>
-                <div style={{ fontFamily: SANS, fontSize: 10, letterSpacing: 1.5, textTransform: "uppercase", color: T.stone, marginBottom: 8 }}>Size</div>
+                <div className="eyebrow-muted mb-2">Size</div>
                 {sizeOptions.map((s) => (
-                  <label key={s} style={checkboxRow}>
+                  <label key={s} className={checkboxRow}>
                     <input type="checkbox" checked={selectedSizes.has(s)} onChange={() => toggleInSet(setSelectedSizes, s)} />
                     {s}
                   </label>
@@ -111,35 +116,35 @@ export function Collection({ products, category, categories }: {
               </div>
             )}
             <div>
-              <div style={{ fontFamily: SANS, fontSize: 10, letterSpacing: 1.5, textTransform: "uppercase", color: T.stone, marginBottom: 8 }}>Availability</div>
-              {[["in", "Ready to ship"], ["out", "Sold out"]].map(([key, label]) => (
-                <label key={key} style={checkboxRow}>
+              <div className="eyebrow-muted mb-2">Availability</div>
+              {([["in", "Ready to ship"], ["out", "Sold out"]] as const).map(([key, txt]) => (
+                <label key={key} className={checkboxRow}>
                   <input type="checkbox" checked={availability.has(key)} onChange={() => toggleInSet(setAvailability, key)} />
-                  {label}
+                  {txt}
                 </label>
               ))}
             </div>
           </div>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: 14 }}>
-            <button onClick={clearAll} disabled={activeCount === 0}
-              style={{ background: "none", border: "none", fontFamily: SANS, fontSize: 11, letterSpacing: 1, textTransform: "uppercase",
-                color: activeCount === 0 ? T.border : T.stone, textDecoration: activeCount === 0 ? "none" : "underline", cursor: activeCount === 0 ? "default" : "pointer" }}>
+          <div className="mt-3 flex items-center justify-between">
+            <button
+              onClick={clearAll}
+              disabled={activeCount === 0}
+              className={`micro ${activeCount === 0 ? "cursor-default text-border" : "cursor-pointer text-muted-foreground underline hover:text-foreground"}`}
+            >
               Clear all
             </button>
-            <span style={{ fontFamily: SANS, fontSize: 11, color: T.stone }}>View products ({filtered.length})</span>
+            <span className="micro text-muted-foreground">View products ({filtered.length})</span>
           </div>
         </div>
       )}
 
-      <div style={{ display: "grid", gridTemplateColumns: `repeat(${dense ? 4 : 3},1fr)`, gap: dense ? 4 : 8, maxWidth: 1400, margin: "0 auto", padding: "0 clamp(12px,3vw,32px) clamp(64px,9vw,110px)" }} className="grid-catalogue">
+      <div className={`shell grid gap-4 pb-20 md:gap-6 md:pb-28 ${dense ? "grid-cols-2 md:grid-cols-4" : "grid-cols-2 md:grid-cols-3"}`}>
         {filtered.map((d) => (
-          <TiltCard rm={rm} key={d.id}>
-            <ProductCard product={d} />
-          </TiltCard>
+          <ProductCard key={d.id} product={d} />
         ))}
       </div>
       {filtered.length === 0 && (
-        <p style={{ textAlign: "center", color: T.stone, fontFamily: SANS, padding: "0 24px 80px" }}>
+        <p className="shell pb-20 text-center text-sm text-muted-foreground">
           {products.length === 0 ? "No pieces in this category yet." : "No pieces match these filters — try clearing one."}
         </p>
       )}
