@@ -1,11 +1,11 @@
 "use client";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { T, SANS, SERIF, peso } from "./theme";
-import { Photo, Eyebrow, Title, Btn } from "./primitives";
+import Image from "next/image";
 import { CField, CSelect } from "./CField";
 import { INDIA_STATE_NAMES, INDIA_STATES } from "@/lib/india-locations";
 import { useStore } from "./StoreContext";
+import { formatINR } from "@/lib/format";
 
 function loadRazorpayScript(): Promise<boolean> {
   return new Promise((resolve) => {
@@ -144,24 +144,21 @@ export function Checkout() {
     }
   };
 
-  const wrap: React.CSSProperties = { maxWidth: 1120, margin: "0 auto", padding: "clamp(40px,6vw,80px) clamp(20px,4vw,48px)" };
-
   if (placed) {
     return (
-      <section style={wrap}>
-        <div style={{ maxWidth: 520, margin: "0 auto", textAlign: "center", padding: "clamp(20px,5vw,50px) 0" }}>
-          <div style={{ width: 64, height: 64, borderRadius: "50%", margin: "0 auto 26px", border: `1px solid ${T.gold}`,
-            display: "flex", alignItems: "center", justifyContent: "center", color: T.gold, fontSize: 28 }}>✓</div>
-          <Eyebrow>Order confirmed</Eyebrow>
-          <Title size="clamp(30px,4.4vw,52px)">Thank you.</Title>
-          <p style={{ fontFamily: SANS, fontWeight: 300, color: T.mid, fontSize: 15, lineHeight: 1.7, marginTop: 18 }}>
-            Your pieces are being prepared with care. A confirmation is on its way to <strong style={{ color: T.ink, fontWeight: 400 }}>{f.email}</strong>.
+      <section className="shell py-16 md:py-24">
+        <div className="mx-auto max-w-lg py-8 text-center">
+          <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full border border-primary text-2xl text-primary">✓</div>
+          <span className="eyebrow">Order confirmed</span>
+          <h1 className="display-lg mt-2">Thank you.</h1>
+          <p className="mt-4 text-[15px] font-light leading-relaxed text-muted-foreground">
+            Your pieces are being prepared with care. A confirmation is on its way to <strong className="font-normal text-foreground">{f.email}</strong>.
           </p>
-          <div style={{ margin: "26px auto 0", padding: "16px 20px", maxWidth: 300, border: `1px solid ${T.border}`, background: T.card }}>
-            <span style={{ fontFamily: SANS, fontSize: 9, letterSpacing: 2, textTransform: "uppercase", color: T.stone }}>Order number</span>
-            <div style={{ fontFamily: SERIF, fontStyle: "italic", fontSize: 24, color: T.ink, marginTop: 4 }}>{orderNo}</div>
+          <div className="mx-auto mt-6 max-w-[300px] border border-border bg-card px-5 py-4">
+            <span className="eyebrow-muted">Order number</span>
+            <div className="mt-1 font-display text-2xl">{orderNo}</div>
           </div>
-          <div style={{ marginTop: 34 }}><Btn onClick={() => router.push("/shop/all")}>Continue shopping</Btn></div>
+          <div className="mt-8"><button onClick={() => router.push("/shop/all")} className="btn-outline-ink">Continue shopping</button></div>
         </div>
       </section>
     );
@@ -169,36 +166,35 @@ export function Checkout() {
 
   if (cart.length === 0) {
     return (
-      <section style={wrap}>
-        <div style={{ textAlign: "center", padding: "clamp(30px,7vw,80px) 0" }}>
-          <Eyebrow>Checkout</Eyebrow>
-          <Title size="clamp(28px,4vw,46px)">Your bag is empty.</Title>
-          <div style={{ marginTop: 26 }}><Btn onClick={() => router.push("/shop/all")}>Browse the collection</Btn></div>
+      <section className="shell py-16 md:py-24">
+        <div className="py-10 text-center">
+          <span className="eyebrow">Checkout</span>
+          <h1 className="display-md mt-2">Your bag is empty.</h1>
+          <div className="mt-6"><button onClick={() => router.push("/shop/all")} className="btn-outline-ink">Browse the collection</button></div>
         </div>
       </section>
     );
   }
 
-  const rowStyle = { display: "flex", gap: 14 };
   const groupTitle = (n: string, t: string) => (
-    <div style={{ display: "flex", alignItems: "baseline", gap: 10, margin: "0 0 16px" }}>
-      <span style={{ fontFamily: SERIF, fontStyle: "italic", color: T.gold, fontSize: 20 }}>{n}</span>
-      <span style={{ fontFamily: SANS, fontSize: 11, letterSpacing: 2.5, textTransform: "uppercase", color: T.ink }}>{t}</span>
+    <div className="mb-4 flex items-baseline gap-2.5">
+      <span className="gold-italic font-display text-xl">{n}</span>
+      <span className="micro">{t}</span>
     </div>
   );
 
   return (
-    <section style={wrap}>
-      <div style={{ textAlign: "center", marginBottom: "clamp(30px,4vw,52px)" }}>
-        <Eyebrow>Secure Checkout</Eyebrow>
-        <Title size="clamp(30px,4.4vw,54px)">Almost <span style={{ fontStyle: "italic", color: T.gold }}>yours.</span></Title>
+    <section className="shell py-10 md:py-16">
+      <div className="mb-10 text-center md:mb-14">
+        <span className="eyebrow">Secure Checkout</span>
+        <h1 className="display-lg mt-2">Almost <span className="gold-italic">yours.</span></h1>
       </div>
 
-      <div style={{ display: "grid", gridTemplateColumns: "1.4fr 1fr", gap: "clamp(28px,4vw,60px)", alignItems: "start" }} className="grid-2">
-        <div style={{ display: "flex", flexDirection: "column", gap: 34 }}>
+      <div className="grid items-start gap-8 md:grid-cols-[1.4fr_1fr] md:gap-14">
+        <div className="flex flex-col gap-8">
           <div>
             {groupTitle("01", "Contact")}
-            <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+            <div className="flex flex-col gap-3.5">
               <CField label="Email" value={f.email} onChange={set("email")} error={err.email} type="email" placeholder="you@email.com" />
               <CField label="Phone" value={f.phone} onChange={set("phone")} error={err.phone} inputMode="numeric" placeholder="10-digit mobile" />
             </div>
@@ -206,86 +202,85 @@ export function Checkout() {
 
           <div>
             {groupTitle("02", "Shipping address")}
-            <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+            <div className="flex flex-col gap-3.5">
               <CField label="Full name" value={f.name} onChange={set("name")} error={err.name} placeholder="First and last name" />
               <CField label="Address" value={f.address} onChange={set("address")} error={err.address} placeholder="House no., street, area" />
-              <div style={rowStyle} className="co-row">
-                <div style={{ flex: 1 }}><CSelect label="State" value={f.state} onChange={setState} error={err.state} options={INDIA_STATE_NAMES} /></div>
-                <div style={{ flex: 1 }}>
+              <div className="flex flex-col gap-3.5 sm:flex-row">
+                <div className="flex-1"><CSelect label="State" value={f.state} onChange={setState} error={err.state} options={INDIA_STATE_NAMES} /></div>
+                <div className="flex-1">
                   <CSelect label="City" value={f.city} onChange={setSelect("city")} error={err.city}
                     options={f.state ? (INDIA_STATES[f.state] ?? []) : []} disabled={!f.state}
                     placeholder={f.state ? "Select city…" : "Select a state first"} />
                 </div>
-                <div style={{ flex: 1 }}><CField label="PIN" value={f.pin} onChange={set("pin")} error={err.pin} inputMode="numeric" /></div>
+                <div className="flex-1"><CField label="PIN" value={f.pin} onChange={set("pin")} error={err.pin} inputMode="numeric" /></div>
               </div>
             </div>
           </div>
 
           <div>
             {groupTitle("03", "Payment")}
-            <p style={{ fontFamily: SANS, fontWeight: 300, fontSize: 13, lineHeight: 1.7, color: T.mid }}>
-              Card, UPI, and netbanking are handled securely inside Razorpay's payment window — we never see or store your card details.
+            <p className="text-[13px] font-light leading-relaxed text-muted-foreground">
+              Card, UPI, and netbanking are handled securely inside Razorpay&apos;s payment window — we never see or store your card details.
             </p>
-            {apiError && <div style={{ background: "#fdecea", color: "#B0503E", padding: 12, marginTop: 12, fontSize: 12 }}>{apiError}</div>}
+            {apiError && <div className="mt-3 bg-destructive/10 p-3 text-xs text-destructive">{apiError}</div>}
           </div>
         </div>
 
-        <div style={{ position: "sticky", top: 84 }} className="co-summary">
-          <div style={{ background: T.card, border: `1px solid ${T.border}`, padding: "clamp(22px,3vw,32px)" }}>
-            <span style={{ fontFamily: SANS, fontSize: 11, letterSpacing: 2.5, textTransform: "uppercase", color: T.ink }}>Order summary</span>
-            <div style={{ margin: "18px 0", display: "flex", flexDirection: "column", gap: 14 }}>
+        <div className="md:sticky md:top-20">
+          <div className="border border-border bg-card p-6 md:p-8">
+            <span className="micro">Order summary</span>
+            <div className="my-4.5 flex flex-col gap-3.5">
               {cart.map((item) => (
-                <div key={item.key} style={{ display: "flex", gap: 12, alignItems: "center" }}>
-                  <div style={{ width: 48, flexShrink: 0 }}><Photo images={item.images} color={item.color} ratio="3/4" /></div>
-                  <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ fontFamily: SERIF, fontStyle: "italic", fontSize: 15, color: T.ink, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{item.name}</div>
-                    <div style={{ fontFamily: SANS, fontSize: 10, letterSpacing: 1, color: T.stone }}>Size {item.size}{item.tier ? ` · ${item.tier}` : ""}</div>
+                <div key={item.key} className="flex items-center gap-3">
+                  <div className="relative aspect-3/4 w-12 shrink-0 overflow-hidden bg-secondary">
+                    {item.images[0] && <Image src={item.images[0]} alt={item.name} fill sizes="48px" className="object-cover" />}
                   </div>
-                  <div style={{ fontFamily: SANS, fontSize: 12, color: T.ink }}>{peso(item.price)}</div>
+                  <div className="min-w-0 flex-1">
+                    <div className="truncate text-sm">{item.name}</div>
+                    <div className="text-[10px] tracking-wide text-muted-foreground">Size {item.size}{item.tier ? ` · ${item.tier}` : ""}</div>
+                  </div>
+                  <div className="text-xs">{formatINR(item.price)}</div>
                 </div>
               ))}
             </div>
-            <div style={{ borderBottom: `1px solid ${T.border}`, paddingBottom: 14, marginBottom: 4 }}>
+            <div className="mb-1 border-b border-border pb-3.5">
               {promo ? (
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: 12, color: T.gold }}>
+                <div className="flex items-center justify-between text-xs text-primary">
                   <span>Code <strong>{promo.code}</strong> applied — {promo.percentOff}% off</span>
-                  <button onClick={() => { setPromo(null); setPromoInput(""); }} style={{ background: "none", border: "none", cursor: "pointer", color: T.stone, fontSize: 16, lineHeight: 1 }}>×</button>
+                  <button onClick={() => { setPromo(null); setPromoInput(""); }} className="text-base leading-none text-muted-foreground">×</button>
                 </div>
               ) : (
-                <div style={{ display: "flex", gap: 8 }}>
-                  <input value={promoInput} onChange={(e) => setPromoInput(e.target.value)} placeholder="Promo or referral code"
-                    style={{ flex: 1, padding: "9px 10px", border: `1px solid ${T.border}`, fontFamily: SANS, fontSize: 12, background: T.bg, color: T.ink, outline: "none" }} />
-                  <button onClick={applyPromo} disabled={checkingPromo} style={{ padding: "9px 14px", fontFamily: SANS, fontSize: 11, letterSpacing: 1,
-                    textTransform: "uppercase", border: `1px solid ${T.ink}`, background: "transparent", color: T.ink, cursor: "pointer" }}>
+                <div className="flex gap-2">
+                  <input value={promoInput} onChange={(e) => setPromoInput(e.target.value)} placeholder="Promo or referral code" className="field-line flex-1 border px-2.5 py-2 text-xs" />
+                  <button onClick={applyPromo} disabled={checkingPromo} className="btn-outline-ink px-3.5 py-2 text-[11px]">
                     {checkingPromo ? "…" : "Apply"}
                   </button>
                 </div>
               )}
-              {promoError && <div style={{ fontSize: 11, color: "#B0503E", marginTop: 6 }}>{promoError}</div>}
+              {promoError && <div className="mt-1.5 text-[11px] text-destructive">{promoError}</div>}
             </div>
-            <div style={{ borderTop: `1px solid ${T.border}`, paddingTop: 14, display: "flex", flexDirection: "column", gap: 9 }}>
-              <div style={{ display: "flex", justifyContent: "space-between", fontFamily: SANS, fontSize: 13, color: T.mid }}>
-                <span>Subtotal</span><span>{peso(subtotal)}</span>
+            <div className="flex flex-col gap-2.5 border-t border-border pt-3.5">
+              <div className="flex justify-between text-[13px] text-muted-foreground">
+                <span>Subtotal</span><span>{formatINR(subtotal)}</span>
               </div>
-              <div style={{ display: "flex", justifyContent: "space-between", fontFamily: SANS, fontSize: 13, color: T.mid }}>
-                <span>Shipping</span><span style={{ color: T.gold }}>{shippingCost === 0 ? "Complimentary" : peso(shippingCost)}</span>
+              <div className="flex justify-between text-[13px] text-muted-foreground">
+                <span>Shipping</span><span className="text-primary">{shippingCost === 0 ? "Complimentary" : formatINR(shippingCost)}</span>
               </div>
               {discount > 0 && (
-                <div style={{ display: "flex", justifyContent: "space-between", fontFamily: SANS, fontSize: 13, color: T.gold }}>
-                  <span>Discount ({promo?.percentOff}%)</span><span>−{peso(discount)}</span>
+                <div className="flex justify-between text-[13px] text-primary">
+                  <span>Discount ({promo?.percentOff}%)</span><span>−{formatINR(discount)}</span>
                 </div>
               )}
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginTop: 6 }}>
-                <span style={{ fontFamily: SANS, fontSize: 11, letterSpacing: 2, textTransform: "uppercase", color: T.ink }}>Total</span>
-                <span style={{ fontFamily: SERIF, fontSize: 26, color: T.ink }}>{peso(total)}</span>
+              <div className="mt-1.5 flex items-baseline justify-between">
+                <span className="micro">Total</span>
+                <span className="font-display text-2xl">{formatINR(total)}</span>
               </div>
-              <span style={{ fontFamily: SANS, fontSize: 10, color: T.stone, marginTop: 2 }}>Inclusive of all taxes</span>
+              <span className="text-[10px] text-muted-foreground">Inclusive of all taxes</span>
             </div>
-            <div style={{ marginTop: 22 }}>
-              <Btn full onClick={placeOrder}>{processing ? "Processing…" : `Pay ${peso(total)}`}</Btn>
+            <div className="mt-5">
+              <button onClick={placeOrder} className="btn-solid-gold w-full">{processing ? "Processing…" : `Pay ${formatINR(total)}`}</button>
             </div>
-            <button onClick={() => router.push("/shop/all")} style={{ width: "100%", marginTop: 12, background: "none", border: "none", cursor: "pointer",
-              fontFamily: SANS, fontSize: 10, letterSpacing: 2, textTransform: "uppercase", color: T.stone }}>Continue shopping</button>
+            <button onClick={() => router.push("/shop/all")} className="micro mt-3 w-full text-muted-foreground">Continue shopping</button>
           </div>
         </div>
       </div>

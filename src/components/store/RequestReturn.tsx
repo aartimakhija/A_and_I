@@ -17,21 +17,25 @@ export default function RequestReturn({ orderItemId, email }: { orderItemId: str
   const [done, setDone] = useState(false);
   const [busy, setBusy] = useState(false);
 
-  if (done) return <span style={{ fontSize: 12, color: "#666" }}>Return requested ✓</span>;
+  if (done) return <span className="text-xs text-muted-foreground">Return requested ✓</span>;
 
   if (!open) return (
-    <button onClick={() => setOpen(true)} style={{ background: "none", border: "none", cursor: "pointer", fontSize: 12, textDecoration: "underline" }}>
+    <button onClick={() => setOpen(true)} className="text-xs text-muted-foreground underline hover:text-foreground">
       Request return
     </button>
   );
 
   return (
-    <div style={{ marginTop: 8, padding: 12, border: "1px solid #eee", maxWidth: 320 }}>
-      <select value={reason} onChange={(e) => setReason(e.target.value)} style={{ width: "100%", padding: 8, marginBottom: 8 }}>
+    <div className="mt-2 max-w-xs border border-border p-3">
+      <select value={reason} onChange={(e) => setReason(e.target.value)} className="mb-2 w-full border border-border bg-background px-2 py-2 text-sm">
         {REASONS.map(([id, label]) => <option key={id} value={id}>{label}</option>)}
       </select>
-      <textarea value={note} onChange={(e) => setNote(e.target.value)} placeholder="Anything else we should know? (optional)"
-        style={{ width: "100%", padding: 8, minHeight: 60, marginBottom: 8 }} />
+      <textarea
+        value={note}
+        onChange={(e) => setNote(e.target.value)}
+        placeholder="Anything else we should know? (optional)"
+        className="mb-2 min-h-[60px] w-full border border-border bg-background px-2 py-2 text-sm"
+      />
       <button
         disabled={busy}
         onClick={async () => {
@@ -44,7 +48,7 @@ export default function RequestReturn({ orderItemId, email }: { orderItemId: str
           setBusy(false);
           if (res.ok) setDone(true);
         }}
-        style={{ padding: "8px 16px", background: "#0a0a0a", color: "#fff", border: 0, cursor: "pointer", fontSize: 12 }}
+        className="btn-outline-ink px-4 py-2 text-xs"
       >
         {busy ? "Submitting…" : "Submit request"}
       </button>

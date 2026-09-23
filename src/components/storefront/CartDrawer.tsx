@@ -1,8 +1,8 @@
 "use client";
 import { useRouter } from "next/navigation";
-import { T, SANS, SERIF, peso } from "./theme";
-import { Photo } from "./primitives";
+import Image from "next/image";
 import { useStore } from "./StoreContext";
+import { formatINR } from "@/lib/format";
 
 export function CartDrawer() {
   const router = useRouter();
@@ -13,57 +13,66 @@ export function CartDrawer() {
 
   return (
     <>
-      <div onClick={() => setCartOpen(false)} aria-hidden style={{ position: "fixed", inset: 0, zIndex: 60,
-        background: "rgba(13,12,11,0.5)", opacity: cartOpen ? 1 : 0, pointerEvents: cartOpen ? "auto" : "none", transition: "opacity 0.35s" }} />
-      <aside style={{ position: "fixed", top: 0, right: 0, bottom: 0, width: "min(420px,90vw)", zIndex: 61,
-        background: T.bg, borderLeft: `1px solid ${T.border}`, transform: cartOpen ? "translateX(0)" : "translateX(100%)",
-        transition: "transform 0.4s cubic-bezier(0.4,0.1,0.2,1)", display: "flex", flexDirection: "column" }}>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "22px 26px", borderBottom: `1px solid ${T.border}` }}>
-          <span style={{ fontFamily: SANS, fontSize: 11, letterSpacing: 3, textTransform: "uppercase", color: T.ink }}>Your bag ({cart.length})</span>
-          <button onClick={() => setCartOpen(false)} style={{ background: "none", border: "none", cursor: "pointer", fontSize: 24, color: T.stone, lineHeight: 1 }}>×</button>
+      <div
+        onClick={() => setCartOpen(false)}
+        aria-hidden
+        className={`fixed inset-0 z-[60] bg-black/50 transition-opacity duration-300 ${cartOpen ? "pointer-events-auto opacity-100" : "pointer-events-none opacity-0"}`}
+      />
+      <aside
+        className={`fixed inset-y-0 right-0 z-[61] flex w-[min(420px,90vw)] flex-col bg-background transition-transform duration-400 ${cartOpen ? "translate-x-0" : "translate-x-full"}`}
+        style={{ borderLeft: "1px solid var(--color-border)" }}
+      >
+        <div className="flex items-center justify-between border-b border-border px-6 py-5">
+          <span className="micro">Your bag ({cart.length})</span>
+          <button onClick={() => setCartOpen(false)} className="text-2xl leading-none text-muted-foreground">×</button>
         </div>
-        <div style={{ flex: 1, overflowY: "auto", padding: "8px 26px" }}>
+        <div className="flex-1 overflow-y-auto px-6 py-2">
           {cart.length === 0 ? (
-            <div style={{ textAlign: "center", padding: "60px 0", fontFamily: SANS, fontWeight: 300, color: T.stone, fontSize: 14 }}>
+            <div className="py-16 text-center text-sm font-light text-muted-foreground">
               Your bag is empty.<br />
-              <button onClick={() => { setCartOpen(false); router.push("/shop/all"); }} style={{ marginTop: 14, background: "none", border: "none", cursor: "pointer",
-                fontFamily: SANS, fontSize: 9, letterSpacing: 3, textTransform: "uppercase", color: T.ink, borderBottom: `1px solid ${T.ink}`, paddingBottom: 2 }}>Start shopping</button>
+              <button
+                onClick={() => { setCartOpen(false); router.push("/shop/all"); }}
+                className="micro mt-3.5 border-b border-foreground pb-0.5 text-foreground"
+              >
+                Start shopping
+              </button>
             </div>
           ) : (
             cart.map((item) => (
-              <div key={item.key} style={{ display: "flex", gap: 14, padding: "16px 0", borderBottom: `1px solid ${T.border}` }}>
-                <div style={{ width: 64, flexShrink: 0 }}><Photo images={item.images} color={item.color} ratio="3/4" /></div>
-                <div style={{ flex: 1 }}>
-                  <div style={{ fontFamily: SERIF, fontStyle: "italic", fontSize: 17, color: T.ink }}>{item.name}</div>
-                  <div style={{ fontFamily: SANS, fontSize: 10, letterSpacing: 1, color: T.stone, margin: "3px 0" }}>
-                    Size {item.size}{item.tier ? ` · ${item.tier}` : ""} · {peso(item.price)}
+              <div key={item.key} className="flex gap-3.5 border-b border-border py-4">
+                <div className="relative aspect-3/4 w-16 shrink-0 overflow-hidden bg-secondary">
+                  {item.images[0] && <Image src={item.images[0]} alt={item.name} fill sizes="64px" className="object-cover" />}
+                </div>
+                <div className="flex-1">
+                  <div className="text-base">{item.name}</div>
+                  <div className="my-1 text-[10px] tracking-wide text-muted-foreground">
+                    Size {item.size}{item.tier ? ` · ${item.tier}` : ""} · {formatINR(item.price)}
                   </div>
-                  <button onClick={() => removeFromCart(item.key)} style={{ background: "none", border: "none", cursor: "pointer",
-                    fontFamily: SANS, fontSize: 8, letterSpacing: 2, textTransform: "uppercase", color: T.stone, padding: 0 }}>Remove</button>
+                  <button onClick={() => removeFromCart(item.key)} className="text-[10px] uppercase tracking-wider text-muted-foreground hover:text-foreground">
+                    Remove
+                  </button>
                 </div>
               </div>
             ))
           )}
 
           {cart.length > 0 && recommendations.length > 0 && (
-            <div style={{ marginTop: 20, paddingTop: 18, borderTop: `1px solid ${T.border}` }}>
-              <div style={{ fontFamily: SANS, fontSize: 10, letterSpacing: 2, textTransform: "uppercase", color: T.stone, marginBottom: 12 }}>
-                We think you would like
-              </div>
-              <div style={{ display: "flex", gap: 12, overflowX: "auto", paddingBottom: 6 }}>
+            <div className="mt-5 border-t border-border pt-4.5">
+              <div className="eyebrow-muted mb-3">We think you would like</div>
+              <div className="flex gap-3 overflow-x-auto pb-1.5">
                 {recommendations.map((p) => {
                   const firstSize = p.variants.find((v) => v.stock > 0)?.size;
                   return (
-                    <div key={p.id} style={{ width: 96, flexShrink: 0 }}>
-                      <div onClick={() => { setCartOpen(false); router.push(`/products/${p.slug}`); }} style={{ cursor: "pointer" }}>
-                        <Photo images={p.images} color={p.color} ratio="3/4" />
-                        <div style={{ fontFamily: SERIF, fontStyle: "italic", fontSize: 12, color: T.ink, marginTop: 6, lineHeight: 1.2 }}>{p.name}</div>
-                        <div style={{ fontFamily: SANS, fontSize: 10, color: T.stone, marginTop: 2 }}>{peso(p.price)}</div>
-                      </div>
+                    <div key={p.id} className="w-24 shrink-0">
+                      <button onClick={() => { setCartOpen(false); router.push(`/products/${p.slug}`); }} className="block w-full text-left">
+                        <div className="relative aspect-3/4 w-full overflow-hidden bg-secondary">
+                          {p.images[0] && <Image src={p.images[0]} alt={p.name} fill sizes="96px" className="object-cover" />}
+                        </div>
+                        <div className="mt-1.5 text-xs leading-tight">{p.name}</div>
+                        <div className="mt-0.5 text-[10px] text-muted-foreground">{formatINR(p.price)}</div>
+                      </button>
                       {firstSize && (
-                        <button onClick={() => addToCart(p, firstSize)}
-                          style={{ marginTop: 6, width: "100%", padding: "6px 0", fontFamily: SANS, fontSize: 9, letterSpacing: 1,
-                            textTransform: "uppercase", border: `1px solid ${T.border}`, background: "none", color: T.ink, cursor: "pointer" }}>
+                        <button onClick={() => addToCart(p, firstSize)} className="mt-1.5 w-full border border-border py-1.5 text-[9px] uppercase tracking-wide hover:border-foreground">
                           + Add
                         </button>
                       )}
@@ -75,15 +84,13 @@ export function CartDrawer() {
           )}
         </div>
         {cart.length > 0 && (
-          <div style={{ padding: "20px 26px", borderTop: `1px solid ${T.border}` }}>
-            <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 16 }}>
-              <span style={{ fontFamily: SANS, fontSize: 11, letterSpacing: 2, textTransform: "uppercase", color: T.stone }}>Subtotal</span>
-              <span style={{ fontFamily: SERIF, fontSize: 22, color: T.ink }}>{peso(subtotal)}</span>
+          <div className="border-t border-border px-6 py-5">
+            <div className="mb-4 flex items-center justify-between">
+              <span className="eyebrow-muted">Subtotal</span>
+              <span className="font-display text-xl">{formatINR(subtotal)}</span>
             </div>
-            <button onClick={() => { setCartOpen(false); router.push("/checkout"); }}
-              className="btn" style={{ width: "100%", fontFamily: SANS, fontSize: 9, letterSpacing: 3, textTransform: "uppercase",
-                padding: "14px 34px", cursor: "pointer", border: `1px solid ${T.ink}`, background: T.ink, color: T.linenLt }}>
-              <span>Checkout</span>
+            <button onClick={() => { setCartOpen(false); router.push("/checkout"); }} className="btn-solid-gold w-full">
+              Checkout
             </button>
           </div>
         )}

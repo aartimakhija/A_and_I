@@ -1,15 +1,19 @@
 "use client";
 import { signIn } from "next-auth/react";
 import { useState } from "react";
+
 export default function Login() {
-  const [email, setEmail] = useState(""); const [password, setPassword] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   return (
-    <main style={{ maxWidth: 360, margin: "80px auto", fontFamily: "system-ui" }}>
-      <h1>Sign in</h1>
-      <input placeholder="email" value={email} onChange={(e) => setEmail(e.target.value)} style={{ width: "100%", padding: 12, margin: "8px 0" }} />
-      <input placeholder="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} style={{ width: "100%", padding: 12, margin: "8px 0" }} />
-      <button onClick={() => signIn("credentials", { email, password, callbackUrl: "/" })} style={{ width: "100%", padding: 12, background: "#0a0a0a", color: "#fff", border: 0 }}>Sign in</button>
-      <p style={{ fontSize: 12, color: "#878787" }}>Admin → /admin · Vendor → /vendor (scoped)</p>
+    <main className="shell flex min-h-[70vh] max-w-sm flex-col justify-center py-16">
+      <h1 className="display-md mb-6">Sign in</h1>
+      <input placeholder="Email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} className="field-line mb-3" />
+      <input placeholder="Password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} className="field-line mb-5" />
+      <button onClick={() => signIn("credentials", { email, password, callbackUrl: "/" })} className="btn-solid-gold w-full">
+        Sign in
+      </button>
+      <p className="mt-4 text-xs text-muted-foreground">Admin → /admin · Vendor → /vendor (scoped)</p>
     </main>
   );
 }
