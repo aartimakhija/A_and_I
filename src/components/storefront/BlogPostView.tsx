@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import Image from "next/image";
-import { ProductCard } from "./ProductCard";
+import { ProductCard } from "@/components/site/ProductCard";
 import type { SFProduct } from "@/lib/storefront-adapter";
 
 type Post = {
