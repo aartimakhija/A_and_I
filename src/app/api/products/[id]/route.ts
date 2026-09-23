@@ -22,10 +22,11 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
 
   const b = await req.json();
   const data: any = {};
-  for (const f of ["name", "story", "category", "colorHex", "colorName", "fabric", "basePrice", "discountPercent", "costPrice", "vendorCost", "status", "metaTitle", "metaDesc", "featured", "featuredOrder", "lookbookOrder", "preOrder", "features", "fitNotes", "careNotes", "deliveryNotes", "limitedEdition"]) {
+  for (const f of ["name", "story", "category", "colorHex", "colorName", "fabric", "basePrice", "discountPercent", "costPrice", "vendorCost", "status", "metaTitle", "metaDesc", "featured", "featuredOrder", "lookbookOrder", "preOrder", "features", "fitNotes", "careNotes", "deliveryNotes", "limitedEdition", "silhouette", "modelNote", "madeCount", "videoUrl"]) {
     if (b[f] !== undefined) data[f] = b[f];
   }
   if (Array.isArray(b.occasion)) data.occasion = b.occasion;
+  if (Array.isArray(b.pairWith)) data.pairWith = b.pairWith;
 
   const p = await prisma.product.update({ where: { id: params.id }, data });
 

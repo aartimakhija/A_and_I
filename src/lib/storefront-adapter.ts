@@ -16,6 +16,11 @@ export type SFProduct = {
   category: string;
   color: string;
   colorName: string | null;
+  silhouette: string | null;
+  modelNote: string | null;
+  madeCount: number | null;
+  pairWith: string[];
+  videoUrl: string | null;
   price: number; // rupees, for display — DB stores paise. This IS the real charged price.
   mrp: number | null; // rupees — derived "was" price, only present when discountPercent is set
   discountPercent: number | null;
@@ -31,6 +36,7 @@ type PrismaProductWithRelations = {
   features: string | null; fitNotes: string | null; careNotes: string | null; deliveryNotes: string | null; limitedEdition: boolean;
   category: string;
   colorHex: string; colorName: string | null; basePrice: number; discountPercent: number | null; status: string; preOrder: boolean;
+  silhouette: string | null; modelNote: string | null; madeCount: number | null; pairWith: string[]; videoUrl: string | null;
   images: { url: string; position: number }[];
   variants: { size: string; stock: number }[];
   tiers: { label: string; priceAdd: number; position: number }[];
@@ -49,6 +55,11 @@ export function toSFProduct(p: PrismaProductWithRelations): SFProduct {
     category: p.category,
     color: p.colorHex,
     colorName: p.colorName,
+    silhouette: p.silhouette,
+    modelNote: p.modelNote,
+    madeCount: p.madeCount,
+    pairWith: p.pairWith,
+    videoUrl: p.videoUrl,
     price, mrp, discountPercent,
     images: [...p.images].sort((a, b) => a.position - b.position).map((i) => i.url),
     variants: p.variants,

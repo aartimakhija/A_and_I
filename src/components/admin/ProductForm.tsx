@@ -15,6 +15,7 @@ type Props = {
     features: string | null; fitNotes: string | null; careNotes: string | null; deliveryNotes: string | null; limitedEdition: boolean;
     category: string;
     colorHex: string; colorName: string | null; basePrice: number; discountPercent: number | null; costPrice: number | null; vendorCost: number | null; status: string;
+    silhouette: string | null; modelNote: string | null; madeCount: number | null; pairWith: string[]; videoUrl: string | null;
     vendorId: string; images: ImageRow[]; featured: boolean; featuredOrder: number; lookbookOrder: number | null; preOrder: boolean;
     variants: { size: string; stock: number }[];
     tiers: { label: string; priceAdd: number }[];
@@ -37,6 +38,11 @@ export default function ProductForm({ vendors, categories, materials, isAdmin, p
   const [category, setCategory] = useState(product?.category ?? categories[0]?.slug ?? "");
   const [colorHex, setColorHex] = useState(product?.colorHex ?? "#8A7A6A");
   const [colorName, setColorName] = useState(product?.colorName ?? "");
+  const [silhouette, setSilhouette] = useState(product?.silhouette ?? "");
+  const [modelNote, setModelNote] = useState(product?.modelNote ?? "");
+  const [madeCount, setMadeCount] = useState(product?.madeCount?.toString() ?? "");
+  const [pairWith, setPairWith] = useState((product?.pairWith ?? []).join(", "));
+  const [videoUrl, setVideoUrl] = useState(product?.videoUrl ?? "");
   const [basePrice, setBasePrice] = useState(((product?.basePrice ?? 480000) / 100).toString());
   const [discountPercent, setDiscountPercent] = useState(product?.discountPercent?.toString() ?? "");
   const [costPrice, setCostPrice] = useState(product?.costPrice ? (product.costPrice / 100).toString() : "");
@@ -92,6 +98,10 @@ export default function ProductForm({ vendors, categories, materials, isAdmin, p
       name, slug: slug || name.toLowerCase().replace(/[^a-z0-9]+/g, "-"), story, category,
       features: features || null, fitNotes: fitNotes || null, careNotes: careNotes || null, deliveryNotes: deliveryNotes || null, limitedEdition,
       colorHex, colorName, basePrice: Math.round(parseFloat(basePrice || "0") * 100), status,
+      silhouette: silhouette || null, modelNote: modelNote || null,
+      madeCount: madeCount ? parseInt(madeCount, 10) : null,
+      pairWith: pairWith.split(",").map((s) => s.trim()).filter(Boolean),
+      videoUrl: videoUrl || null,
       discountPercent: discountPercent ? Math.min(99, Math.max(0, parseInt(discountPercent, 10))) : null,
       costPrice: costPrice ? Math.round(parseFloat(costPrice) * 100) : null,
       vendorCost: vendorCost ? Math.round(parseFloat(vendorCost) * 100) : null,
@@ -146,6 +156,26 @@ export default function ProductForm({ vendors, categories, materials, isAdmin, p
 
       <label style={label}>Delivery (optional — leave blank to use the sitewide default)</label>
       <textarea style={{ ...field, minHeight: 60 }} value={deliveryNotes} onChange={(e) => setDeliveryNotes(e.target.value)} />
+
+      <label style={label}>Silhouette (optional — one line, shown as a gallery caption)</label>
+      <input style={field} value={silhouette} onChange={(e) => setSilhouette(e.target.value)} placeholder="e.g. Fitted cropped bodice paired with a full handkerchief skirt" />
+
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+        <div>
+          <label style={label}>Model note (optional)</label>
+          <input style={field} value={modelNote} onChange={(e) => setModelNote(e.target.value)} placeholder={`e.g. Our model is 5'8" and wears a S/M.`} />
+        </div>
+        <div>
+          <label style={label}>Made count (optional)</label>
+          <input style={field} type="number" min={0} value={madeCount} onChange={(e) => setMadeCount(e.target.value)} placeholder="Units made in this limited run" />
+        </div>
+      </div>
+
+      <label style={label}>Pair with (optional — comma-separated product slugs shown as styling suggestions)</label>
+      <input style={field} value={pairWith} onChange={(e) => setPairWith(e.target.value)} placeholder="e.g. flirting-in-fuchsia, olive-temptation" />
+
+      <label style={label}>Video URL (optional — short product film, e.g. from your S3/R2 bucket)</label>
+      <input style={field} value={videoUrl} onChange={(e) => setVideoUrl(e.target.value)} placeholder="https://..." />
 
       <div style={{ display: "flex", alignItems: "center", gap: 10, marginTop: 16 }}>
         <input type="checkbox" id="limitedEdition" checked={limitedEdition} onChange={(e) => setLimitedEdition(e.target.checked)} />

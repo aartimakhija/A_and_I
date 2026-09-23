@@ -177,8 +177,13 @@ model Product {
   category    String                                   // ready | craft | linen
   occasion    String[]                                 // for multi-filter / SEO
   colorHex    String
-  colorName   String?
+  colorName   String?                                  // "colourway" as shown to customers, e.g. "Sharp Olive"
   fabric      String?
+  silhouette  String?                                  // one-line cut/shape description for the storefront gallery caption
+  modelNote   String?                                  // e.g. "Our model is 5'8\" and wears a S/M."
+  madeCount   Int?                                     // units made in this limited run, if disclosed
+  pairWith    String[]     @default([])                // slugs of products styled together on the PDP
+  videoUrl    String?                                  // optional short-form product film/video URL
   basePrice   Int                                      // paise — the selling price
   discountPercent Int?                                  // 0-99 — when set, a derived "was" price + %-off badge shows on the storefront
   costPrice   Int?                                     // paise — landed cost per unit, drives margin/profit reporting
