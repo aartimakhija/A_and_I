@@ -1,7 +1,6 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
-import { T, SANS, SERIF } from "./theme";
-import { Photo, Eyebrow, Title, Btn } from "./primitives";
+import Image from "next/image";
 import { useStore } from "./StoreContext";
 
 export function ExitPopup() {
@@ -27,26 +26,31 @@ export function ExitPopup() {
   }
 
   return (
-    <div style={{ position: "fixed", inset: 0, zIndex: 96, display: "flex", alignItems: "center", justifyContent: "center", padding: 20 }}>
-      <div onClick={() => setShow(false)} style={{ position: "absolute", inset: 0, background: "rgba(10,10,10,0.55)" }} />
-      <div style={{ position: "relative", background: T.bg, width: "min(460px,94vw)", display: "grid", gridTemplateColumns: "1fr 1fr" }} className="grid-2">
-        <div style={{ minHeight: 220 }}>
-          {feature && <Photo images={feature.images} color={feature.color} ratio="auto" fit="cover" style={{ height: "100%", aspectRatio: "auto" }} />}
+    <div className="fixed inset-0 z-[96] flex items-center justify-center p-5">
+      <div onClick={() => setShow(false)} className="absolute inset-0 bg-black/55" />
+      <div className="relative grid w-[min(460px,94vw)] grid-cols-2 bg-background">
+        <div className="relative min-h-[220px] bg-secondary">
+          {feature?.images[0] && <Image src={feature.images[0]} alt={feature.name} fill sizes="230px" className="object-cover" />}
         </div>
-        <div style={{ padding: "30px 26px", position: "relative" }}>
-          <button onClick={() => setShow(false)} style={{ position: "absolute", top: 12, right: 14, background: "none", border: "none", cursor: "pointer", fontSize: 22, color: T.stone }}>×</button>
-          <Eyebrow>Before you go</Eyebrow>
-          <Title size="26px" style={{ margin: "8px 0 10px" }}>Take <i>10% off</i></Title>
-          <p style={{ fontFamily: SANS, fontSize: 12.5, color: T.stone, lineHeight: 1.6, marginBottom: 16 }}>
-            Join the A&I Post for early access to the next drop — and a welcome code.
+        <div className="relative p-7">
+          <button onClick={() => setShow(false)} className="absolute right-3.5 top-3 text-xl text-muted-foreground">×</button>
+          <span className="eyebrow">Before you go</span>
+          <h3 className="display-md my-2 text-2xl">Take <span className="gold-italic">10% off</span></h3>
+          <p className="mb-4 text-xs leading-relaxed text-muted-foreground">
+            Join the A&amp;I Post for early access to the next drop — and a welcome code.
           </p>
           {done ? (
-            <p style={{ fontFamily: SERIF, fontStyle: "italic", fontSize: 18, color: T.ink }}>You're on the list ✓</p>
+            <p className="gold-italic font-display text-lg">You&apos;re on the list ✓</p>
           ) : (
             <>
-              <input value={email} onChange={(e) => setEmail(e.target.value)} placeholder="your@email.com" type="email"
-                style={{ width: "100%", padding: "12px 14px", border: `1px solid ${T.ink}`, marginBottom: 10, fontFamily: SANS, fontSize: 13, color: T.ink, outline: "none", background: T.card }} />
-              <Btn full onClick={claim}>Claim my code</Btn>
+              <input
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="your@email.com"
+                type="email"
+                className="mb-2.5 w-full border border-foreground bg-card px-3.5 py-3 text-sm text-foreground outline-none"
+              />
+              <button onClick={claim} className="btn-solid-gold w-full">Claim my code</button>
             </>
           )}
         </div>

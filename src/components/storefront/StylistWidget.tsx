@@ -1,7 +1,6 @@
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { T, SANS, SERIF, peso } from "./theme";
 import { OCCASIONS, VIBES } from "@/lib/stylist-static";
 import { useStore } from "./StoreContext";
 
@@ -31,37 +30,33 @@ export function StylistWidget() {
 
   function reset() { setOccasion(null); setVibe(null); setResult(null); }
 
-  const chip = (active: boolean): React.CSSProperties => ({
-    padding: "9px 14px", fontFamily: SANS, fontSize: 12, cursor: "pointer",
-    border: `1px solid ${active ? T.ink : T.border}`, background: active ? T.linen : T.card,
-    color: active ? T.ink : T.stone, textAlign: "left",
-  });
+  const chip = (active: boolean) =>
+    `border px-3.5 py-2.5 text-left text-sm ${active ? "border-foreground bg-secondary text-foreground" : "border-border bg-card text-muted-foreground hover:border-foreground"}`;
 
   return (
     <>
-      <button onClick={() => setStylistOpen(!stylistOpen)} aria-label="Style finder"
-        style={{ position: "fixed", bottom: 24, right: 24, zIndex: 70, width: 56, height: 56, borderRadius: "50%",
-          background: T.ink, color: T.gold, border: "none", cursor: "pointer", fontFamily: SERIF, fontStyle: "italic", fontSize: 22,
-          boxShadow: "0 8px 24px rgba(0,0,0,0.25)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+      <button
+        onClick={() => setStylistOpen(!stylistOpen)}
+        aria-label="Style finder"
+        className="fixed bottom-6 right-6 z-[70] flex h-14 w-14 items-center justify-center rounded-full bg-foreground font-display text-xl italic text-primary shadow-[0_8px_24px_rgba(0,0,0,0.25)]"
+      >
         {stylistOpen ? "×" : "✦"}
       </button>
 
       {stylistOpen && (
-        <div style={{ position: "fixed", bottom: 92, right: 24, zIndex: 70, width: "min(360px,88vw)", maxHeight: "72vh",
-          background: T.bg, border: `1px solid ${T.border}`, boxShadow: "0 20px 60px rgba(0,0,0,0.25)",
-          display: "flex", flexDirection: "column", overflow: "hidden" }}>
-          <div style={{ padding: "16px 18px", borderBottom: `1px solid ${T.border}`, background: T.ink }}>
-            <div style={{ fontFamily: SERIF, fontStyle: "italic", fontSize: 18, color: T.linenLt }}>Style finder</div>
-            <div style={{ fontFamily: SANS, fontSize: 11, color: "rgba(196,184,168,0.7)", marginTop: 2 }}>Pick an occasion and a vibe — we'll pull from the collection.</div>
+        <div className="fixed bottom-[92px] right-6 z-[70] flex max-h-[72vh] w-[min(360px,88vw)] flex-col overflow-hidden border border-border bg-background shadow-[0_20px_60px_rgba(0,0,0,0.25)]">
+          <div className="bg-foreground px-4.5 py-4 text-background">
+            <div className="font-display text-lg italic">Style finder</div>
+            <div className="mt-0.5 text-xs opacity-70">Pick an occasion and a vibe — we&apos;ll pull from the collection.</div>
           </div>
 
-          <div style={{ flex: 1, overflowY: "auto", padding: 18 }}>
+          <div className="flex-1 overflow-y-auto p-4.5">
             {!occasion && (
               <>
-                <div style={{ fontFamily: SANS, fontSize: 10, letterSpacing: 1.5, textTransform: "uppercase", color: T.stone, marginBottom: 8 }}>Occasion</div>
-                <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                <div className="eyebrow-muted mb-2">Occasion</div>
+                <div className="flex flex-col gap-1.5">
                   {OCCASIONS.map((o) => (
-                    <button key={o.id} onClick={() => setOccasion(o.id)} style={chip(false)}>{o.label}</button>
+                    <button key={o.id} onClick={() => setOccasion(o.id)} className={chip(false)}>{o.label}</button>
                   ))}
                 </div>
               </>
@@ -69,29 +64,31 @@ export function StylistWidget() {
 
             {occasion && !vibe && (
               <>
-                <button onClick={reset} style={{ background: "none", border: "none", cursor: "pointer", fontSize: 11, color: T.stone, marginBottom: 12 }}>← back</button>
-                <div style={{ fontFamily: SANS, fontSize: 10, letterSpacing: 1.5, textTransform: "uppercase", color: T.stone, marginBottom: 8 }}>Vibe</div>
-                <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                <button onClick={reset} className="mb-3 text-xs text-muted-foreground">← back</button>
+                <div className="eyebrow-muted mb-2">Vibe</div>
+                <div className="flex flex-col gap-1.5">
                   {VIBES.map((v) => (
-                    <button key={v.id} onClick={() => go(occasion, v.id)} style={chip(false)}>{v.label}</button>
+                    <button key={v.id} onClick={() => go(occasion, v.id)} className={chip(false)}>{v.label}</button>
                   ))}
                 </div>
               </>
             )}
 
-            {asking && <p style={{ fontFamily: SANS, fontSize: 13, color: T.stone }}>One moment…</p>}
+            {asking && <p className="text-sm text-muted-foreground">One moment…</p>}
 
             {result && !asking && (
               <div>
-                <button onClick={reset} style={{ background: "none", border: "none", cursor: "pointer", fontSize: 11, color: T.stone, marginBottom: 12 }}>← start over</button>
-                <p style={{ fontFamily: SANS, fontWeight: 300, fontSize: 13.5, lineHeight: 1.6, color: T.ink }}>{result.blurb}</p>
-                <div style={{ marginTop: 14, display: "flex", flexDirection: "column", gap: 8 }}>
+                <button onClick={reset} className="mb-3 text-xs text-muted-foreground">← start over</button>
+                <p className="text-[13.5px] font-light leading-relaxed text-foreground">{result.blurb}</p>
+                <div className="mt-3.5 flex flex-col gap-2">
                   {result.picks.map((p) => (
-                    <button key={p.id} onClick={() => { setStylistOpen(false); router.push(`/products/${p.slug}`); }}
-                      style={{ display: "flex", alignItems: "center", gap: 10, textAlign: "left", padding: "8px 10px",
-                        border: "none", background: T.card, cursor: "pointer" }}>
-                      <span style={{ width: 28, height: 34, flexShrink: 0, background: `linear-gradient(155deg, ${p.colorHex}55, ${p.colorHex}22)` }} />
-                      <span style={{ fontFamily: SERIF, fontStyle: "italic", fontSize: 14, color: T.ink }}>{p.name}</span>
+                    <button
+                      key={p.id}
+                      onClick={() => { setStylistOpen(false); router.push(`/products/${p.slug}`); }}
+                      className="flex items-center gap-2.5 bg-card px-2.5 py-2 text-left"
+                    >
+                      <span className="h-8.5 w-7 shrink-0" style={{ background: `linear-gradient(155deg, ${p.colorHex}55, ${p.colorHex}22)` }} />
+                      <span className="font-display text-sm italic">{p.name}</span>
                     </button>
                   ))}
                 </div>
