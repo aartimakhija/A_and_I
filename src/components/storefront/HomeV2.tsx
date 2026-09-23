@@ -1,65 +1,52 @@
 import type { SFProduct } from "@/lib/storefront-adapter";
 import { ArrivalHero } from "@/components/site/ArrivalHero";
 import { Marquee } from "@/components/site/Marquee";
-import { ProductCard } from "@/components/site/ProductCard";
 import { PointOfView } from "@/components/site/PointOfView";
 import { CollectionSection, type CollectionCard } from "@/components/site/CollectionSection";
-import { NewsletterForm } from "@/components/site/NewsletterForm";
-import Link from "next/link";
+import { HomeFlow } from "@/components/site/HomeFlow";
 
 const MARQUEE_WORDS = ["Indian craft", "Global silhouette", "Hand-finished", "Made to be seen", "Small runs, made well"];
 
-/** Re-skinned homepage (new "Ink, Marigold, Raw Ivory" design). Renders inside
- * the existing StoreShell (nav/footer/cart untouched for now — see the
- * migration plan's Phase 5). Data-driven: no hard-coded catalogue content. */
+type MovementPiece = { slug: string; name: string; imageUrl?: string | null; videoUrl?: string | null };
+
+/**
+ * Homepage flow — ported 1:1 from Lovable's index.tsx + HomeFlow.tsx:
+ * ArrivalHero (01) → Marquee → PointOfView (02) → CollectionSection (03) →
+ * HomeFlow (04–12, closes with the newsletter + Instagram line). Every
+ * section is data-driven from the live catalogue, so this stays correct as
+ * products change instead of pointing at hard-coded slugs.
+ */
 export function HomeV2({
-  featured,
-  philosophyPiece,
-  collections,
   heroImageUrl,
+  heroVideoUrl,
+  movementPiece,
+  philosophyPiece,
+  featuredProduct,
+  curatedProducts,
+  collections,
 }: {
-  featured: SFProduct[];
-  philosophyPiece: SFProduct | null;
-  collections: CollectionCard[];
   heroImageUrl?: string | null;
+  heroVideoUrl?: string | null;
+  movementPiece?: MovementPiece | null;
+  philosophyPiece: SFProduct | null;
+  featuredProduct: SFProduct | null;
+  curatedProducts: SFProduct[];
+  collections: CollectionCard[];
 }) {
   return (
     <>
-      <ArrivalHero imageUrl={heroImageUrl || featured[0]?.images[0]} />
+      <ArrivalHero imageUrl={heroImageUrl} videoUrl={heroVideoUrl} movementPiece={movementPiece} />
       <Marquee items={MARQUEE_WORDS} />
 
-      {featured.length > 0 && (
-        <section className="shell py-16 md:py-24">
-          <div className="mb-10 flex flex-wrap items-end justify-between gap-4">
-            <div>
-              <span className="eyebrow">Hand-picked</span>
-              <h2 className="display-md mt-2">
-                <span className="gold-italic">Pieces</span> that introduce themselves
-              </h2>
-            </div>
-            <Link href="/shop/all" className="micro link-underline text-muted-foreground">
-              View all
-            </Link>
-          </div>
-          <div className="grid grid-cols-2 gap-4 md:grid-cols-4 md:gap-6">
-            {featured.map((p) => (
-              <ProductCard key={p.id} product={p} />
-            ))}
-          </div>
-        </section>
-      )}
+      <PointOfView images={philosophyPiece?.images.slice(0, 4) ?? []} />
 
-      <PointOfView imageUrl={philosophyPiece?.images[0]} imageAlt={philosophyPiece?.name} />
+      <CollectionSection
+        featuredProduct={featuredProduct}
+        curatedProducts={curatedProducts}
+        worldTiles={collections}
+      />
 
-      <CollectionSection collections={collections} />
-
-      <section className="shell flex flex-col items-center gap-4 border-t border-border py-16 text-center md:py-20">
-        <span className="eyebrow">Stay close</span>
-        <h2 className="display-md max-w-md">First look at every new drop.</h2>
-        <div className="mt-2">
-          <NewsletterForm source="homepage" />
-        </div>
-      </section>
+      <HomeFlow />
     </>
   );
 }

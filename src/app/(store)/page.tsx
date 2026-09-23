@@ -31,11 +31,35 @@ export default async function HomePage() {
 
   const philosophyPiece = all.find((p) => p.category === "linen") ?? all[4] ?? null;
 
+  // The Collection section (Lovable-style: one featured piece + six curated
+  // cards). Reuses "featured" for the hero piece and fills the six from the
+  // rest of the live catalogue, avoiding repeats.
+  const featuredPiece = featured[0] ?? all[0] ?? null;
+  const curatedSix = all.filter((p) => p.id !== featuredPiece?.id).slice(0, 6);
+
+  // "Now in movement" hero card: a second piece, preferring one with a video.
+  const movementCandidate = all.find((p) => p.id !== featuredPiece?.id && p.videoUrl) ?? all.find((p) => p.id !== featuredPiece?.id) ?? null;
+
   const collections: CollectionCard[] = categories.map((c) => ({
     slug: c.slug,
     name: c.name,
     imageUrl: c.coverImageUrl ?? all.find((p) => p.category === c.slug)?.images[0] ?? null,
+    blurb: `Pieces from the ${c.name} edit.`,
   }));
 
-  return <HomeV2 featured={featured} philosophyPiece={philosophyPiece} collections={collections} heroImageUrl={settings.heroImageUrl} />;
+  return (
+    <HomeV2
+      heroVideoUrl={featuredPiece?.videoUrl ?? null}
+      heroImageUrl={settings.heroImageUrl ?? featuredPiece?.images[0] ?? null}
+      movementPiece={
+        movementCandidate
+          ? { slug: movementCandidate.slug, name: movementCandidate.name, imageUrl: movementCandidate.images[0] ?? null, videoUrl: movementCandidate.videoUrl }
+          : null
+      }
+      philosophyPiece={philosophyPiece}
+      featuredProduct={featuredPiece}
+      curatedProducts={curatedSix}
+      collections={collections}
+    />
+  );
 }
