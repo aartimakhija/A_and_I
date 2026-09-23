@@ -629,6 +629,15 @@ model QualityCheck {
   createdAt   DateTime          @default(now())
 }
 
+// General newsletter/email-list signups (footer, homepage) -- distinct from
+// NotifyRequest, which is a per-product back-in-stock waitlist.
+model NewsletterSubscriber {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  source    String?                                    // where they signed up, e.g. "homepage", "footer"
+  createdAt DateTime @default(now())
+}
+
 model SiteSettings {
   id                     String   @id @default("singleton")
   siteName               String   @default("A&I")

@@ -1,8 +1,10 @@
 import { prisma } from "@/lib/prisma";
 import { toSFProduct, PRODUCT_INCLUDE } from "@/lib/storefront-adapter";
-import { Home } from "@/components/storefront/Home";
+import { HomeV2 } from "@/components/storefront/HomeV2";
 import { pageMetadata } from "@/lib/seo";
 import { getSiteSettings } from "@/lib/settings";
+import { getCategories } from "@/lib/categories";
+import type { CollectionCard } from "@/components/site/CollectionSection";
 
 export const metadata = pageMetadata({
   title: "A&I — Style With Us",
@@ -11,9 +13,10 @@ export const metadata = pageMetadata({
 });
 
 export default async function HomePage() {
-  const [products, settings] = await Promise.all([
+  const [products, settings, categories] = await Promise.all([
     prisma.product.findMany({ where: { status: "ACTIVE" }, include: PRODUCT_INCLUDE, orderBy: { createdAt: "desc" }, take: 40 }),
     getSiteSettings(),
+    getCategories(),
   ]);
   const all = products.map(toSFProduct);
 
@@ -26,8 +29,13 @@ export default async function HomePage() {
     .map(toSFProduct);
   const featured = curatedFeatured.length > 0 ? curatedFeatured.slice(0, 4) : all.slice(0, 4);
 
-  const craft = all.filter((p) => p.category === "craft").slice(0, 3);
   const philosophyPiece = all.find((p) => p.category === "linen") ?? all[4] ?? null;
 
-  return <Home featured={featured} craft={craft.length ? craft : all.slice(0, 3)} philosophyPiece={philosophyPiece} allProducts={all} heroImageUrl={settings.heroImageUrl} />;
+  const collections: CollectionCard[] = categories.map((c) => ({
+    slug: c.slug,
+    name: c.name,
+    imageUrl: all.find((p) => p.category === c.slug)?.images[0] ?? null,
+  }));
+
+  return <HomeV2 featured={featured} philosophyPiece={philosophyPiece} collections={collections} heroImageUrl={settings.heroImageUrl} />;
 }
