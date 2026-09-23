@@ -1,4 +1,7 @@
 import Link from "next/link";
+import Image from "next/image";
+import { prisma } from "@/lib/prisma";
+import { toSFProduct, PRODUCT_INCLUDE } from "@/lib/storefront-adapter";
 import { pageMetadata } from "@/lib/seo";
 
 export const metadata = pageMetadata({
@@ -19,7 +22,9 @@ const kit = [
   { k: "For stylists", v: "Sample loans by arrangement, subject to availability of the run and return dates." },
 ];
 
-export default function PressPage() {
+export default async function PressPage() {
+  const pressProducts = await prisma.product.findMany({ where: { status: "ACTIVE" }, include: PRODUCT_INCLUDE, orderBy: { createdAt: "desc" }, take: 2 });
+  const images = pressProducts.map((p) => toSFProduct(p).images[0]).filter(Boolean) as string[];
   return (
     <>
       <section className="shell grid items-center gap-14 py-20 lg:grid-cols-2 lg:py-24">
@@ -42,7 +47,9 @@ export default function PressPage() {
             </Link>
           </div>
         </div>
-        <div className="aspect-4/5 w-full bg-secondary" aria-hidden="true" />
+        <div className="reveal card-zoom relative aspect-4/5 w-full bg-secondary">
+          {images[0] && <Image src={images[0]} alt="A piece from the current A&I collection" fill sizes="(max-width: 1024px) 100vw, 50vw" className="object-cover" />}
+        </div>
       </section>
 
       <section className="shell py-24">
@@ -80,7 +87,9 @@ export default function PressPage() {
               send the assets across.
             </p>
           </div>
-          <div className="aspect-4/5 w-full bg-paper-foreground/10" aria-hidden="true" />
+          <div className="reveal card-zoom relative aspect-4/5 w-full bg-paper-foreground/10">
+            {images[1] && <Image src={images[1]} alt="A piece from the current A&I collection" fill sizes="(max-width: 1024px) 100vw, 50vw" className="object-cover" />}
+          </div>
         </div>
       </section>
 

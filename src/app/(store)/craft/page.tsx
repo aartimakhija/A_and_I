@@ -1,4 +1,7 @@
 import Link from "next/link";
+import Image from "next/image";
+import { prisma } from "@/lib/prisma";
+import { toSFProduct, PRODUCT_INCLUDE } from "@/lib/storefront-adapter";
 import { pageMetadata } from "@/lib/seo";
 
 export const metadata = pageMetadata({
@@ -7,7 +10,7 @@ export const metadata = pageMetadata({
   path: "/craft",
 });
 
-const techniques = [
+const TECHNIQUES = [
   {
     name: "Bandhani",
     place: "India",
@@ -31,7 +34,15 @@ const techniques = [
   },
 ];
 
-export default function CraftPage() {
+export default async function CraftPage() {
+  const craftProducts = await prisma.product.findMany({
+    where: { status: "ACTIVE", category: "craft" },
+    include: PRODUCT_INCLUDE,
+    orderBy: { createdAt: "desc" },
+    take: 4,
+  });
+  const images = craftProducts.map((p) => toSFProduct(p).images[0]).filter(Boolean) as string[];
+
   return (
     <>
       <section className="shell py-20">
@@ -46,9 +57,13 @@ export default function CraftPage() {
       </section>
 
       <section className="shell space-y-20 pb-24">
-        {techniques.map((t, i) => (
-          <div key={t.name} className={`grid items-center gap-12 lg:grid-cols-2 ${i % 2 ? "lg:[&>*:first-child]:order-2" : ""}`}>
-            <div className="aspect-4/5 w-full bg-secondary" aria-hidden="true" />
+        {TECHNIQUES.map((t, i) => (
+          <div key={t.name} className={`reveal grid items-center gap-12 lg:grid-cols-2 ${i % 2 ? "lg:[&>*:first-child]:order-2" : ""}`}>
+            <div className="card-zoom relative aspect-4/5 w-full bg-secondary">
+              {images[i] && (
+                <Image src={images[i]} alt={`${t.name} craftwork, up close`} fill sizes="(max-width: 1024px) 100vw, 50vw" className="object-cover" />
+              )}
+            </div>
             <div>
               <p className="eyebrow">{t.place} · {t.hours}</p>
               <h2 className="display-lg mt-5">
@@ -70,8 +85,12 @@ export default function CraftPage() {
 
       <section className="bg-paper text-paper-foreground">
         <div className="shell grid items-center gap-14 py-24 lg:grid-cols-2">
-          <div className="aspect-4/5 w-full bg-paper-foreground/10" aria-hidden="true" />
-          <div>
+          <div className="reveal card-zoom relative aspect-4/5 w-full bg-paper-foreground/10">
+            {images[3] && (
+              <Image src={images[3]} alt="A finished A&I craft piece" fill sizes="(max-width: 1024px) 100vw, 50vw" className="object-cover" />
+            )}
+          </div>
+          <div className="reveal" style={{ transitionDelay: "80ms" }}>
             <h2 className="display-lg">
               Then it is <span className="italic text-accent">finished by hand.</span>
             </h2>

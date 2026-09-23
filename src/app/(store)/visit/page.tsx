@@ -1,3 +1,6 @@
+import Image from "next/image";
+import { prisma } from "@/lib/prisma";
+import { toSFProduct, PRODUCT_INCLUDE } from "@/lib/storefront-adapter";
 import { pageMetadata } from "@/lib/seo";
 import { VisitForm } from "./VisitForm";
 
@@ -20,7 +23,9 @@ const hour = [
   { n: "04", t: "Nothing signed", d: "You leave with notes and no obligation. If you decide later, the enquiry picks up exactly where the hour ended." },
 ];
 
-export default function VisitPage() {
+export default async function VisitPage() {
+  const studioProduct = await prisma.product.findFirst({ where: { status: "ACTIVE" }, include: PRODUCT_INCLUDE, orderBy: { createdAt: "desc" } });
+  const studioImage = studioProduct ? toSFProduct(studioProduct).images[0] : null;
   return (
     <>
       <section className="shell py-20">
@@ -35,8 +40,8 @@ export default function VisitPage() {
       </section>
 
       <section className="shell grid gap-10 pb-24 md:grid-cols-3">
-        {appointments.map((a) => (
-          <div key={a.t} className="h-full border border-border bg-card p-8">
+        {appointments.map((a, i) => (
+          <div key={a.t} className="reveal h-full border border-border bg-card p-8" style={{ transitionDelay: `${i * 80}ms` }}>
             <p className="eyebrow">{a.where}</p>
             <h2 className="display-md mt-4 text-xl">{a.t}</h2>
             <p className="mt-3 text-sm text-muted-foreground">{a.d}</p>
@@ -85,8 +90,10 @@ export default function VisitPage() {
 
       <section className="bg-paper text-paper-foreground">
         <div className="shell grid items-center gap-14 py-24 lg:grid-cols-2">
-          <div className="aspect-4/5 w-full bg-paper-foreground/10" aria-hidden="true" />
-          <div>
+          <div className="reveal card-zoom relative aspect-4/5 w-full bg-paper-foreground/10">
+            {studioImage && <Image src={studioImage} alt="A piece from the current A&I collection" fill sizes="(max-width: 1024px) 100vw, 50vw" className="object-cover" />}
+          </div>
+          <div className="reveal" style={{ transitionDelay: "80ms" }}>
             <h2 className="display-lg">
               Ask for <span className="italic text-accent">an hour.</span>
             </h2>

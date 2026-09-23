@@ -1,4 +1,7 @@
 import Link from "next/link";
+import Image from "next/image";
+import { prisma } from "@/lib/prisma";
+import { toSFProduct, PRODUCT_INCLUDE } from "@/lib/storefront-adapter";
 import { pageMetadata } from "@/lib/seo";
 
 export const metadata = pageMetadata({
@@ -26,7 +29,9 @@ const materials = [
   { t: "Hand embroidery", d: "Applied by hand onto finished panels. This is where the hours — and the price — actually go.", life: "Dry clean only · store folded in cotton" },
 ];
 
-export default function SustainabilityPage() {
+export default async function SustainabilityPage() {
+  const linenProduct = await prisma.product.findFirst({ where: { status: "ACTIVE", category: "linen" }, include: PRODUCT_INCLUDE, orderBy: { createdAt: "desc" } });
+  const linenImage = linenProduct ? toSFProduct(linenProduct).images[0] : null;
   return (
     <>
       <section className="shell py-20">
@@ -52,8 +57,10 @@ export default function SustainabilityPage() {
 
       <section className="bg-paper text-paper-foreground">
         <div className="shell grid items-center gap-14 py-24 lg:grid-cols-[1fr_1.1fr]">
-          <div className="aspect-4/5 w-full bg-paper-foreground/10" aria-hidden="true" />
-          <div>
+          <div className="reveal card-zoom relative aspect-4/5 w-full bg-paper-foreground/10">
+            {linenImage && <Image src={linenImage} alt="A natural-fibre piece from the A&I collection" fill sizes="(max-width: 1024px) 100vw, 50vw" className="object-cover" />}
+          </div>
+          <div className="reveal" style={{ transitionDelay: "80ms" }}>
             <h2 className="display-lg">
               What we <span className="italic text-accent">haven&apos;t fixed.</span>
             </h2>

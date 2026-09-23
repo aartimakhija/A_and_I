@@ -1,4 +1,7 @@
 import Link from "next/link";
+import Image from "next/image";
+import { prisma } from "@/lib/prisma";
+import { toSFProduct, PRODUCT_INCLUDE } from "@/lib/storefront-adapter";
 import { pageMetadata } from "@/lib/seo";
 
 export const metadata = pageMetadata({
@@ -34,7 +37,9 @@ const gates = [
   { k: "The atelier agrees", v: "The makers cost the hours honestly. If it cannot be made well in the time, the launch moves." },
 ];
 
-export default function FounderPage() {
+export default async function FounderPage() {
+  const studioProduct = await prisma.product.findFirst({ where: { status: "ACTIVE" }, include: PRODUCT_INCLUDE, orderBy: { createdAt: "desc" }, skip: 1 });
+  const studioImage = studioProduct ? toSFProduct(studioProduct).images[0] : null;
   return (
     <>
       <section className="shell py-20">
@@ -49,7 +54,7 @@ export default function FounderPage() {
       </section>
 
       <section className="shell pb-24">
-        <div className="grid items-center gap-12 lg:grid-cols-2">
+        <div className="reveal grid items-center gap-12 lg:grid-cols-2">
           <div className="aspect-square w-full bg-secondary" aria-hidden="true" />
           <div>
             <p className="eyebrow">Founder · design, craft and the calendar</p>
@@ -102,8 +107,10 @@ export default function FounderPage() {
 
       <section className="border-y border-border bg-card">
         <div className="shell grid gap-14 py-24 lg:grid-cols-[0.9fr_1.1fr]">
-          <div className="aspect-4/5 w-full bg-secondary" aria-hidden="true" />
-          <div>
+          <div className="reveal card-zoom relative aspect-4/5 w-full bg-secondary">
+            {studioImage && <Image src={studioImage} alt="A piece from the A&I studio" fill sizes="(max-width: 1024px) 100vw, 50vw" className="object-cover" />}
+          </div>
+          <div className="reveal" style={{ transitionDelay: "80ms" }}>
             <p className="eyebrow">How the work moves</p>
             <h2 className="display-lg mt-6">
               Four moves, <span className="gold-italic">in this order.</span>
