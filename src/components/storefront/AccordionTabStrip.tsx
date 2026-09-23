@@ -1,6 +1,5 @@
 "use client";
 import { useState } from "react";
-import { T, SANS } from "./theme";
 
 export function AccordionTabStrip({ tabs }: { tabs: { label: string; content: string }[] }) {
   const available = tabs.filter((t) => t.content && t.content.trim().length > 0);
@@ -8,18 +7,19 @@ export function AccordionTabStrip({ tabs }: { tabs: { label: string; content: st
   if (available.length === 0) return null;
 
   return (
-    <div style={{ marginTop: 28, maxWidth: 460 }}>
-      <div style={{ display: "flex", gap: 20, borderBottom: `1px solid ${T.border}` }}>
+    <div className="mt-7 max-w-md">
+      <div className="flex gap-5 border-b border-border">
         {available.map((t, i) => (
-          <button key={t.label} onClick={() => setActive(i)}
-            style={{ background: "none", border: "none", cursor: "pointer", padding: "0 0 10px", fontFamily: SANS,
-              fontSize: 11, letterSpacing: 1.5, textTransform: "uppercase", color: active === i ? T.ink : T.stone,
-              borderBottom: active === i ? `2px solid ${T.ink}` : "2px solid transparent", marginBottom: -1 }}>
+          <button
+            key={t.label}
+            onClick={() => setActive(i)}
+            className={`-mb-px micro border-b-2 pb-2.5 ${active === i ? "border-foreground text-foreground" : "border-transparent text-muted-foreground"}`}
+          >
             {t.label}
           </button>
         ))}
       </div>
-      <p style={{ fontFamily: SANS, fontWeight: 300, fontSize: 14, lineHeight: 1.8, color: T.mid, marginTop: 16, whiteSpace: "pre-wrap" }}>
+      <p className="mt-4 whitespace-pre-wrap text-sm font-light leading-relaxed text-muted-foreground">
         {available[active]?.content}
       </p>
     </div>

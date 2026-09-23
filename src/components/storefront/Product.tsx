@@ -1,24 +1,28 @@
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { T, SANS, SERIF, peso, CAT_LABEL, SIZES } from "./theme";
-import { Photo, Eyebrow, Title, Btn, TiltCard, PriceTag } from "./primitives";
+import Image from "next/image";
+import { SIZES } from "./theme";
 import { Lightbox } from "./Lightbox";
 import { SizeChartButton } from "./SizeChartButton";
 import { AccordionTabStrip } from "./AccordionTabStrip";
 import { useStore } from "./StoreContext";
 import { getAvailability } from "@/lib/availability";
+import { formatINR } from "@/lib/format";
+import { ProductCard } from "@/components/site/ProductCard";
 import type { SFProduct } from "@/lib/storefront-adapter";
+
+const CAT_LABEL: Record<string, string> = { ready: "Ready-to-Wear", craft: "Indian Craft", linen: "Linen" };
 
 export function Product({ product, related, defaultDeliveryNotes }: { product: SFProduct; related: SFProduct[]; defaultDeliveryNotes?: string | null }) {
   const router = useRouter();
-  const { rm, addToCart, saved, toggleSaved, styleProfile } = useStore();
+  const { addToCart, saved, toggleSaved, styleProfile } = useStore();
   const recommended = styleProfile?.recommendedSize;
   const recommendedInStock = recommended && product.variants.find((v) => v.size === recommended && v.stock > 0);
   const [size, setSize] = useState(recommendedInStock ? recommended! : product.variants.find((v) => v.stock > 0)?.size ?? SIZES[2]);
   const [tier, setTier] = useState(product.tiers[0]?.label);
+  const [activeImg, setActiveImg] = useState(0);
   const [lightbox, setLightbox] = useState(false);
-  const [lbIndex, setLbIndex] = useState(0);
   const [notifyEmail, setNotifyEmail] = useState("");
   const [notified, setNotified] = useState(false);
   const [reserveName, setReserveName] = useState("");
@@ -30,12 +34,12 @@ export function Product({ product, related, defaultDeliveryNotes }: { product: S
   const [reserveError, setReserveError] = useState("");
 
   const availability = getAvailability(product);
-  const totalStock = availability.totalStock;
   const soldOut = availability.status === "SOLD_OUT";
   const tierAdd = product.tiers.find((t) => t.label === tier)?.priceAdd ?? 0;
   const finalPrice = product.price + tierAdd;
   const isSaved = saved.includes(product.id);
   const sizeStock = (s: string) => product.variants.find((v) => v.size === s)?.stock ?? 0;
+  const catLabel = CAT_LABEL[product.category] ?? product.category;
 
   async function requestNotify() {
     if (!notifyEmail) return;
@@ -66,40 +70,80 @@ export function Product({ product, related, defaultDeliveryNotes }: { product: S
     }
   }
 
-
   return (
     <>
       {lightbox && (
-        <Lightbox imgs={product.images} index={lbIndex} setIndex={setLbIndex} onClose={() => setLightbox(false)} name={product.name} />
+        <Lightbox imgs={product.images} index={activeImg} setIndex={setActiveImg} onClose={() => setLightbox(false)} name={product.name} />
       )}
-      <div style={{ padding: "20px clamp(20px,4vw,48px) 0" }}>
-        <button onClick={() => router.push(`/shop/${product.category}`)} style={{ background: "none", border: "none", cursor: "pointer",
-          fontFamily: SANS, fontSize: 9, letterSpacing: 3, textTransform: "uppercase", color: T.stone }}>← Back to collection</button>
+
+      <div className="shell pt-5">
+        <button onClick={() => router.push(`/shop/${product.category}`)} className="micro text-muted-foreground hover:text-foreground">
+          ← Back to collection
+        </button>
       </div>
-      <section style={{ display: "grid", gridTemplateColumns: "1.1fr 1fr", gap: "clamp(24px,4vw,64px)",
-        maxWidth: 1320, margin: "0 auto", padding: "24px clamp(20px,4vw,48px) clamp(56px,8vw,96px)", alignItems: "start" }} className="pdp">
-        <div style={{ position: "sticky", top: 80, cursor: product.images.length ? "zoom-in" : "default" }} className="pdp-gallery"
-          onClick={() => product.images.length && (setLbIndex(0), setLightbox(true))}>
-          <Photo images={product.images} color={product.color} name={product.name} ratio="4/5" reveal showIndex />
+
+      <section className="shell grid items-start gap-8 py-6 pb-16 md:grid-cols-[1.1fr_1fr] md:gap-14 md:pb-24">
+        {/* Gallery: sticky main image + thumbnail rail, click to open lightbox */}
+        <div className="md:sticky md:top-24">
+          <button
+            type="button"
+            onClick={() => product.images.length && setLightbox(true)}
+            className="relative block aspect-4/5 w-full overflow-hidden bg-secondary"
+            style={!product.images.length ? { background: `linear-gradient(155deg, ${product.color}26 0%, var(--paper) 120%)` } : undefined}
+            aria-label="Open full-screen view"
+          >
+            {product.images[activeImg] && (
+              <Image src={product.images[activeImg]} alt={product.name} fill sizes="(max-width: 768px) 100vw, 55vw" className="object-cover" priority />
+            )}
+          </button>
+          {product.images.length > 1 && (
+            <div className="mt-3 flex gap-2 overflow-x-auto">
+              {product.images.map((src, i) => (
+                <button
+                  key={src + i}
+                  onClick={() => setActiveImg(i)}
+                  className={`relative aspect-4/5 w-16 shrink-0 overflow-hidden bg-secondary transition-opacity ${i === activeImg ? "opacity-100 ring-1 ring-foreground" : "opacity-60 hover:opacity-100"}`}
+                >
+                  <Image src={src} alt="" fill sizes="64px" className="object-cover" />
+                </button>
+              ))}
+            </div>
+          )}
         </div>
+
         <div>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
-            <Eyebrow>{CAT_LABEL[product.category] ?? product.category}</Eyebrow>
-            <button onClick={() => toggleSaved(product.id)} aria-label="Save to wishlist" style={{ background: "none", border: "none",
-              cursor: "pointer", fontSize: 20, color: isSaved ? T.gold : T.stone, lineHeight: 1 }}>{isSaved ? "♥" : "♡"}</button>
+          <div className="flex items-start justify-between">
+            <span className="eyebrow">{catLabel}</span>
+            <button onClick={() => toggleSaved(product.id)} aria-label="Save to wishlist" className={`text-xl leading-none ${isSaved ? "text-primary" : "text-muted-foreground"}`}>
+              {isSaved ? "♥" : "♡"}
+            </button>
           </div>
-          <h1 style={{ fontFamily: SERIF, fontWeight: 300, fontSize: "clamp(32px,4.5vw,54px)", lineHeight: 1.05, color: T.ink, margin: "10px 0" }}>{product.name}</h1>
-          <div style={{ marginBottom: 8 }}>
-            {finalPrice === product.price
-              ? <PriceTag price={product.price} mrp={product.mrp} discountPercent={product.discountPercent} size={16} />
-              : <span style={{ fontFamily: SANS, fontSize: 16, letterSpacing: 1, color: T.mid }}>{peso(finalPrice)}</span>}
+          <h1 className="display-lg my-2.5">{product.name}</h1>
+
+          <div className="mb-2">
+            {finalPrice === product.price ? (
+              product.mrp && product.discountPercent ? (
+                <span className="inline-flex flex-wrap items-baseline gap-2">
+                  <span className="text-sm text-muted-foreground line-through">{formatINR(product.mrp)}</span>
+                  <span className="text-base font-medium">{formatINR(product.price)}</span>
+                  <span className="text-xs font-semibold text-primary">{product.discountPercent}% off</span>
+                </span>
+              ) : (
+                <span className="text-base">{formatINR(product.price)}</span>
+              )
+            ) : (
+              <span className="text-base">{formatINR(finalPrice)}</span>
+            )}
           </div>
-          <div style={{ fontFamily: SANS, fontSize: 11, letterSpacing: 1, color: availability.status === "SOLD_OUT" ? "#B0503E" : T.gold, marginBottom: 24 }}>
+
+          <div className={`micro mb-6 ${availability.status === "SOLD_OUT" ? "text-destructive" : "text-primary"}`}>
             {availability.status === "PRE_ORDER" ? "Pre-order — made once enough of you reserve" : availability.status === "SOLD_OUT" ? "Sold out — join the waitlist" : availability.label}
           </div>
-          <p style={{ fontFamily: SANS, fontSize: 12.5, color: T.stone, marginBottom: 20 }}>
+
+          <p className="mb-5 text-xs text-muted-foreground">
             Dispatched in 3–5 days · Free shipping over ₹5,000 · Returns within 7 days
           </p>
+
           <AccordionTabStrip tabs={[
             { label: "Description", content: product.story ?? "" },
             { label: "Features", content: product.features ?? "" },
@@ -110,23 +154,33 @@ export function Product({ product, related, defaultDeliveryNotes }: { product: S
 
           {(!soldOut || product.preOrder) && (
             <>
-              <div style={{ margin: "30px 0 8px", display: "flex", alignItems: "baseline", gap: 8, flexWrap: "wrap" }}>
-                <Eyebrow>Size</Eyebrow>
+              <div className="mb-2 mt-8 flex flex-wrap items-baseline gap-2">
+                <span className="eyebrow">Size</span>
                 {recommended && (
-                  <span style={{ fontFamily: SANS, fontSize: 11, color: T.gold }}>
-                    · we'd suggest {recommended} <a href="/fit-quiz" style={{ color: T.stone, textDecoration: "underline" }}>(retake quiz)</a>
+                  <span className="text-xs text-primary">
+                    · we&apos;d suggest {recommended}{" "}
+                    <a href="/fit-quiz" className="text-muted-foreground underline">(retake quiz)</a>
                   </span>
                 )}
-                <span style={{ marginLeft: "auto" }}><SizeChartButton category={product.category} /></span>
+                <span className="ml-auto"><SizeChartButton category={product.category} /></span>
               </div>
-              <div style={{ display: "flex", gap: 10 }}>
+              <div className="flex gap-2.5">
                 {SIZES.map((s) => {
                   const stock = sizeStock(s);
+                  const disabled = stock === 0 && !product.preOrder;
                   return (
-                    <button key={s} disabled={stock === 0 && !product.preOrder} onClick={() => setSize(s)}
-                      style={{ width: 46, height: 46, cursor: stock === 0 ? "not-allowed" : "pointer", fontFamily: SANS, fontSize: 11, letterSpacing: 1,
-                        color: stock === 0 ? T.border : size === s ? T.linenLt : T.ink, background: size === s ? T.ink : "transparent",
-                        border: `1px solid ${size === s ? T.ink : T.border}`, transition: "all 0.2s", textDecoration: stock === 0 ? "line-through" : "none" }}>{s}</button>
+                    <button
+                      key={s}
+                      disabled={disabled}
+                      onClick={() => setSize(s)}
+                      className={`h-11 w-11 text-xs transition-colors ${
+                        disabled ? "cursor-not-allowed border border-border text-border line-through" :
+                        size === s ? "border border-foreground bg-foreground text-background" :
+                        "cursor-pointer border border-border text-foreground hover:border-foreground"
+                      }`}
+                    >
+                      {s}
+                    </button>
                   );
                 })}
               </div>
@@ -135,78 +189,73 @@ export function Product({ product, related, defaultDeliveryNotes }: { product: S
 
           {product.tiers.length > 0 && (!soldOut || product.preOrder) && (
             <>
-              <div style={{ margin: "24px 0 8px" }}><Eyebrow>Fabric</Eyebrow></div>
-              <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+              <div className="mb-2 mt-6"><span className="eyebrow">Fabric</span></div>
+              <div className="flex flex-col gap-2">
                 {product.tiers.map((t) => (
-                  <button key={t.label} onClick={() => setTier(t.label)} style={{ display: "flex", justifyContent: "space-between",
-                    padding: "10px 14px", cursor: "pointer", textAlign: "left", fontFamily: SANS, fontSize: 12,
-                    color: tier === t.label ? T.ink : T.stone, background: tier === t.label ? T.linen : "transparent",
-                    border: `1px solid ${tier === t.label ? T.ink : T.border}` }}>
-                    <span>{t.label}</span><span>{t.priceAdd > 0 ? `+${peso(t.priceAdd)}` : "Included"}</span>
+                  <button
+                    key={t.label}
+                    onClick={() => setTier(t.label)}
+                    className={`flex justify-between px-3.5 py-2.5 text-left text-xs transition-colors ${
+                      tier === t.label ? "border border-foreground bg-secondary text-foreground" : "border border-border text-muted-foreground hover:border-foreground"
+                    }`}
+                  >
+                    <span>{t.label}</span>
+                    <span>{t.priceAdd > 0 ? `+${formatINR(t.priceAdd)}` : "Included"}</span>
                   </button>
                 ))}
               </div>
             </>
           )}
 
-          <div style={{ marginTop: 32, maxWidth: 360 }}>
+          <div className="mt-8 max-w-sm">
             {product.preOrder ? (
               reserved ? (
                 <div>
-                  <p style={{ fontFamily: SERIF, fontStyle: "italic", fontSize: 16, color: T.ink }}>You're reserved ✓</p>
-                  <p style={{ fontFamily: SANS, fontSize: 12, color: T.stone, marginTop: 6 }}>
-                    We'll email you the moment it's made. Use code <strong style={{ color: T.gold }}>{reserved.discountCode}</strong> for an early-access discount at checkout.
+                  <p className="gold-italic font-display text-base">You&apos;re reserved ✓</p>
+                  <p className="mt-1.5 text-xs text-muted-foreground">
+                    We&apos;ll email you the moment it&apos;s made. Use code <strong className="text-primary">{reserved.discountCode}</strong> for an early-access discount at checkout.
                   </p>
                 </div>
               ) : (
                 <div>
-                  <div style={{ fontFamily: SANS, fontSize: 11, letterSpacing: 1, color: T.gold, marginBottom: 10 }}>Pre-order — not yet in production</div>
-                  {reserveError && <div style={{ background: "#fdecea", color: "#B0503E", padding: 10, marginBottom: 10, fontSize: 12 }}>{reserveError}</div>}
-                  <input value={reserveName} onChange={(e) => setReserveName(e.target.value)} placeholder="Your name"
-                    style={{ width: "100%", padding: "12px 14px", background: T.card, border: `1px solid ${T.border}`, fontFamily: SANS, fontSize: 13, color: T.ink, outline: "none", marginBottom: 8 }} />
-                  <input value={reserveEmail} onChange={(e) => setReserveEmail(e.target.value)} placeholder="your@email.com" type="email"
-                    style={{ width: "100%", padding: "12px 14px", background: T.card, border: `1px solid ${T.border}`, fontFamily: SANS, fontSize: 13, color: T.ink, outline: "none", marginBottom: 8 }} />
-                  <input value={reservePhone} onChange={(e) => setReservePhone(e.target.value)} placeholder="Phone (optional)"
-                    style={{ width: "100%", padding: "12px 14px", background: T.card, border: `1px solid ${T.border}`, fontFamily: SANS, fontSize: 13, color: T.ink, outline: "none", marginBottom: 8 }} />
-                  <input value={reserveLocation} onChange={(e) => setReserveLocation(e.target.value)} placeholder="City (optional)"
-                    style={{ width: "100%", padding: "12px 14px", background: T.card, border: `1px solid ${T.border}`, fontFamily: SANS, fontSize: 13, color: T.ink, outline: "none", marginBottom: 10 }} />
-                  <Btn full onClick={reserve}>{reserving ? "Reserving…" : `Reserve — Size ${size}`}</Btn>
-                  <p style={{ fontFamily: SANS, fontSize: 11, color: T.stone, marginTop: 8 }}>No payment now. We only go into production once enough of you commit — you'll get an early-access discount for reserving.</p>
+                  <div className="micro mb-2.5 text-primary">Pre-order — not yet in production</div>
+                  {reserveError && <div className="mb-2.5 bg-destructive/10 p-2.5 text-xs text-destructive">{reserveError}</div>}
+                  <input value={reserveName} onChange={(e) => setReserveName(e.target.value)} placeholder="Your name" className="field-line mb-2" />
+                  <input value={reserveEmail} onChange={(e) => setReserveEmail(e.target.value)} placeholder="your@email.com" type="email" className="field-line mb-2" />
+                  <input value={reservePhone} onChange={(e) => setReservePhone(e.target.value)} placeholder="Phone (optional)" className="field-line mb-2" />
+                  <input value={reserveLocation} onChange={(e) => setReserveLocation(e.target.value)} placeholder="City (optional)" className="field-line mb-3" />
+                  <button onClick={reserve} className="btn-solid-gold w-full">{reserving ? "Reserving…" : `Reserve — Size ${size}`}</button>
+                  <p className="mt-2 text-xs text-muted-foreground">No payment now. We only go into production once enough of you commit — you&apos;ll get an early-access discount for reserving.</p>
                 </div>
               )
             ) : soldOut ? (
               notified ? (
-                <p style={{ fontFamily: SERIF, fontStyle: "italic", fontSize: 16, color: T.ink }}>We'll email you when it's back ✓</p>
+                <p className="gold-italic font-display text-base">We&apos;ll email you when it&apos;s back ✓</p>
               ) : (
-                <div style={{ display: "flex", gap: 8 }}>
-                  <input value={notifyEmail} onChange={(e) => setNotifyEmail(e.target.value)} placeholder="your@email.com" type="email"
-                    style={{ flex: 1, padding: "12px 14px", background: T.card, border: `1px solid ${T.border}`, fontFamily: SANS, fontSize: 13, color: T.ink, outline: "none" }} />
-                  <Btn onClick={requestNotify}>Notify me</Btn>
+                <div className="flex gap-2">
+                  <input value={notifyEmail} onChange={(e) => setNotifyEmail(e.target.value)} placeholder="your@email.com" type="email" className="field-line flex-1" />
+                  <button onClick={requestNotify} className="btn-outline-ink shrink-0">Notify me</button>
                 </div>
               )
             ) : (
-              <Btn full onClick={() => addToCart(product, size, tier)}>Add to bag — {peso(finalPrice)}</Btn>
+              <button onClick={() => addToCart(product, size, tier)} className="btn-solid-gold w-full">
+                Add to bag — {formatINR(finalPrice)}
+              </button>
             )}
           </div>
-
         </div>
       </section>
 
       {related.length > 0 && (
-        <section style={{ background: T.card, padding: "clamp(48px,7vw,90px) clamp(20px,4vw,48px)" }}>
-          <div style={{ maxWidth: 1320, margin: "0 auto" }}>
-            <div style={{ marginBottom: 32 }}><Eyebrow>Complete the look</Eyebrow><Title size="clamp(24px,3.4vw,38px)">You may also <span style={{ fontStyle: "italic" }}>like</span></Title></div>
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 18 }} className="grid-4">
+        <section className="bg-card py-16 md:py-24">
+          <div className="shell">
+            <div className="mb-8">
+              <span className="eyebrow">Complete the look</span>
+              <h2 className="display-md mt-2">You may also <span className="gold-italic">like</span></h2>
+            </div>
+            <div className="grid grid-cols-2 gap-4 md:grid-cols-4 md:gap-6">
               {related.map((r) => (
-                <TiltCard rm={rm} key={r.id}>
-                  <div onClick={() => router.push(`/products/${r.slug}`)} style={{ cursor: "pointer", borderRadius: 12, overflow: "hidden", border: `1px solid ${T.border}` }}>
-                    <Photo images={r.images} color={r.color} name={r.name} />
-                    <div style={{ padding: "12px 14px" }}>
-                      <div style={{ fontFamily: SERIF, fontStyle: "italic", fontSize: 17, color: T.ink }}>{r.name}</div>
-                      <div style={{ fontFamily: SANS, fontSize: 11, color: T.stone, marginTop: 3 }}>{peso(r.price)}</div>
-                    </div>
-                  </div>
-                </TiltCard>
+                <ProductCard key={r.id} product={r} />
               ))}
             </div>
           </div>
@@ -215,14 +264,13 @@ export function Product({ product, related, defaultDeliveryNotes }: { product: S
 
       {/* Mobile-only sticky CTA — the primary action stays thumb-reachable
           regardless of scroll depth, mirroring whichever action is live above. */}
-      <div className="pdp-sticky-bar" style={{ display: "none", position: "fixed", bottom: 0, left: 0, right: 0, zIndex: 40,
-        background: T.bg, borderTop: `1px solid ${T.border}`, padding: "12px 16px", boxShadow: "0 -8px 24px rgba(0,0,0,0.08)" }}>
+      <div className="pdp-sticky-bar fixed inset-x-0 bottom-0 z-40 hidden border-t border-border bg-background p-4 shadow-[0_-8px_24px_rgba(0,0,0,0.08)]">
         {product.preOrder ? (
-          reserved ? null : <Btn full onClick={reserve}>{reserving ? "Reserving…" : `Reserve — Size ${size}`}</Btn>
+          reserved ? null : <button onClick={reserve} className="btn-solid-gold w-full">{reserving ? "Reserving…" : `Reserve — Size ${size}`}</button>
         ) : soldOut ? (
-          notified ? null : <Btn full onClick={requestNotify}>Notify me</Btn>
+          notified ? null : <button onClick={requestNotify} className="btn-solid-gold w-full">Notify me</button>
         ) : (
-          <Btn full onClick={() => addToCart(product, size, tier)}>Add to bag — {peso(finalPrice)}</Btn>
+          <button onClick={() => addToCart(product, size, tier)} className="btn-solid-gold w-full">Add to bag — {formatINR(finalPrice)}</button>
         )}
       </div>
     </>
