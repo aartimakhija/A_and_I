@@ -1,4 +1,5 @@
 "use client";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import type { SFProduct } from "@/lib/storefront-adapter";
@@ -16,10 +17,23 @@ const PROCESS = [
   { n: "04", h: "Delivered, and remembered", b: "Every piece ships with its own digital passport: the atelier, the material origin, the hands behind it." },
 ];
 
-export function About({ originPiece, processPieces, pieceCount, faqs }: {
-  originPiece: SFProduct | null; processPieces: SFProduct[]; pieceCount: number; faqs: { question: string; answer: string }[];
+function FaqRow({ question, answer, open, onToggle }: { question: string; answer: string; open: boolean; onToggle: () => void }) {
+  return (
+    <div className="border-b border-border">
+      <button type="button" onClick={onToggle} aria-expanded={open} className="flex w-full items-center justify-between gap-6 py-6 text-left">
+        <span className="font-display text-lg italic">{question}</span>
+        <span aria-hidden className={`text-2xl text-primary transition-transform duration-300 ${open ? "rotate-45" : ""}`}>+</span>
+      </button>
+      {open && <p className="max-w-2xl pb-7 text-sm font-light leading-relaxed text-muted-foreground">{answer}</p>}
+    </div>
+  );
+}
+
+export function About({ originPiece, processImage, processPieces, pieceCount, faqs }: {
+  originPiece: SFProduct | null; processImage: SFProduct | null; processPieces: SFProduct[]; pieceCount: number; faqs: { question: string; answer: string }[];
 }) {
   const router = useRouter();
+  const [openFaq, setOpenFaq] = useState<number | null>(0);
 
   return (
     <>
@@ -35,11 +49,11 @@ export function About({ originPiece, processPieces, pieceCount, faqs }: {
 
       <section className="shell grid items-center gap-8 py-14 md:grid-cols-[1fr_1.15fr] md:gap-16 md:py-24">
         {originPiece?.images[0] && (
-          <div className="relative aspect-4/5 overflow-hidden bg-secondary">
+          <div className="reveal card-zoom relative aspect-4/5 overflow-hidden bg-secondary">
             <Image src={originPiece.images[0]} alt={originPiece.name} fill sizes="(max-width: 768px) 100vw, 45vw" className="object-cover" />
           </div>
         )}
-        <div>
+        <div className="reveal" style={{ transitionDelay: "80ms" }}>
           <span className="eyebrow">How it started</span>
           <h2 className="display-md mt-2.5">The house she wanted<br /><span className="gold-italic">to exist.</span></h2>
           <p className="mt-5 max-w-md text-[15px] font-light leading-loose text-muted-foreground">
@@ -62,39 +76,46 @@ export function About({ originPiece, processPieces, pieceCount, faqs }: {
         </div>
       </section>
 
-      <section className="bg-secondary px-6 py-14 md:py-24">
-        <div className="mx-auto max-w-5xl">
-          <div className="mb-12 text-center">
-            <span className="eyebrow">What we won&apos;t compromise on</span>
-            <h2 className="display-md mt-2.5">Three rules, <span className="gold-italic">no exceptions.</span></h2>
+      {/* Dark ink panel, matching Lovable's "no exceptions" break between the
+          ivory sections either side of it. */}
+      <section className="bg-paper text-paper-foreground">
+        <div className="shell py-24">
+          <div className="reveal mx-auto max-w-2xl text-center">
+            <span className="eyebrow text-paper-foreground/70">What we won&apos;t compromise on</span>
+            <h2 className="display-lg mt-5">Three rules, <span className="italic text-accent">no exceptions.</span></h2>
           </div>
-          <div className="grid gap-8 md:grid-cols-3">
-            {PILLARS.map((p) => (
-              <div key={p.n}>
-                <div className="font-display text-4xl leading-none text-primary/50">{p.n}</div>
-                <div className="my-2.5 font-display text-xl italic">{p.h}</div>
-                <p className="text-sm font-light leading-relaxed text-muted-foreground">{p.b}</p>
+          <div className="mt-14 grid gap-12 md:grid-cols-3">
+            {PILLARS.map((p, i) => (
+              <div key={p.n} className="reveal" style={{ transitionDelay: `${i * 80}ms` }}>
+                <p className="font-display text-5xl italic text-accent">{p.n}</p>
+                <h3 className="display-md mt-4 text-xl">{p.h}</h3>
+                <p className="mt-3 text-sm text-paper-muted">{p.b}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      <section className="px-6 py-14 md:py-24">
-        <div className="mx-auto max-w-5xl">
-          <div className="mb-12 text-center">
-            <span className="eyebrow">From atelier to you</span>
-            <h2 className="display-md mt-2.5">How a piece <span className="gold-italic">comes to life.</span></h2>
+      <section className="shell grid gap-14 py-24 lg:grid-cols-[1fr_1.1fr]">
+        {processImage?.images[0] && (
+          <div className="reveal card-zoom relative aspect-4/5 overflow-hidden bg-secondary">
+            <Image src={processImage.images[0]} alt={`${processImage.name} in progress at the atelier`} fill sizes="(max-width: 1024px) 100vw, 40vw" className="object-cover" />
           </div>
-          <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-4">
+        )}
+        <div className="reveal" style={{ transitionDelay: "80ms" }}>
+          <span className="eyebrow">From atelier to you</span>
+          <h2 className="display-lg mt-5">How a piece <span className="gold-italic">comes to life.</span></h2>
+          <ol className="mt-10 divide-y divide-border border-y border-border">
             {PROCESS.map((p) => (
-              <div key={p.n} className="border-t-2 border-primary pt-4.5">
-                <div className="micro text-muted-foreground">{p.n}</div>
-                <div className="my-2 font-display text-lg italic">{p.h}</div>
-                <p className="text-[13.5px] font-light leading-relaxed text-muted-foreground">{p.b}</p>
-              </div>
+              <li key={p.n} className="grid gap-2 py-6 sm:grid-cols-[4rem_1fr]">
+                <span className="micro text-primary">{p.n}</span>
+                <div>
+                  <h3 className="display-md text-lg">{p.h}</h3>
+                  <p className="mt-2 text-sm font-light leading-relaxed text-muted-foreground">{p.b}</p>
+                </div>
+              </li>
             ))}
-          </div>
+          </ol>
         </div>
       </section>
 
@@ -108,25 +129,31 @@ export function About({ originPiece, processPieces, pieceCount, faqs }: {
         </section>
       )}
 
-      <section className="shell max-w-3xl py-12 md:py-20">
-        <div className="mb-10 text-center">
-          <span className="eyebrow">Questions we hear often</span>
-          <h2 className="display-md mt-2.5">Frequently <span className="gold-italic">asked.</span></h2>
-        </div>
-        <div className="flex flex-col gap-7">
-          {faqs.map((f) => (
-            <div key={f.question}>
-              <h3 className="mb-2 font-display text-lg italic">{f.question}</h3>
-              <p className="m-0 text-sm font-light leading-relaxed text-muted-foreground">{f.answer}</p>
-            </div>
-          ))}
+      <section className="border-y border-border bg-card">
+        <div className="shell max-w-3xl py-16 md:py-24">
+          <div className="reveal mb-4 text-center">
+            <span className="eyebrow">Before you ask</span>
+            <h2 className="display-lg mt-5">The <span className="gold-italic">honest answers.</span></h2>
+          </div>
+          <div className="reveal mt-10" style={{ transitionDelay: "80ms" }}>
+            {faqs.map((f, i) => (
+              <FaqRow
+                key={f.question}
+                question={f.question}
+                answer={f.answer}
+                open={openFaq === i}
+                onToggle={() => setOpenFaq(openFaq === i ? null : i)}
+              />
+            ))}
+          </div>
         </div>
       </section>
 
-      <section className="bg-paper px-6 py-14 text-center text-paper-foreground md:py-24">
-        <span className="eyebrow text-paper-foreground/70">Made in India, worn anywhere</span>
-        <h2 className="display-lg mt-2.5">Come see what<br /><span className="gold-italic">we made this season.</span></h2>
-        <div className="mt-7">
+      <section className="bg-secondary">
+        <div className="reveal shell flex flex-wrap items-center justify-between gap-8 py-20">
+          <h2 className="display-lg max-w-lg">
+            Come see what <span className="gold-italic">we made this season.</span>
+          </h2>
           <button onClick={() => router.push("/shop/all")} className="btn-solid-gold">Shop the collection</button>
         </div>
       </section>

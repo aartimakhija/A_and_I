@@ -26,13 +26,23 @@ export default async function CategoryPage({ params }: { params: { category: str
   const products = await prisma.product.findMany({ where, include: PRODUCT_INCLUDE, orderBy: { createdAt: "desc" } });
   const label = params.category === "all" ? "The Collection" : categories.find((c) => c.slug === params.category)?.name ?? params.category;
 
+  // "Shop by category" tile row (matching Lovable's shop/all page) — one
+  // representative piece per category, only shown on the unfiltered /shop/all view.
+  let categoryTiles: { slug: string; name: string; imageUrl?: string | null }[] = [];
+  if (params.category === "all") {
+    const reps = await Promise.all(
+      categories.map((c) => prisma.product.findFirst({ where: { status: "ACTIVE", category: c.slug }, include: PRODUCT_INCLUDE, orderBy: { createdAt: "desc" } }))
+    );
+    categoryTiles = categories.map((c, i) => ({ slug: c.slug, name: c.name, imageUrl: reps[i] ? toSFProduct(reps[i]!).images[0] : null }));
+  }
+
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(
         breadcrumbJsonLd([{ name: "Home", path: "/" }, { name: "Collection", path: "/shop/all" }, ...(params.category !== "all" ? [{ name: label, path: `/shop/${params.category}` }] : [])])
       ) }} />
       <Breadcrumb items={[{ name: "Home", path: "/" }, { name: "Collection", path: "/shop/all" }, ...(params.category !== "all" ? [{ name: label, path: `/shop/${params.category}` }] : [])]} />
-      <Collection products={products.map(toSFProduct)} category={params.category} categories={categories} />
+      <Collection products={products.map(toSFProduct)} category={params.category} categories={categories} categoryTiles={categoryTiles} />
     </>
   );
 }

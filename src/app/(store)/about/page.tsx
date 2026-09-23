@@ -23,13 +23,14 @@ export default async function AboutPage() {
   ]);
   const all = products.map(toSFProduct);
   const originPiece = all.find((p) => p.category === "craft") ?? all[0] ?? null;
-  const processPieces = all.filter((p) => p.id !== originPiece?.id).slice(0, 3);
+  const processImage = all.find((p) => p.id !== originPiece?.id && p.category === "craft") ?? all.find((p) => p.id !== originPiece?.id) ?? null;
+  const processPieces = all.filter((p) => p.id !== originPiece?.id && p.id !== processImage?.id).slice(0, 3);
 
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd(FAQS)) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd([{ name: "Home", path: "/" }, { name: "About", path: "/about" }])) }} />
-      <About originPiece={originPiece} processPieces={processPieces} pieceCount={totalCount} faqs={FAQS} />
+      <About originPiece={originPiece} processImage={processImage} processPieces={processPieces} pieceCount={totalCount} faqs={FAQS} />
     </>
   );
 }

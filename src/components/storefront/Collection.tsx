@@ -1,6 +1,7 @@
 "use client";
 import { useState, useMemo, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import { ProductCard } from "@/components/site/ProductCard";
 import { getAvailability } from "@/lib/availability";
 import type { SFProduct } from "@/lib/storefront-adapter";
@@ -12,8 +13,9 @@ const SIZE_ORDER = ["XS", "S", "M", "L", "XL"];
  * chips still route to /shop/[slug], colour/size/availability filters and
  * the grid-density toggle are all unchanged — only the visual language
  * moved from inline styles onto the new Tailwind tokens. */
-export function Collection({ products, category, categories }: {
+export function Collection({ products, category, categories, categoryTiles = [] }: {
   products: SFProduct[]; category: string; categories: { slug: string; name: string }[];
+  categoryTiles?: { slug: string; name: string; imageUrl?: string | null }[];
 }) {
   const router = useRouter();
   const filters = [{ slug: "all", name: "View All" }, ...categories];
@@ -62,16 +64,50 @@ export function Collection({ products, category, categories }: {
 
   return (
     <>
-      <header className="shell flex flex-col items-center gap-3 pb-8 pt-16 text-center md:pt-20">
+      <header className="shell pb-8 pt-16 text-center md:pt-20">
         <span className="eyebrow">SS&apos;26 — {products.length} pieces</span>
-        <h1 className="display-lg">
+        <h1 className="display-xl mt-4">
           {category === "all" ? (
-            <>The <span className="gold-italic">Collection</span></>
+            <>Shop <span className="gold-italic">everything.</span></>
           ) : (
             label
           )}
         </h1>
+        {category === "all" && (
+          <p className="mx-auto mt-6 max-w-xl text-muted-foreground">
+            Explore the complete catalogue through verified garment views. Price, fit, availability
+            and delivery are confirmed the moment you enquire.
+          </p>
+        )}
       </header>
+
+      {category === "all" && categoryTiles.length > 0 && (
+        <section className="shell pb-14">
+          <h2 className="eyebrow-muted text-center md:text-left">Shop by category</h2>
+          <div className="mt-6 grid grid-cols-2 gap-5 md:grid-cols-5">
+            {categoryTiles.map((t) => (
+              <button
+                key={t.slug}
+                onClick={() => router.push(`/shop/${t.slug}`)}
+                className="reveal group block text-left"
+              >
+                <span className="relative block aspect-4/5 overflow-hidden bg-secondary">
+                  {t.imageUrl && (
+                    <Image
+                      src={t.imageUrl}
+                      alt={`${t.name} — by A&I`}
+                      fill
+                      sizes="(max-width: 768px) 50vw, 20vw"
+                      className="object-cover transition-transform duration-700 group-hover:scale-105"
+                    />
+                  )}
+                </span>
+                <span className="micro mt-3 block text-foreground">{t.name}</span>
+              </button>
+            ))}
+          </div>
+        </section>
+      )}
 
       <div className="shell flex flex-wrap justify-center gap-3 pb-5">
         {filters.map((f) => (
@@ -139,8 +175,10 @@ export function Collection({ products, category, categories }: {
       )}
 
       <div className={`shell grid gap-4 pb-20 md:gap-6 md:pb-28 ${dense ? "grid-cols-2 md:grid-cols-4" : "grid-cols-2 md:grid-cols-3"}`}>
-        {filtered.map((d) => (
-          <ProductCard key={d.id} product={d} />
+        {filtered.map((d, i) => (
+          <div key={d.id} className="reveal" style={{ transitionDelay: `${(i % 8) * 60}ms` }}>
+            <ProductCard product={d} />
+          </div>
         ))}
       </div>
       {filtered.length === 0 && (
