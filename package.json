@@ -13,7 +13,9 @@
     "db:studio": "prisma studio",
     "migrate:catalogue": "tsx scripts/migrate-catalogue.ts",
     "set:preorder": "tsx scripts/set-all-preorder.ts",
-    "seed:blog": "tsx scripts/seed-blog.ts"
+    "seed:blog": "tsx scripts/seed-blog.ts",
+    "report:catalogue": "tsx scripts/report-catalogue.ts",
+    "cleanup:catalogue": "tsx scripts/cleanup-legacy-catalogue.ts"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"
