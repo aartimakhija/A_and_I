@@ -3,6 +3,7 @@ import Image from "next/image";
 import { prisma } from "@/lib/prisma";
 import { toSFProduct, PRODUCT_INCLUDE } from "@/lib/storefront-adapter";
 import { pageMetadata } from "@/lib/seo";
+import { getSiteSettings } from "@/lib/settings";
 
 export const metadata = pageMetadata({
   title: "The Founder — Artee Makhija",
@@ -38,8 +39,12 @@ const gates = [
 ];
 
 export default async function FounderPage() {
-  const studioProduct = await prisma.product.findFirst({ where: { status: "ACTIVE" }, include: PRODUCT_INCLUDE, orderBy: { createdAt: "desc" }, skip: 1 });
+  const [studioProduct, settings] = await Promise.all([
+    prisma.product.findFirst({ where: { status: "ACTIVE" }, include: PRODUCT_INCLUDE, orderBy: { createdAt: "desc" }, skip: 1 }),
+    getSiteSettings(),
+  ]);
   const studioImage = studioProduct ? toSFProduct(studioProduct).images[0] : null;
+  const founderImage = settings.founderImageUrl ?? null;
   return (
     <>
       <section className="shell py-20">
@@ -55,7 +60,15 @@ export default async function FounderPage() {
 
       <section className="shell pb-24">
         <div className="reveal grid items-center gap-12 lg:grid-cols-2">
-          <div className="aspect-square w-full bg-secondary" aria-hidden="true" />
+          <div className="card-zoom relative aspect-square w-full overflow-hidden bg-secondary">
+            {founderImage ? (
+              <Image src={founderImage} alt="Artee Makhija, founder of A&I" fill sizes="(max-width: 1024px) 100vw, 50vw" className="object-cover" />
+            ) : (
+              <div className="flex h-full w-full items-center justify-center" aria-hidden="true">
+                <span className="gold-italic text-6xl">AM</span>
+              </div>
+            )}
+          </div>
           <div>
             <p className="eyebrow">Founder · design, craft and the calendar</p>
             <h2 className="display-lg mt-5">

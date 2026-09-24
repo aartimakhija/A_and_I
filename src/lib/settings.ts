@@ -3,7 +3,7 @@ import { prisma } from "@/lib/prisma";
 const FALLBACK = {
   id: "singleton", siteName: "A&I", tagline: "Style With Us",
   description: "Indian craft, global silhouette. Womenswear handmade in small runs across India.",
-  faviconUrl: null, logoUrl: null, ogImageUrl: null, heroImageUrl: null, footerImageUrl: null, announcementText: "Made in India, in small runs",
+  faviconUrl: null, logoUrl: null, ogImageUrl: null, founderImageUrl: null, heroImageUrl: null, footerImageUrl: null, announcementText: "Made in India, in small runs",
   nextDropAt: null,
   defaultDeliveryNotes: "Made-to-order pieces have a production time of 3–4 weeks. Ready-to-ship items dispatch within 1–2 working days.",
   socialInstagram: null, socialWhatsapp: null, socialPinterest: null, socialFacebook: null, socialTwitter: null,

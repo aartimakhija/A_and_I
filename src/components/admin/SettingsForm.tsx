@@ -3,7 +3,7 @@ import { useState } from "react";
 
 type Settings = {
   siteName: string; tagline: string | null; description: string | null;
-  faviconUrl: string | null; logoUrl: string | null; ogImageUrl: string | null; heroImageUrl: string | null; footerImageUrl: string | null;
+  faviconUrl: string | null; logoUrl: string | null; ogImageUrl: string | null; founderImageUrl: string | null; heroImageUrl: string | null; footerImageUrl: string | null;
   announcementText: string | null;
   nextDropAt: string | null;
   defaultDeliveryNotes: string | null;
@@ -23,7 +23,7 @@ export default function SettingsForm({ initial }: { initial: Settings }) {
   const set = (k: keyof Settings) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
     setS((prev) => ({ ...prev, [k]: e.target.value }));
 
-  async function uploadImage(key: "faviconUrl" | "logoUrl" | "ogImageUrl" | "heroImageUrl" | "footerImageUrl", file: File) {
+  async function uploadImage(key: "faviconUrl" | "logoUrl" | "ogImageUrl" | "founderImageUrl" | "heroImageUrl" | "footerImageUrl", file: File) {
     setUploading(key);
     setError("");
     try {
@@ -62,7 +62,7 @@ export default function SettingsForm({ initial }: { initial: Settings }) {
   const section: React.CSSProperties = { background: "#fff", border: "1px solid #eee", padding: 24, marginBottom: 24 };
   const sectionTitle: React.CSSProperties = { fontSize: 14, fontWeight: 600, marginBottom: 4 };
 
-  function ImageField({ label: l, k }: { label: string; k: "faviconUrl" | "logoUrl" | "ogImageUrl" | "heroImageUrl" | "footerImageUrl" }) {
+  function ImageField({ label: l, k }: { label: string; k: "faviconUrl" | "logoUrl" | "ogImageUrl" | "founderImageUrl" | "heroImageUrl" | "footerImageUrl" }) {
     return (
       <div style={{ marginTop: 16 }}>
         <span style={label}>{l}</span>
@@ -93,6 +93,7 @@ export default function SettingsForm({ initial }: { initial: Settings }) {
         <ImageField label="Favicon" k="faviconUrl" />
         <ImageField label="Logo" k="logoUrl" />
         <ImageField label="Default social share image (Open Graph)" k="ogImageUrl" />
+        <ImageField label="Founder portrait (used on /founder — a real photo of Artee, square or portrait crop)" k="founderImageUrl" />
         <ImageField label="Home hero banner (wide crop — a photo shot or cropped for a wide letterbox, not a portrait product shot)" k="heroImageUrl" />
         <ImageField label="Footer background photo (scenic, wide crop — optional; falls back to a flat dark color)" k="footerImageUrl" />
       </div>

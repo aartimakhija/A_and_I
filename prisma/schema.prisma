@@ -655,6 +655,7 @@ model SiteSettings {
   faviconUrl             String?
   logoUrl                String?
   ogImageUrl             String?
+  founderImageUrl        String?                                  // portrait of Artee for /founder — falls back to a monogram treatment if unset
   heroImageUrl           String?                                  // dedicated home-hero banner photo — falls back to a featured product image if unset
   footerImageUrl         String?                                  // scenic full-bleed footer background — falls back to a flat dark color if unset
   announcementText       String?  @default("Made in India, in small runs")
