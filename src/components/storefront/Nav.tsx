@@ -16,7 +16,7 @@ const mobileExtra: [string, string][] = [
 
 export function Nav() {
   const pathname = usePathname();
-  const { cart, setCartOpen, saved, setSavedOpen, setSearchOpen, menuOpen, setMenuOpen } = useStore();
+  const { cart, setCartOpen, saved, setSavedOpen, setSearchOpen, menuOpen, setMenuOpen, isLoggedIn } = useStore();
 
   const navLinkClass = (href: string) => {
     const active = href === "/" ? pathname === "/" : pathname?.startsWith(href.split("/").slice(0, 2).join("/"));
@@ -43,6 +43,9 @@ export function Nav() {
         <button onClick={() => setSavedOpen(true)} className="micro hidden text-muted-foreground md:inline">
           Saved{saved.length > 0 ? ` (${saved.length})` : ""}
         </button>
+        <Link href={isLoggedIn ? "/account/orders" : "/login"} className="link-underline micro hidden text-muted-foreground md:inline">
+          {isLoggedIn ? "Account" : "Login"}
+        </Link>
         <button onClick={() => setCartOpen(true)} className="micro relative text-foreground">
           Bag
           {cart.length > 0 && <span className="ml-1.5 text-[10px] text-primary">({cart.length})</span>}
@@ -66,6 +69,9 @@ export function Nav() {
           <button onClick={() => { setMenuOpen(false); setSavedOpen(true); }} className="micro text-left text-sm text-muted-foreground">
             Saved{saved.length > 0 ? ` (${saved.length})` : ""}
           </button>
+          <Link href={isLoggedIn ? "/account/orders" : "/login"} onClick={() => setMenuOpen(false)} className={`${navLinkClass(isLoggedIn ? "/account" : "/login")} text-left text-sm`}>
+            {isLoggedIn ? "Account" : "Login"}
+          </Link>
         </div>
       )}
     </nav>

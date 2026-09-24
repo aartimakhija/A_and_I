@@ -42,6 +42,7 @@ type StoreState = {
   stylistOpen: boolean; setStylistOpen: (v: boolean) => void;
   styleProfile: StyleProfile | null; setStyleProfile: (p: StyleProfile | null) => void;
   rm: boolean;
+  isLoggedIn: boolean; // so Nav/Footer can point to "/account/orders" vs "/login" instead of guessing
 };
 
 const StoreCtx = createContext<StoreState | null>(null);
@@ -114,7 +115,7 @@ export function StoreProviders({ catalogue, categories, rm, isLoggedIn, initialS
     <StoreCtx.Provider value={{
       catalogue, categories, siteSettings, cart, addToCart, removeFromCart, clearCart, subtotal, cartOpen, setCartOpen,
       saved, toggleSaved, savedOpen, setSavedOpen, searchOpen, setSearchOpen, menuOpen, setMenuOpen,
-      stylistOpen, setStylistOpen, styleProfile, setStyleProfile, rm,
+      stylistOpen, setStylistOpen, styleProfile, setStyleProfile, rm, isLoggedIn,
     }}>
       {children}
     </StoreCtx.Provider>
