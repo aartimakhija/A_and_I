@@ -2,6 +2,7 @@ import { prisma } from "@/lib/prisma";
 import { getSession } from "@/lib/rbac";
 import { getCategories } from "@/lib/categories";
 import ProductForm from "@/components/admin/ProductForm";
+import { PageHeader } from "@/components/admin/ui";
 
 export default async function NewProduct() {
   const s = await getSession();
@@ -12,10 +13,8 @@ export default async function NewProduct() {
   ]);
   return (
     <>
-      <h1>New product</h1>
-      <div style={{ marginTop: 24 }}>
-        <ProductForm vendors={vendors} categories={categories} materials={materials} isAdmin={s.role === "ADMIN"} />
-      </div>
+      <PageHeader title="New product" backHref="/admin/products" backLabel="Catalogue" />
+      <ProductForm vendors={vendors} categories={categories} materials={materials} isAdmin={s.role === "ADMIN"} />
     </>
   );
 }

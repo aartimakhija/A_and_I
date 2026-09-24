@@ -3,6 +3,7 @@ import { getSession } from "@/lib/rbac";
 import { notFound } from "next/navigation";
 import { getCategories } from "@/lib/categories";
 import ProductForm from "@/components/admin/ProductForm";
+import { Badge, Button, PageHeader, productStatusTone } from "@/components/admin/ui";
 
 export default async function EditProduct({ params }: { params: { id: string } }) {
   const s = await getSession();
@@ -18,10 +19,23 @@ export default async function EditProduct({ params }: { params: { id: string } }
   if (!product) notFound();
   return (
     <>
-      <h1>Edit {product.name}</h1>
-      <div style={{ marginTop: 24 }}>
-        <ProductForm vendors={vendors} categories={categories} materials={materials} isAdmin={s.role === "ADMIN"} product={product} />
-      </div>
+      <PageHeader
+        title={product.name}
+        subtitle={`/${product.slug}`}
+        backHref="/admin/products"
+        backLabel="Catalogue"
+        actions={
+          <>
+            <Badge tone={productStatusTone(product.status)}>{product.status.replace("_", " ")}</Badge>
+            {product.status === "ACTIVE" && (
+              <Button href={`/products/${product.slug}`} target="_blank" variant="ghost">
+                View live ↗
+              </Button>
+            )}
+          </>
+        }
+      />
+      <ProductForm vendors={vendors} categories={categories} materials={materials} isAdmin={s.role === "ADMIN"} product={product} />
     </>
   );
 }

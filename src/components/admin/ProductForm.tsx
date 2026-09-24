@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { Button, Card, fieldClass, labelClass } from "@/components/admin/ui";
 
 type Vendor = { id: string; name: string };
 type ImageRow = { url: string };
@@ -33,6 +34,10 @@ const STORY_IMAGE_FIELDS = [
   { key: "fabricImageUrl", label: "Fabric close-up", hint: "Macro shot of the weave or cutwork — shown in “The cloth, up close”" },
   { key: "careImageUrl", label: "Care", hint: "Garment care / steaming shot — shown alongside care instructions" },
 ] as const;
+
+function slugify(s: string) {
+  return s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+}
 
 export default function ProductForm({ vendors, categories, materials, isAdmin, product }: Props) {
   const router = useRouter();
@@ -171,242 +176,377 @@ export default function ProductForm({ vendors, categories, materials, isAdmin, p
     }
   }
 
-  const field: React.CSSProperties = { width: "100%", padding: "10px 12px", border: "1px solid #ddd", marginTop: 4, fontFamily: "inherit" };
-  const label: React.CSSProperties = { fontSize: 11, letterSpacing: 1, textTransform: "uppercase", color: "#666", display: "block", marginTop: 16 };
+  const textareaClass = `${fieldClass} min-h-[80px] resize-y`;
+
+  const ImageThumb = ({ url, onRemove }: { url: string; onRemove: () => void }) => (
+    <div className="relative">
+      <img src={url} alt="" className="h-24 w-20 rounded-sm border border-neutral-200 object-cover" />
+      <button
+        type="button"
+        onClick={onRemove}
+        className="absolute -right-1.5 -top-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-neutral-900 text-xs text-white hover:bg-neutral-700"
+        aria-label="Remove image"
+      >
+        ×
+      </button>
+    </div>
+  );
 
   return (
-    <form onSubmit={onSubmit} style={{ maxWidth: 640 }}>
-      {error && <div style={{ background: "#fdecea", color: "#B0503E", padding: 12, marginBottom: 16 }}>{error}</div>}
-
-      <label style={label}>Name</label>
-      <input style={field} value={name} onChange={(e) => setName(e.target.value)} required />
-
-      <label style={label}>Slug (URL)</label>
-      <input style={field} value={slug} onChange={(e) => setSlug(e.target.value)} placeholder="auto-generated from name if blank" />
-
-      <label style={label}>Story</label>
-      <textarea style={{ ...field, minHeight: 80 }} value={story} onChange={(e) => setStory(e.target.value)} placeholder="Narrative/description tab on the product page" />
-
-      <label style={label}>Features (optional)</label>
-      <textarea style={{ ...field, minHeight: 60 }} value={features} onChange={(e) => setFeatures(e.target.value)} placeholder="e.g. Adjustable drawstring waist, side pockets, mother-of-pearl buttons" />
-
-      <label style={label}>Fit (optional)</label>
-      <textarea style={{ ...field, minHeight: 60 }} value={fitNotes} onChange={(e) => setFitNotes(e.target.value)} placeholder="e.g. True to size. Model is 5'6&quot; wearing size M." />
-
-      <label style={label}>Care (optional)</label>
-      <textarea style={{ ...field, minHeight: 60 }} value={careNotes} onChange={(e) => setCareNotes(e.target.value)} placeholder="e.g. Dry clean only. Iron on reverse." />
-
-      <label style={label}>Delivery (optional — leave blank to use the sitewide default)</label>
-      <textarea style={{ ...field, minHeight: 60 }} value={deliveryNotes} onChange={(e) => setDeliveryNotes(e.target.value)} />
-
-      <label style={label}>Silhouette (optional — one line, shown as a gallery caption)</label>
-      <input style={field} value={silhouette} onChange={(e) => setSilhouette(e.target.value)} placeholder="e.g. Fitted cropped bodice paired with a full handkerchief skirt" />
-
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
-        <div>
-          <label style={label}>Model note (optional)</label>
-          <input style={field} value={modelNote} onChange={(e) => setModelNote(e.target.value)} placeholder={`e.g. Our model is 5'8" and wears a S/M.`} />
-        </div>
-        <div>
-          <label style={label}>Made count (optional)</label>
-          <input style={field} type="number" min={0} value={madeCount} onChange={(e) => setMadeCount(e.target.value)} placeholder="Units made in this limited run" />
-        </div>
-      </div>
-
-      <label style={label}>Pair with (optional — comma-separated product slugs shown as styling suggestions)</label>
-      <input style={field} value={pairWith} onChange={(e) => setPairWith(e.target.value)} placeholder="e.g. flirting-in-fuchsia, olive-temptation" />
-
-      <label style={label}>Video URL (optional — short product film, e.g. from your S3/R2 bucket)</label>
-      <input style={field} value={videoUrl} onChange={(e) => setVideoUrl(e.target.value)} placeholder="https://..." />
-
-      <div style={{ display: "flex", alignItems: "center", gap: 10, marginTop: 16 }}>
-        <input type="checkbox" id="limitedEdition" checked={limitedEdition} onChange={(e) => setLimitedEdition(e.target.checked)} />
-        <label htmlFor="limitedEdition" style={{ fontSize: 13 }}>Limited Edition (shows a badge on the storefront)</label>
-      </div>
-
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
-        <div>
-          <label style={label}>Category</label>
-          <select style={field} value={category} onChange={(e) => setCategory(e.target.value)}>
-            {categories.map((c) => <option key={c.slug} value={c.slug}>{c.name}</option>)}
-          </select>
-        </div>
-        <div>
-          <label style={label}>Status</label>
-          <select style={field} value={status} onChange={(e) => setStatus(e.target.value)}>
-            {["DRAFT", "ACTIVE", "ARCHIVED", "SOLD_OUT"].map((s) => <option key={s} value={s}>{s}</option>)}
-          </select>
-        </div>
-      </div>
-
-      <label style={{ ...label, marginTop: 20, display: "block" }}>Where this shows up</label>
-      <div style={{ border: "1px solid #eee", padding: "12px 14px", marginTop: 6, display: "flex", flexDirection: "column", gap: 12 }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-          <input type="checkbox" id="featured" checked={featured} onChange={(e) => setFeatured(e.target.checked)} />
-          <label htmlFor="featured" style={{ fontSize: 13 }}>Feature on homepage ("Hand-picked" section)</label>
-          {featured && (
-            <input type="number" value={featuredOrder} onChange={(e) => setFeaturedOrder(parseInt(e.target.value || "0", 10))}
-              title="Lower number shows first" style={{ width: 60, padding: 6, border: "1px solid #ddd", marginLeft: "auto" }} />
-          )}
-        </div>
-        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-          <input type="checkbox" id="inLookbook" checked={inLookbook} onChange={(e) => setInLookbook(e.target.checked)} />
-          <label htmlFor="inLookbook" style={{ fontSize: 13 }}>Include in Lookbook</label>
-          {inLookbook && (
-            <input type="number" value={lookbookOrder} onChange={(e) => setLookbookOrder(parseInt(e.target.value || "0", 10))}
-              title="Lower number shows first" style={{ width: 60, padding: 6, border: "1px solid #ddd", marginLeft: "auto" }} />
-          )}
-        </div>
-        <p style={{ fontSize: 11, color: "#999", margin: 0 }}>The number controls order — lower shows first. Leave both off and the homepage/lookbook will just show your most recent pieces automatically.</p>
-        <div style={{ display: "flex", alignItems: "center", gap: 10, borderTop: "1px solid #eee", paddingTop: 12 }}>
-          <input type="checkbox" id="preOrder" checked={preOrder} onChange={(e) => setPreOrder(e.target.checked)} />
-          <label htmlFor="preOrder" style={{ fontSize: 13 }}>Open for pre-order (production hasn't started — PDP shows "Reserve" instead of "Add to bag")</label>
-        </div>
-      </div>
-
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 16 }}>
-        <div>
-          <label style={label}>Color hex</label>
-          <input style={field} value={colorHex} onChange={(e) => setColorHex(e.target.value)} />
-        </div>
-        <div>
-          <label style={label}>Color name</label>
-          <input style={field} value={colorName} onChange={(e) => setColorName(e.target.value)} />
-        </div>
-        <div>
-          <label style={label}>Base price (₹) — the actual selling price</label>
-          <input style={field} type="number" value={basePrice} onChange={(e) => setBasePrice(e.target.value)} />
-        </div>
-        <div>
-          <label style={label}>Discount % (optional)</label>
-          <input style={field} type="number" min={0} max={99} value={discountPercent} onChange={(e) => setDiscountPercent(e.target.value)} placeholder="e.g. 25" />
-          {discountPercent && parseFloat(discountPercent) > 0 && (
-            <p style={{ fontSize: 11, color: "#999", marginTop: 4 }}>
-              Storefront will show <s>₹{Math.round(parseFloat(basePrice || "0") / (1 - parseFloat(discountPercent) / 100)).toLocaleString("en-IN")}</s> ₹{parseFloat(basePrice || "0").toLocaleString("en-IN")} <span style={{ color: "#1a7a3c" }}>({discountPercent}% off)</span>
-            </p>
-          )}
-        </div>
-      </div>
-
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
-        <div>
-          <label style={label}>Cost price (₹) — for margin reporting</label>
-          <input style={field} type="number" value={costPrice} onChange={(e) => setCostPrice(e.target.value)} placeholder="Landed cost per unit" />
-        </div>
-        <div>
-          <label style={label}>Vendor cost (₹) — optional, if different</label>
-          <input style={field} type="number" value={vendorCost} onChange={(e) => setVendorCost(e.target.value)} placeholder="Defaults to cost price" />
-        </div>
-      </div>
-
-      {isAdmin && (
-        <>
-          <label style={label}>Vendor</label>
-          <select style={field} value={vendorId} onChange={(e) => setVendorId(e.target.value)}>
-            {vendors.map((v) => <option key={v.id} value={v.id}>{v.name}</option>)}
-          </select>
-        </>
+    <form onSubmit={onSubmit} className="pb-4">
+      {error && (
+        <div className="mb-5 rounded-sm border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{error}</div>
       )}
 
-      <label style={label}>Stock by size</label>
-      <div style={{ display: "flex", gap: 8, marginTop: 6 }}>
-        {SIZES.map((s) => (
-          <div key={s}>
-            <div style={{ fontSize: 10, textAlign: "center", marginBottom: 4 }}>{s}</div>
-            <input type="number" style={{ width: 56, padding: 8, border: "1px solid #ddd" }}
-              value={stock[s]} onChange={(e) => setStock((st) => ({ ...st, [s]: parseInt(e.target.value || "0", 10) }))} />
-          </div>
-        ))}
-      </div>
-
-      <label style={label}>Fabric tiers (price add in ₹)</label>
-      {tiers.map((t, i) => (
-        <div key={i} style={{ display: "flex", gap: 8, marginTop: 6 }}>
-          <input style={{ ...field, marginTop: 0, flex: 1 }} value={t.label}
-            onChange={(e) => setTiers((ts) => ts.map((x, idx) => idx === i ? { ...x, label: e.target.value } : x))} />
-          <input style={{ ...field, marginTop: 0, width: 100 }} type="number" value={t.priceAdd}
-            onChange={(e) => setTiers((ts) => ts.map((x, idx) => idx === i ? { ...x, priceAdd: parseFloat(e.target.value || "0") } : x))} />
-        </div>
-      ))}
-
-      <label style={label}>Bill of materials</label>
-      {materials.length === 0 ? (
-        <p style={{ fontSize: 12, color: "#999", marginTop: 6 }}>No materials yet — add some under <a href="/admin/materials">Materials</a> first.</p>
-      ) : (
-        <>
-          {bom.map((row, i) => (
-            <div key={i} style={{ display: "flex", gap: 8, marginTop: 6 }}>
-              <select style={{ ...field, marginTop: 0, flex: 1 }} value={row.materialId}
-                onChange={(e) => setBom((rows) => rows.map((r, idx) => idx === i ? { ...r, materialId: e.target.value } : r))}>
-                <option value="">— select material —</option>
-                {materials.map((m) => <option key={m.id} value={m.id}>{m.name} ({m.unit})</option>)}
-              </select>
-              <input style={{ ...field, marginTop: 0, width: 120 }} type="number" placeholder="Qty per unit" value={row.qtyPerUnit}
-                onChange={(e) => setBom((rows) => rows.map((r, idx) => idx === i ? { ...r, qtyPerUnit: parseFloat(e.target.value || "0") } : r))} />
-              <button type="button" onClick={() => setBom((rows) => rows.filter((_, idx) => idx !== i))}
-                style={{ background: "none", border: "none", cursor: "pointer", color: "#B0503E", fontSize: 18 }}>×</button>
-            </div>
-          ))}
-          <button type="button" onClick={() => setBom((rows) => [...rows, { materialId: "", qtyPerUnit: 1 }])}
-            style={{ marginTop: 8, fontSize: 12, background: "none", border: "1px solid #ccc", padding: "6px 14px", cursor: "pointer" }}>
-            + Add material
-          </button>
-        </>
-      )}
-
-      <label style={label}>Images</label>
-      <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginTop: 6 }}>
-        {images.map((url, i) => (
-          <div key={i} style={{ position: "relative" }}>
-            <img src={url} alt="" style={{ width: 72, height: 90, objectFit: "cover", border: "1px solid #ddd" }} />
-            <button type="button" onClick={() => setImages((imgs) => imgs.filter((_, idx) => idx !== i))}
-              style={{ position: "absolute", top: -6, right: -6, width: 20, height: 20, borderRadius: "50%", border: "none", background: "#000", color: "#fff", cursor: "pointer" }}>×</button>
-          </div>
-        ))}
-        <label style={{ width: 72, height: 90, border: "1px dashed #bbb", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", fontSize: 24, color: "#999" }}>
-          {uploading ? "…" : "+"}
-          <input type="file" accept="image/*" onChange={onUpload} style={{ display: "none" }} disabled={uploading} />
-        </label>
-      </div>
-      <p style={{ fontSize: 11, color: "#999", marginTop: 6 }}>
-        Uploads go to S3/R2 in production, or /public/uploads in dev (see storageBackend in src/lib/storage.ts).
-      </p>
-
-      <label style={{ ...label, marginTop: 24, display: "block" }}>Story photography (optional)</label>
-      <p style={{ fontSize: 11, color: "#999", marginTop: 4 }}>
-        Dedicated images for the "idea → making → fabric" narrative shown below the fold on the product page.
-        Leave any of these blank and that section falls back to the product's regular photos above.
-      </p>
-      <div style={{ display: "flex", flexDirection: "column", gap: 14, marginTop: 10 }}>
-        {STORY_IMAGE_FIELDS.map(({ key, label: fieldLabel, hint }) => (
-          <div key={key} style={{ display: "flex", gap: 12, alignItems: "flex-start", border: "1px solid #eee", padding: 12 }}>
-            {storyImages[key] ? (
-              <div style={{ position: "relative", flexShrink: 0 }}>
-                <img src={storyImages[key]} alt="" style={{ width: 72, height: 90, objectFit: "cover", border: "1px solid #ddd" }} />
-                <button type="button" onClick={() => setStoryImages((s) => ({ ...s, [key]: "" }))}
-                  style={{ position: "absolute", top: -6, right: -6, width: 20, height: 20, borderRadius: "50%", border: "none", background: "#000", color: "#fff", cursor: "pointer" }}>×</button>
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+        {/* ── Main column ─────────────────────────────────────────── */}
+        <div className="flex flex-col gap-6 lg:col-span-2">
+          <Card title="Basic details">
+            <div className="space-y-4">
+              <div>
+                <label className={labelClass}>Name</label>
+                <input className={`${fieldClass} mt-1`} value={name} onChange={(e) => setName(e.target.value)} required />
               </div>
-            ) : (
-              <label style={{ width: 72, height: 90, flexShrink: 0, border: "1px dashed #bbb", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", fontSize: 24, color: "#999" }}>
-                {storyUploading[key] ? "…" : "+"}
-                <input type="file" accept="image/*" onChange={(e) => onStoryUpload(key, e)} style={{ display: "none" }} disabled={!!storyUploading[key]} />
-              </label>
-            )}
-            <div>
-              <div style={{ fontSize: 13, fontWeight: 600 }}>{fieldLabel}</div>
-              <div style={{ fontSize: 11, color: "#999", marginTop: 2 }}>{hint}</div>
+              <div>
+                <label className={labelClass}>Slug (URL)</label>
+                <input
+                  className={`${fieldClass} mt-1`}
+                  value={slug}
+                  onChange={(e) => setSlug(e.target.value)}
+                  placeholder={name ? slugify(name) : "auto-generated from name if blank"}
+                />
+                {!slug && name && <p className="mt-1 text-xs text-neutral-400">Will save as “{slugify(name)}”.</p>}
+              </div>
             </div>
-          </div>
-        ))}
+          </Card>
+
+          <Card title="Story & content" description="What shows up in the tabs and captions on the product page.">
+            <div className="space-y-4">
+              <div>
+                <label className={labelClass}>Story</label>
+                <textarea className={`${textareaClass} mt-1 min-h-[100px]`} value={story} onChange={(e) => setStory(e.target.value)} placeholder="Narrative/description tab on the product page" />
+              </div>
+              <div>
+                <label className={labelClass}>Features (optional)</label>
+                <textarea className={`${textareaClass} mt-1`} value={features} onChange={(e) => setFeatures(e.target.value)} placeholder="e.g. Adjustable drawstring waist, side pockets, mother-of-pearl buttons" />
+              </div>
+              <div>
+                <label className={labelClass}>Fit (optional)</label>
+                <textarea className={`${textareaClass} mt-1`} value={fitNotes} onChange={(e) => setFitNotes(e.target.value)} placeholder={`e.g. True to size. Model is 5'6" wearing size M.`} />
+              </div>
+              <div>
+                <label className={labelClass}>Care (optional)</label>
+                <textarea className={`${textareaClass} mt-1`} value={careNotes} onChange={(e) => setCareNotes(e.target.value)} placeholder="e.g. Dry clean only. Iron on reverse." />
+              </div>
+              <div>
+                <label className={labelClass}>Delivery (optional — leave blank to use the sitewide default)</label>
+                <textarea className={`${textareaClass} mt-1`} value={deliveryNotes} onChange={(e) => setDeliveryNotes(e.target.value)} />
+              </div>
+              <div>
+                <label className={labelClass}>Silhouette (optional — one line, shown as a gallery caption)</label>
+                <input className={`${fieldClass} mt-1`} value={silhouette} onChange={(e) => setSilhouette(e.target.value)} placeholder="e.g. Fitted cropped bodice paired with a full handkerchief skirt" />
+              </div>
+            </div>
+          </Card>
+
+          <Card title="Merchandising" description="Styling context and cross-sell details.">
+            <div className="space-y-4">
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <div>
+                  <label className={labelClass}>Model note (optional)</label>
+                  <input className={`${fieldClass} mt-1`} value={modelNote} onChange={(e) => setModelNote(e.target.value)} placeholder={`e.g. Our model is 5'8" and wears a S/M.`} />
+                </div>
+                <div>
+                  <label className={labelClass}>Made count (optional)</label>
+                  <input className={`${fieldClass} mt-1`} type="number" min={0} value={madeCount} onChange={(e) => setMadeCount(e.target.value)} placeholder="Units made in this limited run" />
+                </div>
+              </div>
+              <div>
+                <label className={labelClass}>Pair with (optional — comma-separated product slugs shown as styling suggestions)</label>
+                <input className={`${fieldClass} mt-1`} value={pairWith} onChange={(e) => setPairWith(e.target.value)} placeholder="e.g. flirting-in-fuchsia, olive-temptation" />
+              </div>
+              <div>
+                <label className={labelClass}>Video URL (optional — short product film, e.g. from your S3/R2 bucket)</label>
+                <input className={`${fieldClass} mt-1`} value={videoUrl} onChange={(e) => setVideoUrl(e.target.value)} placeholder="https://..." />
+              </div>
+              <label className="flex items-center gap-2 text-sm text-neutral-700">
+                <input type="checkbox" className="h-4 w-4" checked={limitedEdition} onChange={(e) => setLimitedEdition(e.target.checked)} />
+                Limited Edition <span className="text-neutral-400">— shows a badge on the storefront</span>
+              </label>
+            </div>
+          </Card>
+
+          <Card title="Photography">
+            <div className="space-y-6">
+              <div>
+                <label className={labelClass}>Gallery images</label>
+                <div className="mt-2 flex flex-wrap gap-3">
+                  {images.map((url, i) => (
+                    <ImageThumb key={i} url={url} onRemove={() => setImages((imgs) => imgs.filter((_, idx) => idx !== i))} />
+                  ))}
+                  <label className="flex h-24 w-20 cursor-pointer items-center justify-center rounded-sm border border-dashed border-neutral-300 text-2xl text-neutral-400 hover:border-neutral-400 hover:text-neutral-600">
+                    {uploading ? "…" : "+"}
+                    <input type="file" accept="image/*" onChange={onUpload} className="hidden" disabled={uploading} />
+                  </label>
+                </div>
+                <p className="mt-2 text-xs text-neutral-400">
+                  Uploads go to S3/R2 in production, or /public/uploads in dev (see storageBackend in src/lib/storage.ts).
+                </p>
+              </div>
+
+              <div className="border-t border-neutral-100 pt-5">
+                <label className={labelClass}>Story photography (optional)</label>
+                <p className="mt-1 text-xs text-neutral-400">
+                  Dedicated images for the "idea → making → fabric" narrative shown below the fold on the product page.
+                  Leave any of these blank and that section falls back to the product's regular photos above.
+                </p>
+                <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">
+                  {STORY_IMAGE_FIELDS.map(({ key, label: fieldLabel, hint }) => (
+                    <div key={key} className="flex flex-col items-start gap-3 rounded-sm border border-neutral-200 p-3">
+                      {storyImages[key] ? (
+                        <ImageThumb url={storyImages[key]} onRemove={() => setStoryImages((s) => ({ ...s, [key]: "" }))} />
+                      ) : (
+                        <label className="flex h-24 w-20 cursor-pointer items-center justify-center rounded-sm border border-dashed border-neutral-300 text-2xl text-neutral-400 hover:border-neutral-400 hover:text-neutral-600">
+                          {storyUploading[key] ? "…" : "+"}
+                          <input type="file" accept="image/*" onChange={(e) => onStoryUpload(key, e)} className="hidden" disabled={!!storyUploading[key]} />
+                        </label>
+                      )}
+                      <div>
+                        <div className="text-xs font-semibold text-neutral-800">{fieldLabel}</div>
+                        <div className="mt-0.5 text-[11px] leading-snug text-neutral-400">{hint}</div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </Card>
+
+          <Card title="Bill of materials">
+            {materials.length === 0 ? (
+              <p className="text-sm text-neutral-400">
+                No materials yet — add some under <a href="/admin/materials" className="underline">Materials</a> first.
+              </p>
+            ) : (
+              <div className="space-y-2">
+                {bom.map((row, i) => (
+                  <div key={i} className="flex gap-2">
+                    <select
+                      className={`${fieldClass} flex-1`}
+                      value={row.materialId}
+                      onChange={(e) => setBom((rows) => rows.map((r, idx) => (idx === i ? { ...r, materialId: e.target.value } : r)))}
+                    >
+                      <option value="">— select material —</option>
+                      {materials.map((m) => (
+                        <option key={m.id} value={m.id}>
+                          {m.name} ({m.unit})
+                        </option>
+                      ))}
+                    </select>
+                    <input
+                      className={`${fieldClass} w-32`}
+                      type="number"
+                      placeholder="Qty per unit"
+                      value={row.qtyPerUnit}
+                      onChange={(e) => setBom((rows) => rows.map((r, idx) => (idx === i ? { ...r, qtyPerUnit: parseFloat(e.target.value || "0") } : r)))}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setBom((rows) => rows.filter((_, idx) => idx !== i))}
+                      className="px-2 text-lg text-red-500 hover:text-red-700"
+                      aria-label="Remove material row"
+                    >
+                      ×
+                    </button>
+                  </div>
+                ))}
+                <Button type="button" size="sm" onClick={() => setBom((rows) => [...rows, { materialId: "", qtyPerUnit: 1 }])}>
+                  + Add material
+                </Button>
+              </div>
+            )}
+          </Card>
+        </div>
+
+        {/* ── Sidebar column ──────────────────────────────────────── */}
+        <div className="flex flex-col gap-6 lg:sticky lg:top-6 lg:col-span-1 lg:self-start">
+          <Card title="Status & category">
+            <div className="space-y-4">
+              <div>
+                <label className={labelClass}>Status</label>
+                <select className={`${fieldClass} mt-1`} value={status} onChange={(e) => setStatus(e.target.value)}>
+                  {["DRAFT", "ACTIVE", "ARCHIVED", "SOLD_OUT"].map((s) => (
+                    <option key={s} value={s}>{s}</option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label className={labelClass}>Category</label>
+                <select className={`${fieldClass} mt-1`} value={category} onChange={(e) => setCategory(e.target.value)}>
+                  {categories.map((c) => (
+                    <option key={c.slug} value={c.slug}>{c.name}</option>
+                  ))}
+                </select>
+              </div>
+            </div>
+          </Card>
+
+          <Card title="Where this shows up">
+            <div className="space-y-4">
+              <div className="flex items-center gap-2">
+                <input type="checkbox" className="h-4 w-4" id="featured" checked={featured} onChange={(e) => setFeatured(e.target.checked)} />
+                <label htmlFor="featured" className="flex-1 text-sm text-neutral-700">
+                  Feature on homepage <span className="text-neutral-400">("Hand-picked")</span>
+                </label>
+                {featured && (
+                  <input
+                    type="number"
+                    value={featuredOrder}
+                    onChange={(e) => setFeaturedOrder(parseInt(e.target.value || "0", 10))}
+                    title="Lower number shows first"
+                    className="w-16 rounded-sm border border-neutral-300 px-2 py-1 text-sm"
+                  />
+                )}
+              </div>
+              <div className="flex items-center gap-2">
+                <input type="checkbox" className="h-4 w-4" id="inLookbook" checked={inLookbook} onChange={(e) => setInLookbook(e.target.checked)} />
+                <label htmlFor="inLookbook" className="flex-1 text-sm text-neutral-700">Include in Lookbook</label>
+                {inLookbook && (
+                  <input
+                    type="number"
+                    value={lookbookOrder}
+                    onChange={(e) => setLookbookOrder(parseInt(e.target.value || "0", 10))}
+                    title="Lower number shows first"
+                    className="w-16 rounded-sm border border-neutral-300 px-2 py-1 text-sm"
+                  />
+                )}
+              </div>
+              <p className="text-xs leading-snug text-neutral-400">
+                The number controls order — lower shows first. Leave both off and the homepage/lookbook will just show your most recent pieces automatically.
+              </p>
+              <div className="flex items-center gap-2 border-t border-neutral-100 pt-4">
+                <input type="checkbox" className="h-4 w-4" id="preOrder" checked={preOrder} onChange={(e) => setPreOrder(e.target.checked)} />
+                <label htmlFor="preOrder" className="text-sm text-neutral-700">
+                  Open for pre-order <span className="text-neutral-400">(PDP shows "Reserve" instead of "Add to bag")</span>
+                </label>
+              </div>
+            </div>
+          </Card>
+
+          <Card title="Pricing">
+            <div className="space-y-4">
+              <div className="grid grid-cols-[auto_1fr] items-end gap-3">
+                <div>
+                  <label className={labelClass}>Color</label>
+                  <div
+                    className="mt-1 h-10 w-10 rounded-sm border border-neutral-300"
+                    style={{ background: colorHex || "#ffffff" }}
+                  />
+                </div>
+                <div>
+                  <input className={`${fieldClass} mt-1`} value={colorHex} onChange={(e) => setColorHex(e.target.value)} placeholder="#8A7A6A" />
+                </div>
+              </div>
+              <div>
+                <label className={labelClass}>Color name</label>
+                <input className={`${fieldClass} mt-1`} value={colorName} onChange={(e) => setColorName(e.target.value)} />
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className={labelClass}>Base price (₹)</label>
+                  <input className={`${fieldClass} mt-1`} type="number" value={basePrice} onChange={(e) => setBasePrice(e.target.value)} />
+                </div>
+                <div>
+                  <label className={labelClass}>Discount %</label>
+                  <input className={`${fieldClass} mt-1`} type="number" min={0} max={99} value={discountPercent} onChange={(e) => setDiscountPercent(e.target.value)} placeholder="e.g. 25" />
+                </div>
+              </div>
+              {discountPercent && parseFloat(discountPercent) > 0 && (
+                <p className="text-xs text-neutral-500">
+                  Storefront shows{" "}
+                  <s>₹{Math.round(parseFloat(basePrice || "0") / (1 - parseFloat(discountPercent) / 100)).toLocaleString("en-IN")}</s>{" "}
+                  ₹{parseFloat(basePrice || "0").toLocaleString("en-IN")}{" "}
+                  <span className="text-emerald-700">({discountPercent}% off)</span>
+                </p>
+              )}
+              <div className="grid grid-cols-2 gap-3 border-t border-neutral-100 pt-4">
+                <div>
+                  <label className={labelClass}>Cost price (₹)</label>
+                  <input className={`${fieldClass} mt-1`} type="number" value={costPrice} onChange={(e) => setCostPrice(e.target.value)} placeholder="Landed cost" />
+                </div>
+                <div>
+                  <label className={labelClass}>Vendor cost (₹)</label>
+                  <input className={`${fieldClass} mt-1`} type="number" value={vendorCost} onChange={(e) => setVendorCost(e.target.value)} placeholder="If different" />
+                </div>
+              </div>
+              <p className="text-[11px] text-neutral-400">Cost fields drive margin reporting — they're never shown to customers.</p>
+            </div>
+          </Card>
+
+          <Card title="Vendor & inventory">
+            <div className="space-y-4">
+              {isAdmin && (
+                <div>
+                  <label className={labelClass}>Vendor</label>
+                  <select className={`${fieldClass} mt-1`} value={vendorId} onChange={(e) => setVendorId(e.target.value)}>
+                    {vendors.map((v) => (
+                      <option key={v.id} value={v.id}>{v.name}</option>
+                    ))}
+                  </select>
+                </div>
+              )}
+              <div>
+                <label className={labelClass}>Stock by size</label>
+                <div className="mt-1 flex gap-2">
+                  {SIZES.map((s) => (
+                    <div key={s} className="text-center">
+                      <div className="mb-1 text-[10px] font-medium text-neutral-400">{s}</div>
+                      <input
+                        type="number"
+                        className="w-12 rounded-sm border border-neutral-300 px-1.5 py-1.5 text-center text-sm"
+                        value={stock[s]}
+                        onChange={(e) => setStock((st) => ({ ...st, [s]: parseInt(e.target.value || "0", 10) }))}
+                      />
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <div className="border-t border-neutral-100 pt-4">
+                <label className={labelClass}>Fabric tiers (price add in ₹)</label>
+                <div className="mt-1 space-y-2">
+                  {tiers.map((t, i) => (
+                    <div key={i} className="flex gap-2">
+                      <input
+                        className={`${fieldClass} flex-1`}
+                        value={t.label}
+                        onChange={(e) => setTiers((ts) => ts.map((x, idx) => (idx === i ? { ...x, label: e.target.value } : x)))}
+                      />
+                      <input
+                        className={`${fieldClass} w-20`}
+                        type="number"
+                        value={t.priceAdd}
+                        onChange={(e) => setTiers((ts) => ts.map((x, idx) => (idx === i ? { ...x, priceAdd: parseFloat(e.target.value || "0") } : x)))}
+                      />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </Card>
+        </div>
       </div>
 
-      <div style={{ marginTop: 28, display: "flex", gap: 12 }}>
-        <button type="submit" disabled={saving} style={{ padding: "12px 28px", background: "#0a0a0a", color: "#fff", border: 0, cursor: "pointer" }}>
-          {saving ? "Saving…" : product ? "Save changes" : "Create product"}
-        </button>
-        <button type="button" onClick={() => router.push("/admin/products")} style={{ padding: "12px 28px", background: "none", border: "1px solid #ccc", cursor: "pointer" }}>
-          Cancel
-        </button>
+      {/* Sticky save bar */}
+      <div className="sticky bottom-0 -mx-8 mt-6 border-t border-neutral-200 bg-white/95 px-8 py-3 backdrop-blur">
+        <div className="flex items-center gap-3">
+          <Button type="submit" variant="primary" disabled={saving}>
+            {saving ? "Saving…" : product ? "Save changes" : "Create product"}
+          </Button>
+          <Button type="button" variant="secondary" onClick={() => router.push("/admin/products")}>
+            Cancel
+          </Button>
+          {error && <span className="text-xs text-red-600">Check the error above.</span>}
+        </div>
       </div>
     </form>
   );
