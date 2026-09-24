@@ -16,6 +16,7 @@ type Props = {
     category: string;
     colorHex: string; colorName: string | null; basePrice: number; discountPercent: number | null; costPrice: number | null; vendorCost: number | null; status: string;
     silhouette: string | null; modelNote: string | null; madeCount: number | null; pairWith: string[]; videoUrl: string | null;
+    sketchImageUrl: string | null; paletteImageUrl: string | null; makingImageUrl: string | null; fabricImageUrl: string | null; careImageUrl: string | null;
     vendorId: string; images: ImageRow[]; featured: boolean; featuredOrder: number; lookbookOrder: number | null; preOrder: boolean;
     variants: { size: string; stock: number }[];
     tiers: { label: string; priceAdd: number }[];
@@ -24,6 +25,14 @@ type Props = {
 };
 
 const SIZES = ["XS", "S", "M", "L", "XL"];
+
+const STORY_IMAGE_FIELDS = [
+  { key: "sketchImageUrl", label: "Sketch / illustration", hint: "The original design sketch — shown in “The idea”" },
+  { key: "paletteImageUrl", label: "Colour & material palette", hint: "Fabric swatches, trims, hardware — shown in “From line to palette”" },
+  { key: "makingImageUrl", label: "The making (behind the scenes)", hint: "Hands at work / construction — shown in “The hand behind the piece”" },
+  { key: "fabricImageUrl", label: "Fabric close-up", hint: "Macro shot of the weave or cutwork — shown in “The cloth, up close”" },
+  { key: "careImageUrl", label: "Care", hint: "Garment care / steaming shot — shown alongside care instructions" },
+] as const;
 
 export default function ProductForm({ vendors, categories, materials, isAdmin, product }: Props) {
   const router = useRouter();
@@ -56,6 +65,14 @@ export default function ProductForm({ vendors, categories, materials, isAdmin, p
   const [bom, setBom] = useState<{ materialId: string; qtyPerUnit: number }[]>(product?.bom ?? []);
   const [vendorId, setVendorId] = useState(product?.vendorId ?? vendors[0]?.id ?? "");
   const [images, setImages] = useState<string[]>(product?.images.map((i) => i.url) ?? []);
+  const [storyImages, setStoryImages] = useState<Record<string, string>>({
+    sketchImageUrl: product?.sketchImageUrl ?? "",
+    paletteImageUrl: product?.paletteImageUrl ?? "",
+    makingImageUrl: product?.makingImageUrl ?? "",
+    fabricImageUrl: product?.fabricImageUrl ?? "",
+    careImageUrl: product?.careImageUrl ?? "",
+  });
+  const [storyUploading, setStoryUploading] = useState<Record<string, boolean>>({});
   const [stock, setStock] = useState<Record<string, number>>(
     Object.fromEntries(SIZES.map((s) => [s, product?.variants.find((v) => v.size === s)?.stock ?? 6]))
   );
@@ -90,6 +107,26 @@ export default function ProductForm({ vendors, categories, materials, isAdmin, p
     }
   }
 
+  async function onStoryUpload(key: string, e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setStoryUploading((u) => ({ ...u, [key]: true }));
+    setError("");
+    try {
+      const fd = new FormData();
+      fd.append("file", file);
+      const res = await fetch("/api/admin/upload", { method: "POST", body: fd });
+      const json = await res.json();
+      if (!res.ok) throw new Error(json.error || "upload failed");
+      setStoryImages((s) => ({ ...s, [key]: json.url }));
+    } catch (err: any) {
+      setError(err.message);
+    } finally {
+      setStoryUploading((u) => ({ ...u, [key]: false }));
+      e.target.value = "";
+    }
+  }
+
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     setSaving(true);
@@ -102,6 +139,11 @@ export default function ProductForm({ vendors, categories, materials, isAdmin, p
       madeCount: madeCount ? parseInt(madeCount, 10) : null,
       pairWith: pairWith.split(",").map((s) => s.trim()).filter(Boolean),
       videoUrl: videoUrl || null,
+      sketchImageUrl: storyImages.sketchImageUrl || null,
+      paletteImageUrl: storyImages.paletteImageUrl || null,
+      makingImageUrl: storyImages.makingImageUrl || null,
+      fabricImageUrl: storyImages.fabricImageUrl || null,
+      careImageUrl: storyImages.careImageUrl || null,
       discountPercent: discountPercent ? Math.min(99, Math.max(0, parseInt(discountPercent, 10))) : null,
       costPrice: costPrice ? Math.round(parseFloat(costPrice) * 100) : null,
       vendorCost: vendorCost ? Math.round(parseFloat(vendorCost) * 100) : null,
@@ -329,6 +371,34 @@ export default function ProductForm({ vendors, categories, materials, isAdmin, p
       <p style={{ fontSize: 11, color: "#999", marginTop: 6 }}>
         Uploads go to S3/R2 in production, or /public/uploads in dev (see storageBackend in src/lib/storage.ts).
       </p>
+
+      <label style={{ ...label, marginTop: 24, display: "block" }}>Story photography (optional)</label>
+      <p style={{ fontSize: 11, color: "#999", marginTop: 4 }}>
+        Dedicated images for the "idea → making → fabric" narrative shown below the fold on the product page.
+        Leave any of these blank and that section falls back to the product's regular photos above.
+      </p>
+      <div style={{ display: "flex", flexDirection: "column", gap: 14, marginTop: 10 }}>
+        {STORY_IMAGE_FIELDS.map(({ key, label: fieldLabel, hint }) => (
+          <div key={key} style={{ display: "flex", gap: 12, alignItems: "flex-start", border: "1px solid #eee", padding: 12 }}>
+            {storyImages[key] ? (
+              <div style={{ position: "relative", flexShrink: 0 }}>
+                <img src={storyImages[key]} alt="" style={{ width: 72, height: 90, objectFit: "cover", border: "1px solid #ddd" }} />
+                <button type="button" onClick={() => setStoryImages((s) => ({ ...s, [key]: "" }))}
+                  style={{ position: "absolute", top: -6, right: -6, width: 20, height: 20, borderRadius: "50%", border: "none", background: "#000", color: "#fff", cursor: "pointer" }}>×</button>
+              </div>
+            ) : (
+              <label style={{ width: 72, height: 90, flexShrink: 0, border: "1px dashed #bbb", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", fontSize: 24, color: "#999" }}>
+                {storyUploading[key] ? "…" : "+"}
+                <input type="file" accept="image/*" onChange={(e) => onStoryUpload(key, e)} style={{ display: "none" }} disabled={!!storyUploading[key]} />
+              </label>
+            )}
+            <div>
+              <div style={{ fontSize: 13, fontWeight: 600 }}>{fieldLabel}</div>
+              <div style={{ fontSize: 11, color: "#999", marginTop: 2 }}>{hint}</div>
+            </div>
+          </div>
+        ))}
+      </div>
 
       <div style={{ marginTop: 28, display: "flex", gap: 12 }}>
         <button type="submit" disabled={saving} style={{ padding: "12px 28px", background: "#0a0a0a", color: "#fff", border: 0, cursor: "pointer" }}>

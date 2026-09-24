@@ -20,6 +20,7 @@ export async function POST(req: NextRequest) {
       colorName: b.colorName, basePrice: b.basePrice, discountPercent: b.discountPercent ?? null, costPrice: b.costPrice ?? null, vendorCost: b.vendorCost ?? null, status: b.status || "ACTIVE", vendorId,
       features: b.features ?? null, fitNotes: b.fitNotes ?? null, careNotes: b.careNotes ?? null, deliveryNotes: b.deliveryNotes ?? null, limitedEdition: b.limitedEdition ?? false,
       silhouette: b.silhouette ?? null, modelNote: b.modelNote ?? null, madeCount: b.madeCount ?? null, pairWith: b.pairWith ?? [], videoUrl: b.videoUrl ?? null,
+      sketchImageUrl: b.sketchImageUrl ?? null, paletteImageUrl: b.paletteImageUrl ?? null, makingImageUrl: b.makingImageUrl ?? null, fabricImageUrl: b.fabricImageUrl ?? null, careImageUrl: b.careImageUrl ?? null,
       featured: b.featured ?? false, featuredOrder: b.featuredOrder ?? 0, lookbookOrder: b.lookbookOrder ?? null,
       preOrder: b.preOrder ?? false,
       variants: { create: (b.variants ?? []).map((v: any) => ({ size: v.size, sku: `${b.slug}-${v.size}`, stock: v.stock ?? 0 })) },

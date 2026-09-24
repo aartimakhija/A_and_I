@@ -25,6 +25,14 @@ export type SFProduct = {
   mrp: number | null; // rupees — derived "was" price, only present when discountPercent is set
   discountPercent: number | null;
   images: string[];
+  // Dedicated "story" imagery (ideation sketch / colour+material palette / making / fabric
+  // close-up / care) shown in the ProductStory PDP section. Each falls back to cycling
+  // through `images` when the product has no dedicated asset for that beat.
+  sketchImageUrl: string | null;
+  paletteImageUrl: string | null;
+  makingImageUrl: string | null;
+  fabricImageUrl: string | null;
+  careImageUrl: string | null;
   variants: { size: string; stock: number }[];
   tiers: { label: string; priceAdd: number }[]; // priceAdd in rupees
   status: string;
@@ -37,6 +45,7 @@ type PrismaProductWithRelations = {
   category: string;
   colorHex: string; colorName: string | null; basePrice: number; discountPercent: number | null; status: string; preOrder: boolean;
   silhouette: string | null; modelNote: string | null; madeCount: number | null; pairWith: string[]; videoUrl: string | null;
+  sketchImageUrl: string | null; paletteImageUrl: string | null; makingImageUrl: string | null; fabricImageUrl: string | null; careImageUrl: string | null;
   images: { url: string; position: number }[];
   variants: { size: string; stock: number }[];
   tiers: { label: string; priceAdd: number; position: number }[];
@@ -62,6 +71,11 @@ export function toSFProduct(p: PrismaProductWithRelations): SFProduct {
     videoUrl: p.videoUrl,
     price, mrp, discountPercent,
     images: [...p.images].sort((a, b) => a.position - b.position).map((i) => i.url),
+    sketchImageUrl: p.sketchImageUrl,
+    paletteImageUrl: p.paletteImageUrl,
+    makingImageUrl: p.makingImageUrl,
+    fabricImageUrl: p.fabricImageUrl,
+    careImageUrl: p.careImageUrl,
     variants: p.variants,
     tiers: [...p.tiers].sort((a, b) => a.position - b.position).map((t) => ({ label: t.label, priceAdd: t.priceAdd / 100 })),
     status: p.status,

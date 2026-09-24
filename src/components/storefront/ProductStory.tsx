@@ -5,12 +5,13 @@ import type { SFProduct } from "@/lib/storefront-adapter";
 /**
  * The ideation-to-care narrative shown below the fold on every product page,
  * matching the Lovable design's story sequence (idea → direction → reality →
- * the hand behind the piece → fabric & care → the story, complete). The
- * Lovable source shows dedicated sketch/ideation photography where a product
- * has it and falls back to the product's own catalogue views otherwise —
- * every real A&I product currently only has catalogue photography, so this
- * always takes that fallback path, cycling through the product's real images
- * rather than inventing artwork that doesn't exist.
+ * the hand behind the piece → fabric & care → the story, complete).
+ *
+ * Where a product has dedicated story photography (sketch / colour+material
+ * palette / making-of / fabric close-up / care), each beat uses its own
+ * matching asset. Products without that photography fall back to cycling
+ * through the product's regular catalogue images, so nothing breaks for
+ * older catalogue items that only ever had front/back/side shots.
  */
 
 function StepLabel({ n, label }: { n: string; label: string }) {
@@ -42,6 +43,12 @@ export function ProductStory({ product }: { product: SFProduct }) {
   const maker = product.category === "craft" ? "a specialist craft partner" : "our studio";
   const colourway = product.colorName ?? "this colourway";
 
+  const ideaImg = product.sketchImageUrl ?? view(1) ?? view(0);
+  const paletteImg = product.paletteImageUrl ?? view(2) ?? view(0);
+  const makingImg = product.makingImageUrl ?? view(3) ?? view(0);
+  const fabricImg = product.fabricImageUrl ?? view(3) ?? view(0);
+  const careImg = product.careImageUrl;
+
   return (
     <>
       {/* 02 — THE IDEA */}
@@ -51,7 +58,7 @@ export function ProductStory({ product }: { product: SFProduct }) {
           Before the piece, there was <span className="gold-italic">a line.</span>
         </h2>
         <div className="mt-14 grid items-center gap-14 lg:grid-cols-2">
-          <Frame src={view(1) ?? view(0)} alt={`${product.name} — early proportion study`} color={product.color} />
+          <Frame src={ideaImg} alt={`${product.name} — original design sketch`} color={product.color} />
           <div>
             <p className="text-muted-foreground">
               {product.name} began with proportion — where the piece sits on the body, and how much
@@ -94,7 +101,7 @@ export function ProductStory({ product }: { product: SFProduct }) {
                 </div>
               )}
             </dl>
-            <Frame src={view(2) ?? view(0)} alt={`${product.name} in ${colourway}`} color={product.color} />
+            <Frame src={paletteImg} alt={`Fabric, colour and trim palette for ${product.name}`} color={product.color} />
           </div>
         </div>
       </section>
@@ -131,8 +138,8 @@ export function ProductStory({ product }: { product: SFProduct }) {
           </h2>
           <div className="mt-14 grid items-center gap-14 lg:grid-cols-2">
             <Frame
-              src={view(3) ?? view(0)}
-              alt={`${product.name} — detail view showing construction and finishing`}
+              src={makingImg}
+              alt={`${product.name} — in the making, construction and finishing`}
               ratio="aspect-4/3"
               color={product.color}
             />
@@ -156,7 +163,7 @@ export function ProductStory({ product }: { product: SFProduct }) {
       </section>
 
       {/* 06 — THE FABRIC AND ITS CARE */}
-      {(product.fitNotes || product.careNotes) && (
+      {(fabricImg || product.fitNotes || product.careNotes) && (
         <section className="shell py-20 md:py-24">
           <StepLabel n="06" label="Why this fabric?" />
           <h2 className="display-lg mt-8 max-w-3xl">
@@ -164,8 +171,8 @@ export function ProductStory({ product }: { product: SFProduct }) {
           </h2>
           <div className="mt-14 grid items-start gap-14 lg:grid-cols-2">
             <Frame
-              src={view(3) ?? view(0)}
-              alt={`Detail of the cloth used for ${product.name}`}
+              src={fabricImg}
+              alt={`Detail of the cloth and cutwork used for ${product.name}`}
               ratio="aspect-4/3"
               color={product.color}
             />
@@ -175,10 +182,19 @@ export function ProductStory({ product }: { product: SFProduct }) {
                 Held at this distance, the weave, the thread colours and the finish are the piece.
                 Exact composition and care are confirmed before the cloth is cut.
               </p>
-              {product.careNotes && (
+              {(product.careNotes || careImg) && (
                 <>
                   <h3 className="display-md mt-10">Taking care of it</h3>
-                  <p className="mt-5 whitespace-pre-wrap text-sm text-muted-foreground">{product.careNotes}</p>
+                  <div className="mt-5 flex items-start gap-5">
+                    {careImg && (
+                      <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-full bg-secondary">
+                        <Image src={careImg} alt={`How to care for ${product.name}`} fill sizes="80px" className="object-cover" />
+                      </div>
+                    )}
+                    {product.careNotes && (
+                      <p className="whitespace-pre-wrap text-sm text-muted-foreground">{product.careNotes}</p>
+                    )}
+                  </div>
                 </>
               )}
             </div>

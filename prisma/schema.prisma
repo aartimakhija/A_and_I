@@ -184,6 +184,13 @@ model Product {
   madeCount   Int?                                     // units made in this limited run, if disclosed
   pairWith    String[]     @default([])                // slugs of products styled together on the PDP
   videoUrl    String?                                  // optional short-form product film/video URL
+  // Dedicated "story" imagery for the ideation-to-care PDP narrative — falls back to
+  // gallery photos on the storefront when a product has none of these set.
+  sketchImageUrl  String?                              // original design sketch/illustration
+  paletteImageUrl String?                              // fabric/colour/trim palette board
+  makingImageUrl  String?                              // behind-the-scenes construction photo
+  fabricImageUrl  String?                              // macro fabric/cutwork close-up
+  careImageUrl    String?                              // care/steaming photo
   basePrice   Int                                      // paise — the selling price
   discountPercent Int?                                  // 0-99 — when set, a derived "was" price + %-off badge shows on the storefront
   costPrice   Int?                                     // paise — landed cost per unit, drives margin/profit reporting
