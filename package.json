@@ -15,7 +15,8 @@
     "set:preorder": "tsx scripts/set-all-preorder.ts",
     "seed:blog": "tsx scripts/seed-blog.ts",
     "report:catalogue": "tsx scripts/report-catalogue.ts",
-    "cleanup:catalogue": "tsx scripts/cleanup-legacy-catalogue.ts"
+    "cleanup:catalogue": "tsx scripts/cleanup-legacy-catalogue.ts",
+    "seed:capsule-images": "tsx scripts/seed-capsule-images.ts"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"
