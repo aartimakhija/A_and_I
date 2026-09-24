@@ -17,10 +17,20 @@ import { NewsletterForm } from "@/components/site/NewsletterForm";
  */
 
 const IMG = "/uploads/products";
+// Every capsule product was shot with the same five "story" angles (see
+// scripts/seed-capsule-story-images.ts): -0..-3 are the plain garment
+// gallery photos, then -sketch / -palette / -making / -fabric / -care.
+// The sections below deliberately pick the matching story angle per step
+// (design sheet for "the idea", macro cutwork for "material", hands
+// mid-stitch for "craft") instead of reusing the plain garment photo
+// everywhere.
+const flagshipBase = "1790000000000-architecture-in-linen-look-01-asymmetric-one-shoulder-girih-cutwork-gown";
 const flagship = {
   name: "Asymmetric One-Shoulder Girih Cutwork Gown",
   slug: "architecture-in-linen-look-01-asymmetric-one-shoulder-girih-cutwork-gown",
-  image: `${IMG}/1790000000000-architecture-in-linen-look-01-asymmetric-one-shoulder-girih-cutwork-gown-0.jpg`,
+  image: `${IMG}/${flagshipBase}-0.jpg`,
+  sketchImage: `${IMG}/${flagshipBase}-sketch.jpg`,
+  fabricImage: `${IMG}/${flagshipBase}-fabric.jpg`,
 };
 
 const journey = [
@@ -28,8 +38,8 @@ const journey = [
     n: "01",
     label: "The idea",
     body: "Persian girih geometry — the interlocking star-and-polygon patterning found in centuries-old tilework — reworked as a cutwork motif for cloth.",
-    image: flagship.image,
-    alt: "Design reference render for the asymmetric one-shoulder girih cutwork gown",
+    image: flagship.sketchImage,
+    alt: "Design sketch and technical detail sheet for the asymmetric one-shoulder girih cutwork gown",
   },
   {
     n: "02",
@@ -61,10 +71,10 @@ const studioStrip = [
 ];
 
 const makingSequence = [
-  { n: "01", label: "Pattern", body: "The girih grid is drawn to the garment's own pattern pieces, not applied after the fact.", image: `${IMG}/1790000000021-architecture-in-linen-look-57-rose-line-print-lasercut-slip-gown-0.jpg`, alt: "Design reference render showing a lasercut pattern placement" },
-  { n: "02", label: "Cut", body: "Laser-cut by a specialist craft partner, edge by edge, so the geometry stays exact.", image: `${IMG}/1790000000030-architecture-in-linen-look-92-ombr-lasercut-density-jumpsuit-in-cobalt-sky-0.jpg`, alt: "Design reference render showing lasercut density detail" },
-  { n: "03", label: "Finish", body: "Every cut edge is hand-bound so the open geometry holds its shape rather than fraying.", image: `${IMG}/1790000000034-architecture-in-linen-look-111-girih-cutwork-evening-gown-0.jpg`, alt: "Design reference render of a girih cutwork evening gown" },
-  { n: "04", label: "Fit", body: "Checked against the block before it's confirmed for production.", image: `${IMG}/1790000000036-architecture-in-linen-look-121-moorish-muqarnas-cutwork-caftan-0.jpg`, alt: "Design reference render of a cutwork caftan" },
+  { n: "01", label: "Pattern", body: "The girih grid is drawn to the garment's own pattern pieces, not applied after the fact.", image: `${IMG}/1790000000021-architecture-in-linen-look-57-rose-line-print-lasercut-slip-gown-making.jpg`, alt: "Hands laying out the lasercut pattern placement" },
+  { n: "02", label: "Cut", body: "Laser-cut by a specialist craft partner, edge by edge, so the geometry stays exact.", image: `${IMG}/1790000000030-architecture-in-linen-look-92-ombr-lasercut-density-jumpsuit-in-cobalt-sky-making.jpg`, alt: "Hands at work on the lasercut density detail" },
+  { n: "03", label: "Finish", body: "Every cut edge is hand-bound so the open geometry holds its shape rather than fraying.", image: `${IMG}/1790000000034-architecture-in-linen-look-111-girih-cutwork-evening-gown-making.jpg`, alt: "Hands hand-binding a girih cutwork edge" },
+  { n: "04", label: "Fit", body: "Checked against the block before it's confirmed for production.", image: `${IMG}/1790000000036-architecture-in-linen-look-121-moorish-muqarnas-cutwork-caftan-making.jpg`, alt: "Hands checking the fit of a cutwork caftan against the block" },
 ];
 
 const difference = [
@@ -139,7 +149,7 @@ export function HomeFlow() {
           <div className="mt-14 grid items-start gap-14 lg:grid-cols-2">
             <div className="reveal">
               <div className="relative aspect-4/3 w-full bg-secondary">
-                <Image src={flagship.image} alt="Design reference render for the flagship girih cutwork gown" fill sizes="(max-width: 1024px) 100vw, 50vw" className="object-cover" />
+                <Image src={flagship.fabricImage} alt="Macro close-up of the laser-cut girih cutwork fabric" fill sizes="(max-width: 1024px) 100vw, 50vw" className="object-cover" />
               </div>
               <p className="micro mt-6 text-muted-foreground">Material → design → body</p>
             </div>
