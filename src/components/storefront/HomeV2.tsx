@@ -38,7 +38,21 @@ export function HomeV2({
       <ArrivalHero imageUrl={heroImageUrl} videoUrl={heroVideoUrl} movementPiece={movementPiece} />
       <Marquee items={MARQUEE_WORDS} />
 
-      <PointOfView images={philosophyPiece?.images.slice(0, 4) ?? []} />
+      {/* PointOfView's four steps are typed (Idea/Form/Material/Craft), not just
+          "four photos" — feed each one the story-photo that actually matches,
+          falling back to plain gallery shots only where a product has none. */}
+      <PointOfView
+        images={
+          philosophyPiece
+            ? [
+                philosophyPiece.sketchImageUrl ?? philosophyPiece.images[0] ?? null,
+                philosophyPiece.images[0] ?? null,
+                philosophyPiece.fabricImageUrl ?? philosophyPiece.images[1] ?? null,
+                philosophyPiece.makingImageUrl ?? philosophyPiece.images[2] ?? null,
+              ]
+            : []
+        }
+      />
 
       <CollectionSection
         featuredProduct={featuredProduct}
