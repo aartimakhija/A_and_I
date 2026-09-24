@@ -23,6 +23,9 @@ export function NavMegaMenu() {
   const explore: [string, string][] = [
     ["/shop/all", "Shop All"], ["/shop/all?availability=in", "Ready to Ship"], ["/lookbook", "Lookbook"], ["/blog", "Journal"], ["/bespoke", "Bespoke"],
   ];
+  const ourWorld: [string, string][] = [
+    ["/craft", "The Craft"], ["/founder", "The Founder"], ["/visit", "The Studio"],
+  ];
 
   return (
     <div onMouseEnter={openNow} onMouseLeave={closeSoon} className="relative">
@@ -30,11 +33,19 @@ export function NavMegaMenu() {
         Collection
       </Link>
       {open && (
-        <div className="absolute left-1/2 top-7 z-[55] grid w-[min(720px,90vw)] -translate-x-1/2 grid-cols-[160px_160px_1fr] gap-10 border border-border bg-background p-8 shadow-[0_20px_50px_rgba(0,0,0,0.12)]">
+        <div className="absolute left-1/2 top-7 z-[55] grid w-[min(860px,90vw)] -translate-x-1/2 grid-cols-[160px_140px_160px_1fr] gap-10 border border-border bg-background p-8 shadow-[0_20px_50px_rgba(0,0,0,0.12)]">
           <div>
             <div className="eyebrow-muted mb-3">Explore</div>
             {explore.map(([href, label]) => (
               <Link key={href} href={href} onClick={() => setOpen(false)} className="link-underline mb-2.5 block font-display italic text-[15px]">
+                {label}
+              </Link>
+            ))}
+          </div>
+          <div>
+            <div className="eyebrow-muted mb-3">Our world</div>
+            {ourWorld.map(([href, label]) => (
+              <Link key={href} href={href} onClick={() => setOpen(false)} className="link-underline mb-2.5 block text-[13px] font-light text-muted-foreground">
                 {label}
               </Link>
             ))}

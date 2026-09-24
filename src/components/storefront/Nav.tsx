@@ -7,6 +7,12 @@ import { useStore } from "./StoreContext";
 const links: [string, string][] = [
   ["/", "Home"], ["/lookbook", "Lookbook"], ["/blog", "Journal"], ["/bespoke", "Bespoke"], ["/about", "About"], ["/contact", "Contact"],
 ];
+// Desktop tucks these under the "Collection" mega menu's "Our world" column so the
+// top bar doesn't get crowded — the mobile drawer has no mega menu, so it lists
+// them directly instead, right after the primary links.
+const mobileExtra: [string, string][] = [
+  ["/craft", "Craft"], ["/founder", "Founder"], ["/visit", "Visit"],
+];
 
 export function Nav() {
   const pathname = usePathname();
@@ -51,6 +57,9 @@ export function Nav() {
           <Link href="/" onClick={() => setMenuOpen(false)} className={`${navLinkClass("/")} text-left text-sm`}>Home</Link>
           <Link href="/shop/all" onClick={() => setMenuOpen(false)} className={`${navLinkClass("/shop/all")} text-left text-sm`}>Collection</Link>
           {links.slice(1).map(([href, label]) => (
+            <Link key={href} href={href} onClick={() => setMenuOpen(false)} className={`${navLinkClass(href)} text-left text-sm`}>{label}</Link>
+          ))}
+          {mobileExtra.map(([href, label]) => (
             <Link key={href} href={href} onClick={() => setMenuOpen(false)} className={`${navLinkClass(href)} text-left text-sm`}>{label}</Link>
           ))}
           <button onClick={() => { setMenuOpen(false); setSearchOpen(true); }} className="micro text-left text-sm text-muted-foreground">Search</button>
