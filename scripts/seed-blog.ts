@@ -1,9 +1,10 @@
 // scripts/seed-blog.ts
 //
-// Creates 5 real Journal posts, each tagged to a real product from the
-// catalogue (so "Shop this post" on the live page actually has something to
-// show). Looks products up by slug at run time rather than hardcoding IDs,
-// so it works regardless of when/how your catalogue was seeded.
+// Creates 6 real Journal posts. Five are each tagged to a real product from
+// the catalogue (so "Shop this post" on the live page actually has something
+// to show); one (productSlug: null) is a general/evergreen post with no
+// product tag. Looks products up by slug at run time rather than hardcoding
+// IDs, so it works regardless of when/how your catalogue was seeded.
 //
 // Run:  npx tsx scripts/seed-blog.ts
 
@@ -94,6 +95,23 @@ And if you're travelling, it's one of the least demanding pieces to pack — it 
 
 Five ways isn't a marketing number here; it's genuinely how many distinct outfits we tested before deciding this piece belonged in the collection at all.`,
   },
+  {
+    slug: "how-pre-order-actually-works",
+    productSlug: null,
+    title: "How Pre-Order Actually Works at A&I",
+    subtitle: "No payment up front, no minimum order size games — just how small-run manufacturing actually happens.",
+    body: `Most pre-order systems online are really just a waitlist with a fancier name. Ours works differently, mostly because our production actually works differently.
+
+When a piece is marked pre-order, it means the run hasn't been cut yet. We don't hold fabric or book atelier hours speculatively — a run size is set by how many people actually want the piece, not by a forecast someone made months ago. So reserving a pre-order piece takes no payment at all. You choose your size, you're on the list, and that's the entire commitment on your side.
+
+Once there's enough interest to justify opening the run, we go into production. Depending on the technique — bandhani and mirror-work take longer than a plain linen cut — this is usually a matter of weeks, not months, though we'd rather tell you honestly if a piece is running behind than promise a date we can't hold.
+
+The one thing you get for reserving early: a discount code for when the piece actually ships, as a small thank-you for committing before the run existed. It's applied at checkout once you're notified.
+
+If the run doesn't fill — which happens rarely, but does happen — you're simply never charged, and we'll usually let you know either way rather than leaving you wondering.
+
+We know "made once ordered" asks more patience than a piece already sitting in a warehouse. In exchange, nothing you buy this way was made speculatively, sized wrong for the market, or discounted into landfill six months later because someone guessed demand incorrectly. That trade feels like the right one to us, and it's the same logic behind everything on the Responsibility page.`,
+  },
 ];
 
 async function main() {
@@ -102,8 +120,10 @@ async function main() {
     const existing = await prisma.blogPost.findUnique({ where: { slug: post.slug } });
     if (existing) { console.log(`  = ${post.slug} already exists, skipping`); skipped++; continue; }
 
-    const product = await prisma.product.findUnique({ where: { slug: post.productSlug }, include: { images: { orderBy: { position: "asc" }, take: 1 } } });
-    if (!product) { console.warn(`  ! product "${post.productSlug}" not found — creating post without a cover image or tag`); }
+    const product = post.productSlug
+      ? await prisma.product.findUnique({ where: { slug: post.productSlug }, include: { images: { orderBy: { position: "asc" }, take: 1 } } })
+      : null;
+    if (post.productSlug && !product) { console.warn(`  ! product "${post.productSlug}" not found — creating post without a cover image or tag`); }
 
     await prisma.blogPost.create({
       data: {
