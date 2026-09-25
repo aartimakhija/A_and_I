@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
-import { getSession, requireRole } from "@/lib/rbac";
+import { getSession } from "@/lib/rbac";
 import { rateLimit, clientIp } from "@/lib/rate-limit";
 
 const Body = z.object({
@@ -41,14 +41,4 @@ export async function POST(req: NextRequest) {
     data: { orderId: item.orderId, orderItemId: item.id, reason: parsed.data.reason, note: parsed.data.note },
   });
   return NextResponse.json(ret, { status: 201 });
-}
-
-// Admin: list all return/refund requests (Returns queue).
-export async function GET() {
-  await requireRole(["ADMIN"]);
-  const returns = await prisma.return.findMany({
-    include: { order: { select: { number: true, email: true } }, orderItem: { select: { name: true, size: true, unitPrice: true } } },
-    orderBy: { createdAt: "desc" },
-  });
-  return NextResponse.json(returns);
 }

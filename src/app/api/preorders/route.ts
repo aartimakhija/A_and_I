@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { customAlphabet } from "nanoid";
 import { prisma } from "@/lib/prisma";
-import { requireRole } from "@/lib/rbac";
 import { rateLimit, clientIp } from "@/lib/rate-limit";
 
 const code = customAlphabet("ABCDEFGHJKLMNPQRSTUVWXYZ23456789", 6);
@@ -37,35 +36,4 @@ export async function POST(req: NextRequest) {
     data: { ...parsed.data, discountCode },
   });
   return NextResponse.json({ id: pre.id, discountCode }, { status: 201 });
-}
-
-// Admin: full list, or grouped counts per product+size for production planning
-export async function GET(req: NextRequest) {
-  await requireRole(["ADMIN"]);
-  const grouped = req.nextUrl.searchParams.get("grouped") === "true";
-
-  if (grouped) {
-    const rows = await prisma.preOrder.groupBy({
-      by: ["productId", "size"],
-      where: { status: { not: "CANCELLED" } },
-      _sum: { qty: true },
-    });
-    const products = await prisma.product.findMany({
-      where: { id: { in: rows.map((r) => r.productId) } },
-      select: { id: true, name: true, slug: true },
-    });
-    const byId = Object.fromEntries(products.map((p) => [p.id, p]));
-    const summary = rows.map((r) => ({
-      productId: r.productId, productName: byId[r.productId]?.name ?? "Unknown",
-      productSlug: byId[r.productId]?.slug ?? "", size: r.size, qty: r._sum.qty ?? 0,
-    }));
-    return NextResponse.json(summary);
-  }
-
-  const preorders = await prisma.preOrder.findMany({
-    include: { product: { select: { name: true, slug: true } } },
-    orderBy: { createdAt: "desc" },
-    take: 300,
-  });
-  return NextResponse.json(preorders);
 }

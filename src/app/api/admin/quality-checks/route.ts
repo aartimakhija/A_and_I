@@ -2,16 +2,6 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { requireRole } from "@/lib/rbac";
 
-export async function GET() {
-  await requireRole(["ADMIN"]);
-  const checks = await prisma.qualityCheck.findMany({
-    include: { poItem: { include: { po: { select: { poNumber: true } }, product: { select: { name: true } } } } },
-    orderBy: { createdAt: "desc" },
-    take: 500, // safety cap — see /admin API pagination follow-up
-  });
-  return NextResponse.json(checks);
-}
-
 // Journey 9: "If approved, Inventory increases. If rejected, Return to vendor."
 // Passing qtyPassed units here bumps the matching Product+size Variant's
 // stock immediately — the one automatic inventory movement in this flow,

@@ -1,14 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { requireRole, vendorScope } from "@/lib/rbac";
+import { requireRole } from "@/lib/rbac";
 
-// CMS: list (admin = all, vendor = own) / create
-export async function GET() {
-  const s = await requireRole(["ADMIN", "VENDOR"]);
-  const products = await prisma.product.findMany({ where: vendorScope(s), include: { images: true, variants: true }, orderBy: { createdAt: "desc" } });
-  return NextResponse.json(products);
-}
-
+// CMS: create (admin for any vendor, vendor for self)
 export async function POST(req: NextRequest) {
   const s = await requireRole(["ADMIN", "VENDOR"]);
   const b = await req.json();

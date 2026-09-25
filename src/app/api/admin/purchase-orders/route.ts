@@ -5,16 +5,6 @@ import { requireRole } from "@/lib/rbac";
 
 const num = customAlphabet("0123456789", 5);
 
-export async function GET() {
-  await requireRole(["ADMIN"]);
-  const pos = await prisma.purchaseOrder.findMany({
-    include: { vendor: { select: { name: true } }, items: true },
-    orderBy: { createdAt: "desc" },
-    take: 500, // safety cap — see /admin API pagination follow-up
-  });
-  return NextResponse.json(pos);
-}
-
 export async function POST(req: NextRequest) {
   await requireRole(["ADMIN"]);
   const b = await req.json();

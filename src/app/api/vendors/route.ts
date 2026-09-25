@@ -3,10 +3,6 @@ import { prisma } from "@/lib/prisma";
 import { requireRole } from "@/lib/rbac";
 
 // Vendor management (admin only)
-export async function GET() {
-  await requireRole(["ADMIN"]);
-  return NextResponse.json(await prisma.vendor.findMany({ include: { _count: { select: { products: true } } } }));
-}
 export async function POST(req: NextRequest) {
   await requireRole(["ADMIN"]);
   const b = await req.json();
