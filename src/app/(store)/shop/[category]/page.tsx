@@ -42,15 +42,23 @@ export default async function CategoryPage({ params }: { params: { category: str
   // product silently blanks out its whole category tile.
   let categoryTiles: { slug: string; name: string; imageUrl?: string | null }[] = [];
   if (params.category === "all") {
-    const reps = await Promise.all(
-      categories.map((c) =>
-        prisma.product.findMany({ where: { status: "ACTIVE", category: c.slug }, include: PRODUCT_INCLUDE, orderBy: { createdAt: "desc" }, take: 10 })
-      )
-    );
-    categoryTiles = categories.map((c, i) => {
-      const withImage = reps[i].map(toSFProduct).find((p) => p.images[0]);
-      return { slug: c.slug, name: c.name, imageUrl: withImage?.images[0] ?? null };
-    });
+    // A hiccup fetching tile images (e.g. a cold-start DB blip) should never
+    // take down the whole page — worst case, "Shop by category" just doesn't
+    // render this one visit instead of the entire collection page 500ing.
+    try {
+      const reps = await Promise.all(
+        categories.map((c) =>
+          prisma.product.findMany({ where: { status: "ACTIVE", category: c.slug }, include: PRODUCT_INCLUDE, orderBy: { createdAt: "desc" }, take: 10 })
+        )
+      );
+      categoryTiles = categories.map((c, i) => {
+        const withImage = reps[i].map(toSFProduct).find((p) => p.images[0]);
+        return { slug: c.slug, name: c.name, imageUrl: withImage?.images[0] ?? null };
+      });
+    } catch (err) {
+      console.error("Failed to build category tiles for /shop/all:", err);
+      categoryTiles = [];
+    }
   }
 
   return (

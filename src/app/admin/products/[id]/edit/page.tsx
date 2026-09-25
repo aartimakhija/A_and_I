@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { getCategories } from "@/lib/categories";
 import ProductForm from "@/components/admin/ProductForm";
 import { Badge, Button, PageHeader, productStatusTone } from "@/components/admin/ui";
+import { ProductFormErrorBoundary } from "@/components/admin/ProductFormErrorBoundary";
 
 export default async function EditProduct({ params }: { params: { id: string } }) {
   // TEMPORARY diagnostic wrapper: Next.js redacts the real error message for
@@ -64,7 +65,9 @@ export default async function EditProduct({ params }: { params: { id: string } }
           </>
         }
       />
-      <ProductForm vendors={vendors} categories={categories} materials={materials} isAdmin={s.role === "ADMIN"} product={product} />
+      <ProductFormErrorBoundary>
+        <ProductForm vendors={vendors} categories={categories} materials={materials} isAdmin={s.role === "ADMIN"} product={product} />
+      </ProductFormErrorBoundary>
     </>
   );
 }

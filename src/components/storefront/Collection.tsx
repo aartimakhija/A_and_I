@@ -26,6 +26,7 @@ export function Collection({ products, category, categories, categoryTiles = [] 
   const [selectedColors, setSelectedColors] = useState<Set<string>>(new Set());
   const [selectedSizes, setSelectedSizes] = useState<Set<string>>(new Set());
   const [availability, setAvailability] = useState<Set<string>>(new Set()); // "in" | "out"
+  const [search, setSearch] = useState("");
   useEffect(() => {
     try {
       const q = new URLSearchParams(window.location.search).get("availability");
@@ -37,6 +38,11 @@ export function Collection({ products, category, categories, categoryTiles = [] 
   const sizeOptions = useMemo(() => SIZE_ORDER.filter((s) => products.some((p) => p.variants.some((v) => v.size === s))), [products]);
 
   const filtered = useMemo(() => products.filter((p) => {
+    if (search.trim()) {
+      const q = search.trim().toLowerCase();
+      const haystack = `${p.name} ${p.colorName ?? ""} ${p.silhouette ?? ""}`.toLowerCase();
+      if (!haystack.includes(q)) return false;
+    }
     if (selectedColors.size > 0 && (!p.colorName || !selectedColors.has(p.colorName))) return false;
     if (selectedSizes.size > 0 && !p.variants.some((v) => selectedSizes.has(v.size) && v.stock > 0)) return false;
     const inStock = getAvailability(p).canAddToBag;
@@ -46,7 +52,7 @@ export function Collection({ products, category, categories, categoryTiles = [] 
       if (!matchesIn && !matchesOut) return false;
     }
     return true;
-  }), [products, selectedColors, selectedSizes, availability]);
+  }), [products, selectedColors, selectedSizes, availability, search]);
 
   function toggleInSet(setter: React.Dispatch<React.SetStateAction<Set<string>>>, value: string) {
     setter((prev) => {
@@ -57,6 +63,8 @@ export function Collection({ products, category, categories, categoryTiles = [] 
   }
   function clearAll() { setSelectedColors(new Set()); setSelectedSizes(new Set()); setAvailability(new Set()); }
   const activeCount = selectedColors.size + selectedSizes.size + availability.size;
+  const searchClass =
+    "w-full border border-border bg-transparent px-3.5 py-2 text-sm text-foreground placeholder:text-muted-foreground transition-colors focus:border-foreground focus:outline-none sm:w-52";
 
   const chip = (active: boolean) =>
     `micro border px-4 py-2 transition-colors ${active ? "border-foreground bg-foreground text-background" : "border-border text-muted-foreground hover:border-foreground hover:text-foreground"}`;
@@ -109,21 +117,41 @@ export function Collection({ products, category, categories, categoryTiles = [] 
         </section>
       )}
 
-      <div className="shell flex flex-wrap justify-center gap-3 pb-5">
-        {filters.map((f) => (
-          <button key={f.slug} onClick={() => router.push(`/shop/${f.slug}`)} className={chip(category === f.slug)}>
-            {f.name}
+      <div className="shell mb-1 flex flex-wrap items-center justify-between gap-4 border-b border-border pb-6">
+        <div className="flex flex-wrap gap-2.5">
+          {filters.map((f) => (
+            <button key={f.slug} onClick={() => router.push(`/shop/${f.slug}`)} className={chip(category === f.slug)}>
+              {f.name}
+            </button>
+          ))}
+        </div>
+        <div className="flex flex-wrap items-center gap-2.5">
+          <div className="relative">
+            <input
+              type="search"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Search this collection…"
+              className={searchClass}
+              aria-label="Search this collection"
+            />
+            {search && (
+              <button
+                onClick={() => setSearch("")}
+                aria-label="Clear search"
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+              >
+                ×
+              </button>
+            )}
+          </div>
+          <button onClick={() => setFiltersOpen((o) => !o)} className={chip(filtersOpen || activeCount > 0)}>
+            Filters{activeCount > 0 ? ` (${activeCount})` : ""}
           </button>
-        ))}
-      </div>
-
-      <div className="shell flex justify-center gap-2.5 pb-6">
-        <button onClick={() => setFiltersOpen((o) => !o)} className={chip(filtersOpen || activeCount > 0)}>
-          Filters{activeCount > 0 ? ` (${activeCount})` : ""}
-        </button>
-        <button onClick={() => setDense((d) => !d)} className={chip(dense)} aria-label="Toggle grid density">
-          {dense ? "Grid: Compact" : "Grid: Standard"}
-        </button>
+          <button onClick={() => setDense((d) => !d)} className={chip(dense)} aria-label="Toggle grid density">
+            {dense ? "Grid: Compact" : "Grid: Standard"}
+          </button>
+        </div>
       </div>
 
       {filtersOpen && (
@@ -183,7 +211,11 @@ export function Collection({ products, category, categories, categoryTiles = [] 
       </div>
       {filtered.length === 0 && (
         <p className="shell pb-20 text-center text-sm text-muted-foreground">
-          {products.length === 0 ? "No pieces in this category yet." : "No pieces match these filters — try clearing one."}
+          {products.length === 0
+            ? "No pieces in this category yet."
+            : search.trim()
+            ? `No pieces match “${search.trim()}”.`
+            : "No pieces match these filters — try clearing one."}
         </p>
       )}
     </>

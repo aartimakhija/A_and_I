@@ -51,7 +51,7 @@ export function Footer() {
                 href.startsWith("http") ? (
                   <a key={label} href={href} target="_blank" rel="noopener noreferrer" className="link-underline mb-2 block text-xs font-light text-paper-foreground/60">{label}</a>
                 ) : (
-                  <Link key={label} href={href} className="link-underline mb-2 block text-xs font-light text-paper-foreground/60">{label}</Link>
+                  <Link key={label} href={href} prefetch={false} className="link-underline mb-2 block text-xs font-light text-paper-foreground/60">{label}</Link>
                 )
               ))}
             </div>
@@ -60,8 +60,8 @@ export function Footer() {
         <div className="flex flex-wrap items-center justify-between gap-2.5 border-t border-white/10 pt-5">
           <span className="text-[10px] text-paper-foreground/35">© {new Date().getFullYear()} A&I — Style With Us</span>
           <div className="flex gap-4.5">
-            <Link href="/privacy" className="text-[10px] text-paper-foreground/50">Privacy Policy</Link>
-            <Link href="/terms" className="text-[10px] text-paper-foreground/50">Terms of Service</Link>
+            <Link href="/privacy" prefetch={false} className="text-[10px] text-paper-foreground/50">Privacy Policy</Link>
+            <Link href="/terms" prefetch={false} className="text-[10px] text-paper-foreground/50">Terms of Service</Link>
           </div>
           <span className="text-[10px] text-paper-foreground/35">Made in India</span>
         </div>
