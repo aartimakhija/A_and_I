@@ -3,7 +3,7 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { layer } from "./hooks";
 import { useStore } from "./StoreContext";
-import { formatINR } from "@/lib/format";
+import { formatPrice } from "@/lib/format";
 import type { SFProduct } from "@/lib/storefront-adapter";
 
 const LOOKS = [
@@ -81,7 +81,7 @@ export function Lookbook({ products }: { products: SFProduct[] }) {
                 </div>
                 <div className="mt-7">
                   <button onClick={() => router.push(`/products/${d.slug}`)} className="btn-outline-ink">
-                    Shop this look — {formatINR(d.price)}
+                    Shop this look — {formatPrice(d.price)}
                   </button>
                 </div>
               </div>

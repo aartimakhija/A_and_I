@@ -8,7 +8,7 @@ import { AccordionTabStrip } from "./AccordionTabStrip";
 import { ProductStory } from "./ProductStory";
 import { useStore } from "./StoreContext";
 import { getAvailability } from "@/lib/availability";
-import { formatINR } from "@/lib/format";
+import { formatINR, formatPrice } from "@/lib/format";
 import { ProductCard } from "@/components/site/ProductCard";
 import type { SFProduct } from "@/lib/storefront-adapter";
 
@@ -125,15 +125,15 @@ export function Product({
             {finalPrice === product.price ? (
               product.mrp && product.discountPercent ? (
                 <span className="inline-flex flex-wrap items-baseline gap-2">
-                  <span className="text-sm text-muted-foreground line-through">{formatINR(product.mrp)}</span>
-                  <span className="text-base font-medium">{formatINR(product.price)}</span>
+                  <span className="text-sm text-muted-foreground line-through">{formatPrice(product.mrp)}</span>
+                  <span className="text-base font-medium">{formatPrice(product.price)}</span>
                   <span className="text-xs font-semibold text-primary">{product.discountPercent}% off</span>
                 </span>
               ) : (
-                <span className="text-base">{formatINR(product.price)}</span>
+                <span className="text-base">{formatPrice(product.price)}</span>
               )
             ) : (
-              <span className="text-base">{formatINR(finalPrice)}</span>
+              <span className="text-base">{formatPrice(finalPrice)}</span>
             )}
           </div>
 
@@ -238,7 +238,7 @@ export function Product({
               )
             ) : (
               <button onClick={() => addToCart(product, size, tier)} className="btn-solid-gold w-full">
-                Add to bag — {formatINR(finalPrice)}
+                Add to bag — {formatPrice(finalPrice)}
               </button>
             )}
           </div>
@@ -290,7 +290,7 @@ export function Product({
         ) : soldOut ? (
           notified ? null : <button onClick={requestNotify} className="btn-solid-gold w-full">Notify me</button>
         ) : (
-          <button onClick={() => addToCart(product, size, tier)} className="btn-solid-gold w-full">Add to bag — {formatINR(finalPrice)}</button>
+          <button onClick={() => addToCart(product, size, tier)} className="btn-solid-gold w-full">Add to bag — {formatPrice(finalPrice)}</button>
         )}
       </div>
     </>

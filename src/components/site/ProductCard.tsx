@@ -1,7 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import type { SFProduct } from "@/lib/storefront-adapter";
-import { formatINR } from "@/lib/format";
+import { formatPrice } from "@/lib/format";
 
 /** Product card in the new design's visual language, wired to real catalogue data. */
 export function ProductCard({ product }: { product: SFProduct }) {
@@ -42,8 +42,8 @@ export function ProductCard({ product }: { product: SFProduct }) {
           </Link>
         </h3>
         <span className="micro whitespace-nowrap text-muted-foreground">
-          {product.mrp && <span className="mr-1.5 line-through">{formatINR(product.mrp)}</span>}
-          {formatINR(product.price)}
+          {product.mrp && <span className="mr-1.5 line-through">{formatPrice(product.mrp)}</span>}
+          {formatPrice(product.price)}
         </span>
       </div>
       {product.silhouette && <p className="mt-1 text-xs text-muted-foreground">{product.silhouette}</p>}

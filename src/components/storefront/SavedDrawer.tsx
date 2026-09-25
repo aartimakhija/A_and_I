@@ -2,7 +2,7 @@
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { useStore } from "./StoreContext";
-import { formatINR } from "@/lib/format";
+import { formatPrice } from "@/lib/format";
 
 export function SavedDrawer() {
   const router = useRouter();
@@ -43,7 +43,7 @@ export function SavedDrawer() {
               </button>
               <div className="flex-1">
                 <div className="text-base">{d.name}</div>
-                <div className="my-1 text-xs text-muted-foreground">{formatINR(d.price)}</div>
+                <div className="my-1 text-xs text-muted-foreground">{formatPrice(d.price)}</div>
                 <div className="flex gap-3.5">
                   <button onClick={() => addToCart(d, d.variants.find((v) => v.stock > 0)?.size ?? "M")} className="border-b border-foreground pb-0.5 text-[9px] uppercase tracking-wider text-foreground">
                     Add to bag

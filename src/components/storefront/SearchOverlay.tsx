@@ -3,7 +3,7 @@ import { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { useStore } from "./StoreContext";
-import { formatINR } from "@/lib/format";
+import { formatPrice } from "@/lib/format";
 
 const CAT_LABEL: Record<string, string> = { ready: "Ready-to-Wear", craft: "Indian Craft", linen: "Linen" };
 
@@ -57,7 +57,7 @@ export function SearchOverlay() {
                       {d.images[0] && <Image src={d.images[0]} alt={d.name} fill sizes="(max-width: 768px) 50vw, 25vw" className="object-cover" />}
                     </div>
                     <div className="mt-2 text-sm">{d.name}</div>
-                    <div className="mt-0.5 text-xs text-muted-foreground">{formatINR(d.price)}</div>
+                    <div className="mt-0.5 text-xs text-muted-foreground">{formatPrice(d.price)}</div>
                   </button>
                 ))}
               </div>

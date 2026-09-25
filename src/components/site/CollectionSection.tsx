@@ -1,12 +1,9 @@
 import Link from "next/link";
 import Image from "next/image";
 import type { SFProduct } from "@/lib/storefront-adapter";
+import { formatPrice } from "@/lib/format";
 
 export type CollectionCard = { slug: string; name: string; imageUrl?: string | null; blurb?: string };
-
-function formatINR(n: number) {
-  return "₹" + Math.round(n).toLocaleString("en-IN");
-}
 
 function descriptor(p: SFProduct) {
   return [p.colorName, p.category].filter(Boolean).join(" · ");
@@ -40,8 +37,8 @@ function CuratedCard({ product, index }: { product: SFProduct; index: number }) 
       <h3 className="display-md mt-6 text-xl">{product.name}</h3>
       <p className="micro mt-2 text-muted-foreground">{descriptor(product)}</p>
       <p className="mt-3 text-sm text-muted-foreground">
-        {product.mrp && <span className="mr-1.5 line-through">{formatINR(product.mrp)}</span>}
-        {formatINR(product.price)}
+        {product.mrp && <span className="mr-1.5 line-through">{formatPrice(product.mrp)}</span>}
+        {formatPrice(product.price)}
       </p>
       <Link href={`/products/${product.slug}`} className="micro link-underline mt-4 inline-block text-foreground">
         Explore piece →
@@ -116,9 +113,9 @@ export function CollectionSection({
               )}
               <p className="display-md mt-7 text-2xl">
                 {featuredProduct.mrp && (
-                  <span className="mr-2 text-lg text-muted-foreground line-through">{formatINR(featuredProduct.mrp)}</span>
+                  <span className="mr-2 text-lg text-muted-foreground line-through">{formatPrice(featuredProduct.mrp)}</span>
                 )}
-                {formatINR(featuredProduct.price)}
+                {formatPrice(featuredProduct.price)}
               </p>
               <Link
                 href={`/products/${featuredProduct.slug}`}
