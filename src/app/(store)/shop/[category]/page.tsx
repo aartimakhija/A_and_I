@@ -28,12 +28,20 @@ export default async function CategoryPage({ params }: { params: { category: str
 
   // "Shop by category" tile row (matching Lovable's shop/all page) — one
   // representative piece per category, only shown on the unfiltered /shop/all view.
+  // Picks the newest ACTIVE product that actually HAS a photo, not just the
+  // newest product overall — otherwise a freshly-added, not-yet-photographed
+  // product silently blanks out its whole category tile.
   let categoryTiles: { slug: string; name: string; imageUrl?: string | null }[] = [];
   if (params.category === "all") {
     const reps = await Promise.all(
-      categories.map((c) => prisma.product.findFirst({ where: { status: "ACTIVE", category: c.slug }, include: PRODUCT_INCLUDE, orderBy: { createdAt: "desc" } }))
+      categories.map((c) =>
+        prisma.product.findMany({ where: { status: "ACTIVE", category: c.slug }, include: PRODUCT_INCLUDE, orderBy: { createdAt: "desc" }, take: 10 })
+      )
     );
-    categoryTiles = categories.map((c, i) => ({ slug: c.slug, name: c.name, imageUrl: reps[i] ? toSFProduct(reps[i]!).images[0] : null }));
+    categoryTiles = categories.map((c, i) => {
+      const withImage = reps[i].map(toSFProduct).find((p) => p.images[0]);
+      return { slug: c.slug, name: c.name, imageUrl: withImage?.images[0] ?? null };
+    });
   }
 
   return (

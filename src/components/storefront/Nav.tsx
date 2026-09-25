@@ -1,15 +1,13 @@
 "use client";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { NavMegaMenu } from "./NavMegaMenu";
 import { useStore } from "./StoreContext";
 
 const links: [string, string][] = [
   ["/", "Home"], ["/lookbook", "Lookbook"], ["/blog", "Journal"], ["/bespoke", "Bespoke"], ["/about", "About"], ["/contact", "Contact"],
 ];
-// Desktop tucks these under the "Collection" mega menu's "Our world" column so the
-// top bar doesn't get crowded — the mobile drawer has no mega menu, so it lists
-// them directly instead, right after the primary links.
+// Desktop reaches these from the footer's "Studio" column instead of a nav
+// dropdown; the mobile drawer lists them directly after the primary links.
 const mobileExtra: [string, string][] = [
   ["/craft", "Craft"], ["/founder", "Founder"], ["/visit", "Visit"],
 ];
@@ -32,7 +30,7 @@ export function Nav() {
 
       <div className="hidden items-center gap-8 md:flex">
         <Link href="/" className={navLinkClass("/")}>Home</Link>
-        <NavMegaMenu />
+        <Link href="/shop/all" className={navLinkClass("/shop")}>Collection</Link>
         {links.slice(1).map(([href, label]) => (
           <Link key={href} href={href} className={navLinkClass(href)}>{label}</Link>
         ))}
