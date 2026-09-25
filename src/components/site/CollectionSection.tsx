@@ -12,8 +12,8 @@ function descriptor(p: SFProduct) {
 function CuratedCard({ product, index }: { product: SFProduct; index: number }) {
   const second = product.images[1];
   return (
-    <article className="reveal group" style={{ transitionDelay: `${(index % 6) * 80}ms` }}>
-      <Link href={`/products/${product.slug}`} prefetch={false} className="relative block aspect-3/4 overflow-hidden bg-secondary">
+    <article className="reveal group [perspective:1200px]" style={{ transitionDelay: `${(index % 6) * 80}ms` }}>
+      <Link href={`/products/${product.slug}`} prefetch={false} className="relative block aspect-3/4 overflow-hidden bg-secondary transition-transform duration-500 ease-out will-change-transform group-hover:[transform:rotateX(2deg)_rotateY(-4deg)_scale(1.02)]">
         {product.images[0] && (
           <Image
             src={product.images[0]}

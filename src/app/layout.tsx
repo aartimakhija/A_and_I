@@ -34,7 +34,7 @@ export async function generateMetadata() {
   return {
     title: { default: s.siteName, template: `%s — A&I` },
     description: s.description || "Indian craft, global silhouette. Womenswear handmade in small runs across India.",
-    metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"),
+    metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://arteeandi.com"),
     icons: { icon: s.faviconUrl || "/icon.png", apple: s.faviconUrl || "/apple-icon.png" },
     manifest: "/manifest.json",
     verification: {

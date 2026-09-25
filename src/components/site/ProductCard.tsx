@@ -7,8 +7,10 @@ import { formatPrice } from "@/lib/format";
 export function ProductCard({ product }: { product: SFProduct }) {
   const secondImage = product.images[1];
   return (
-    <article className="group relative">
-      <Link href={`/products/${product.slug}`} prefetch={false} className="relative block aspect-3/4 overflow-hidden bg-secondary">
+    <article className="group relative [perspective:1200px]">
+      {/* Subtle tilt-on-hover, restored from the earlier design — pure CSS,
+          no JS mouse-tracking, so it can't jank or fight scroll performance. */}
+      <Link href={`/products/${product.slug}`} prefetch={false} className="relative block aspect-3/4 overflow-hidden bg-secondary transition-transform duration-500 ease-out will-change-transform group-hover:[transform:rotateX(2deg)_rotateY(-4deg)_scale(1.02)]">
         {product.images[0] && (
           <Image
             src={product.images[0]}

@@ -2,7 +2,7 @@ import { prisma } from "@/lib/prisma";
 import type { Metadata } from "next";
 
 const SITE_NAME = "A&I — Style With Us";
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://arteeandi.com";
 const DEFAULT_DESCRIPTION = "Indian craft, global silhouette. Womenswear handmade in small runs across India.";
 const DEFAULT_OG_IMAGE = "/og-default.png"; // see /public/og-default.png — swap for real brand photography when available
 
