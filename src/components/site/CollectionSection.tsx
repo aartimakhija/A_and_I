@@ -135,7 +135,7 @@ export function CollectionSection({
           </div>
         )}
 
-        {worldTiles.length > 0 && (
+        {worldTiles.length > 1 && (
           <>
             <div className="reveal mt-24 max-w-xl">
               <h3 className="display-lg text-3xl">
