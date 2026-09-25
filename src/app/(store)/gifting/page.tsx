@@ -5,14 +5,20 @@ import { toSFProduct, PRODUCT_INCLUDE } from "@/lib/storefront-adapter";
 import { ProductCard } from "@/components/site/ProductCard";
 
 export const metadata = pageMetadata({
-  title: "Gifting — Ready To Ship, Wrapped by Hand",
-  description: "Gift an A&I piece: in-stock styles that dispatch in days, hand-wrapped, with easy size exchanges.",
+  title: "Gifting — Reserved With Care, Wrapped by Hand",
+  description: "Gift an A&I piece: reserve a shortlisted design, no payment up front, hand-wrapped once it ships, with easy size exchanges.",
   path: "/gifting",
 });
 
+// Every current piece is a shortlisted, pre-order design rather than
+// something sitting in stock — this used to promise a 3-5 day dispatch
+// that nothing in the live catalogue can actually honour, and its product
+// showcase (below) silently rendered empty because the query only asked
+// for in-stock pieces. Rewritten to describe gifting the way pre-order
+// actually works here, and the query now pulls from the real catalogue.
 const steps = [
-  { n: "01", k: "Choose in stock", v: "In-stock pieces dispatch within 3–5 working days, so a gift never waits on the atelier." },
-  { n: "02", k: "Check out as usual", v: "Add it to your bag and pay securely through Razorpay — the same checkout as any order." },
+  { n: "01", k: "Choose a piece", v: "Reserve any shortlisted design as a gift — no payment up front, just a size." },
+  { n: "02", k: "We tell you when it ships", v: "The run opens once there's enough interest, the same as any pre-order — we email the moment it's ready." },
   { n: "03", k: "We wrap by hand", v: "Folded in unbleached cotton, tied and sealed in marigold paper. No price anywhere in the box." },
   { n: "04", k: "They swap sizes freely", v: "Any gifted piece can be exchanged into another size within 7 days of delivery." },
 ];
@@ -26,7 +32,7 @@ const occasions = [
 
 export default async function GiftingPage() {
   const raw = await prisma.product.findMany({
-    where: { status: "ACTIVE", preOrder: false },
+    where: { status: "ACTIVE" },
     include: PRODUCT_INCLUDE,
     take: 4,
     orderBy: { createdAt: "desc" },
@@ -41,8 +47,9 @@ export default async function GiftingPage() {
           Something with <span className="gold-italic">hours in it.</span>
         </h1>
         <p className="mt-7 max-w-lg text-muted-foreground">
-          Hand-finished pieces, wrapped without a price in sight, and exchangeable if you guessed the
-          size wrong. No plastic gift card, no rush job.
+          Hand-finished pieces, reserved with no payment up front, wrapped without a price in sight
+          once they ship, and exchangeable if you guessed the size wrong. No plastic gift card, no
+          rush job.
         </p>
       </section>
 
@@ -64,11 +71,11 @@ export default async function GiftingPage() {
           <div className="shell py-20">
             <div className="flex flex-wrap items-baseline justify-between gap-4">
               <div>
-                <p className="eyebrow">Dispatches in days</p>
+                <p className="eyebrow">Reserve as a gift</p>
                 <h2 className="display-lg mt-5">Gift these.</h2>
               </div>
-              <Link href="/shop/all" className="link-underline micro text-muted-foreground">
-                All in-stock pieces
+              <Link href="/shop/all" className="link-underline micro tap-scale text-muted-foreground">
+                See the full capsule
               </Link>
             </div>
             <div className="mt-12 grid grid-cols-1 gap-x-8 gap-y-14 sm:grid-cols-2 lg:grid-cols-4">

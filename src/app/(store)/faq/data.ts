@@ -45,7 +45,7 @@ export const faqs = [
   },
   {
     q: "Who actually makes the clothes?",
-    a: "Artee designs every piece herself in Ahmedabad, and works with specialist makers and ateliers across India on cutting, hand-finishing and embroidery. Nothing is bought in finished and relabelled.",
+    a: "Artee designs every piece herself in Ahmedabad, and works with a specialist craft partner on laser-cutting and hand-finishing. Nothing is bought in finished and relabelled.",
   },
   {
     q: "Do you take wholesale or stockist enquiries?",
