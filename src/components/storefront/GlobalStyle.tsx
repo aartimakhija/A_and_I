@@ -2,8 +2,19 @@
 import { T } from "./theme";
 
 export function GlobalStyle() {
-  return (
-    <style>{`
+  // dangerouslySetInnerHTML, not `<style>{css}</style>` — <style> is an HTML
+  // "raw text" element, so the browser never decodes entities inside it. A
+  // plain JSX text child gets HTML-escaped by React (quotes become &#x27;),
+  // which the browser then takes completely literally: the @import url('...')
+  // below was actually being requested as a URL containing the six raw
+  // characters "&#x27;" instead of a quote, so the Google Fonts stylesheet
+  // 404'd sitewide (silently falling back to system fonts everywhere), and
+  // the SSR/hydration text mismatch this produced was also almost certainly
+  // behind the repeated "Minified React error #418/423/425" console errors
+  // on every single page load — each one forces React to throw away the
+  // server-rendered DOM and re-render fully client-side. dangerouslySetInnerHTML
+  // inserts the raw string as-is, on both server and client, fixing both.
+  const css = `
       @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Jost:wght@200;300;400;500&display=swap');
       :root { --px:0; --py:0; }
       * { box-sizing: border-box; }
@@ -71,6 +82,6 @@ export function GlobalStyle() {
         .reveal, .reveal-img { opacity: 1 !important; transform: none !important; clip-path: none !important; transition: none !important; }
         .ulink::after, .btn::before { transition: none !important; }
       }
-    `}</style>
-  );
+    `;
+  return <style dangerouslySetInnerHTML={{ __html: css }} />;
 }
