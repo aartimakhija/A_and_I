@@ -4,7 +4,7 @@ import type { Metadata } from "next";
 const SITE_NAME = "A&I — Style With Us";
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://arteeandi.com";
 const DEFAULT_DESCRIPTION = "Indian craft, global silhouette. Womenswear handmade in small runs across India.";
-const DEFAULT_OG_IMAGE = "/og-default.png"; // see /public/og-default.png — swap for real brand photography when available
+const DEFAULT_OG_IMAGE = "/og-default.png"; // real Architecture in Linen photography — regenerate this card each time the flagship capsule/look changes (was a plain text-only placeholder before)
 
 /**
  * JSON.stringify a JSON-LD payload for safe inline embedding via
