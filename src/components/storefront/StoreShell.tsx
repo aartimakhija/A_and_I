@@ -20,11 +20,23 @@ import type { SiteSettingsSlice } from "./StoreContext";
 // with data-in — without this, every product grid, photo, and section using
 // them (Home, Collection, Product, Lookbook, About, SocialProof) stays
 // invisible forever, which is exactly the "empty" storefront that was showing.
+//
+// This used to re-query on every pathname change and bail out for good if it
+// found zero .reveal elements at that exact instant (`if (!els.length)
+// return`). On a client-side navigation, this effect (living in the shared
+// layout's StoreShell) can fire before the new page's Server Component
+// content has actually landed in the DOM — a real, confirmed race, not a
+// hypothetical one. When it lost that race, it found nothing, bailed out,
+// and never got another chance, since the effect only re-runs on the next
+// pathname change — so the whole page stayed permanently invisible.
+//
+// Fixed with a single persistent IntersectionObserver for the page's entire
+// lifetime, plus a MutationObserver that (re)scans for any new, not-yet-
+// tagged .reveal elements whenever the DOM changes — covering the initial
+// load, streamed-in content, and every future navigation, with no reliance
+// on timing.
 function useRevealObserver() {
-  const pathname = usePathname();
   useEffect(() => {
-    const els = document.querySelectorAll(".reveal, .reveal-img");
-    if (!els.length) return;
     const io = new IntersectionObserver(
       (entries) => {
         for (const entry of entries) {
@@ -36,11 +48,20 @@ function useRevealObserver() {
       },
       { threshold: 0.1, rootMargin: "0px 0px -5% 0px" }
     );
-    els.forEach((el) => io.observe(el));
-    return () => io.disconnect();
-    // Re-scan every time the route changes, since navigating brings in a fresh
-    // set of .reveal elements that this effect hasn't observed yet.
-  }, [pathname]);
+
+    const observeNew = () => {
+      document.querySelectorAll(".reveal:not([data-in]), .reveal-img:not([data-in])").forEach((el) => io.observe(el));
+    };
+
+    observeNew();
+    const mo = new MutationObserver(observeNew);
+    mo.observe(document.body, { childList: true, subtree: true });
+
+    return () => {
+      io.disconnect();
+      mo.disconnect();
+    };
+  }, []);
 }
 
 function useCaptureReferral() {
