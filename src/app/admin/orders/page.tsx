@@ -1,8 +1,21 @@
 // OMS — all orders
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
-export default async function AdminOrders() {
-  const orders = await prisma.order.findMany({ include: { items: true, payment: true, shipment: true }, orderBy: { createdAt: "desc" }, take: 100 });
+
+const PAGE_SIZE = 100;
+
+export default async function AdminOrders({ searchParams }: { searchParams: { page?: string } }) {
+  const page = Math.max(1, parseInt(searchParams.page || "1", 10) || 1);
+  const [orders, total] = await Promise.all([
+    prisma.order.findMany({
+      include: { items: true, payment: true, shipment: true },
+      orderBy: { createdAt: "desc" },
+      skip: (page - 1) * PAGE_SIZE,
+      take: PAGE_SIZE,
+    }),
+    prisma.order.count(),
+  ]);
+  const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
   return (
     <>
       <h1>Orders (OMS)</h1>
@@ -17,6 +30,16 @@ export default async function AdminOrders() {
           </tr>
         ))}</tbody>
       </table>
+      {orders.length === 0 && <p style={{ color: "#999", marginTop: 12 }}>No orders on this page.</p>}
+      <div style={{ display: "flex", alignItems: "center", gap: 12, marginTop: 16, fontSize: 13 }}>
+        {page > 1
+          ? <Link href={`/admin/orders?page=${page - 1}`} style={{ color: "#0a0a0a" }}>← Newer</Link>
+          : <span style={{ color: "#ccc" }}>← Newer</span>}
+        <span style={{ color: "#666" }}>Page {page} of {totalPages} · {total} order{total === 1 ? "" : "s"} total</span>
+        {page < totalPages
+          ? <Link href={`/admin/orders?page=${page + 1}`} style={{ color: "#0a0a0a" }}>Older →</Link>
+          : <span style={{ color: "#ccc" }}>Older →</span>}
+      </div>
     </>
   );
 }

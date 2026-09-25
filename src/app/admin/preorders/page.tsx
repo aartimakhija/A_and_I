@@ -3,12 +3,25 @@
 // Contacted, Approve, or Reject before following up with the customer directly.
 import { prisma } from "@/lib/prisma";
 import PreOrderActions from "@/components/admin/PreOrderActions";
+import Link from "next/link";
 
-export default async function AdminPreorders() {
-  const [grouped, recent] = await Promise.all([
+const PAGE_SIZE = 200;
+
+export default async function AdminPreorders({ searchParams }: { searchParams: { page?: string } }) {
+  const page = Math.max(1, parseInt(searchParams.page || "1", 10) || 1);
+  const [grouped, recent, recentTotal] = await Promise.all([
+    // Unaffected by "All requests" pagination below — production planning always
+    // reflects every non-cancelled pre-order, not just the current page.
     prisma.preOrder.groupBy({ by: ["productId", "size"], where: { status: { not: "CANCELLED" } }, _sum: { qty: true } }),
-    prisma.preOrder.findMany({ include: { product: { select: { name: true, slug: true } } }, orderBy: { createdAt: "desc" }, take: 200 }),
+    prisma.preOrder.findMany({
+      include: { product: { select: { name: true, slug: true } } },
+      orderBy: { createdAt: "desc" },
+      skip: (page - 1) * PAGE_SIZE,
+      take: PAGE_SIZE,
+    }),
+    prisma.preOrder.count(),
   ]);
+  const totalPages = Math.max(1, Math.ceil(recentTotal / PAGE_SIZE));
   const products = await prisma.product.findMany({
     where: { id: { in: grouped.map((g) => g.productId) } },
     select: { id: true, name: true, preOrder: true },
@@ -25,6 +38,8 @@ export default async function AdminPreorders() {
     byProduct.set(g.productId, entry);
   }
 
+  // Pending badge counts only the current page's requests — a full-table count
+  // would need its own query; page 1 (the default view) is the common case.
   const pendingCount = recent.filter((r) => r.status === "PENDING").length;
 
   return (
@@ -66,6 +81,15 @@ export default async function AdminPreorders() {
         ))}</tbody>
       </table>
       {recent.length === 0 && <p style={{ color: "#999", marginTop: 12 }}>Nothing yet — once a product has "Open for pre-order" checked, its PDP will offer this instead of Add to Bag.</p>}
+      <div style={{ display: "flex", alignItems: "center", gap: 12, marginTop: 16, fontSize: 13 }}>
+        {page > 1
+          ? <Link href={`/admin/preorders?page=${page - 1}`} style={{ color: "#0a0a0a" }}>← Newer</Link>
+          : <span style={{ color: "#ccc" }}>← Newer</span>}
+        <span style={{ color: "#666" }}>Page {page} of {totalPages} · {recentTotal} request{recentTotal === 1 ? "" : "s"} total</span>
+        {page < totalPages
+          ? <Link href={`/admin/preorders?page=${page + 1}`} style={{ color: "#0a0a0a" }}>Older →</Link>
+          : <span style={{ color: "#ccc" }}>Older →</span>}
+      </div>
     </>
   );
 }
