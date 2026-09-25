@@ -1,6 +1,7 @@
 // Vendor management
 import { prisma } from "@/lib/prisma";
-import { Badge, Button, Card, PageHeader, vendorStatusTone } from "@/components/admin/ui";
+import { Badge, Button, Card, PageHeader } from "@/components/admin/ui";
+import { vendorStatusTone } from "@/lib/status-tone";
 import VendorActions from "@/components/admin/VendorActions";
 import VendorDeleteButton from "@/components/admin/VendorDeleteButton";
 import VendorLeadTime from "@/components/admin/VendorLeadTime";

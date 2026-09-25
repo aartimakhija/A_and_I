@@ -66,7 +66,13 @@ export function Button(props: ButtonProps) {
 }
 
 // ── Badge ───────────────────────────────────────────────────────────────
-export type BadgeTone = "green" | "amber" | "red" | "blue" | "gray";
+// BadgeTone, productStatusTone and vendorStatusTone moved to
+// "@/lib/status-tone" — this file has "use client" at the top, and a Server
+// Component calling a plain function from a "use client" module (rather
+// than rendering it as JSX) throws "X is not a function" in production.
+// Re-exported here so existing imports of BadgeTone from this file still work.
+export type { BadgeTone } from "@/lib/status-tone";
+import type { BadgeTone } from "@/lib/status-tone";
 const BADGE_CLASSES: Record<BadgeTone, string> = {
   green: "bg-emerald-50 text-emerald-700 border-emerald-200",
   amber: "bg-amber-50 text-amber-800 border-amber-200",
@@ -83,24 +89,6 @@ export function Badge({ tone = "gray", children }: { tone?: BadgeTone; children:
       {children}
     </span>
   );
-}
-
-export function productStatusTone(status: string): BadgeTone {
-  switch (status) {
-    case "ACTIVE": return "green";
-    case "DRAFT": return "gray";
-    case "SOLD_OUT": return "amber";
-    case "ARCHIVED": return "red";
-    default: return "gray";
-  }
-}
-export function vendorStatusTone(status: string): BadgeTone {
-  switch (status) {
-    case "APPROVED": return "green";
-    case "PENDING": return "amber";
-    case "SUSPENDED": return "red";
-    default: return "gray";
-  }
 }
 
 // ── Card ────────────────────────────────────────────────────────────────

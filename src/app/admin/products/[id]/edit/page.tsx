@@ -3,7 +3,8 @@ import { getSession } from "@/lib/rbac";
 import { notFound } from "next/navigation";
 import { getCategories } from "@/lib/categories";
 import ProductForm from "@/components/admin/ProductForm";
-import { Badge, Button, PageHeader, productStatusTone } from "@/components/admin/ui";
+import { Badge, Button, PageHeader } from "@/components/admin/ui";
+import { productStatusTone } from "@/lib/status-tone";
 import { ProductFormErrorBoundary } from "@/components/admin/ProductFormErrorBoundary";
 
 export default async function EditProduct({ params }: { params: { id: string } }) {

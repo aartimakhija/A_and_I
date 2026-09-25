@@ -1,7 +1,8 @@
 "use client";
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Badge, Button, productStatusTone } from "@/components/admin/ui";
+import { Badge, Button } from "@/components/admin/ui";
+import { productStatusTone } from "@/lib/status-tone";
 
 type ProductRow = {
   id: string; name: string; category: string; vendorName: string; price: number; stock: number;
