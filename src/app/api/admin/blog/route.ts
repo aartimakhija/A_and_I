@@ -7,6 +7,7 @@ export async function GET() {
   const posts = await prisma.blogPost.findMany({
     include: { products: { include: { product: { select: { name: true } } } } },
     orderBy: { createdAt: "desc" },
+    take: 500, // safety cap — see /admin API pagination follow-up
   });
   return NextResponse.json(posts);
 }

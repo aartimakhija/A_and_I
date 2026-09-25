@@ -7,6 +7,7 @@ export async function GET() {
   const checks = await prisma.qualityCheck.findMany({
     include: { poItem: { include: { po: { select: { poNumber: true } }, product: { select: { name: true } } } } },
     orderBy: { createdAt: "desc" },
+    take: 500, // safety cap — see /admin API pagination follow-up
   });
   return NextResponse.json(checks);
 }

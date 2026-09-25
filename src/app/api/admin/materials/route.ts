@@ -4,7 +4,7 @@ import { requireRole } from "@/lib/rbac";
 
 export async function GET() {
   await requireRole(["ADMIN"]);
-  const materials = await prisma.material.findMany({ include: { vendor: { select: { name: true } } }, orderBy: { name: "asc" } });
+  const materials = await prisma.material.findMany({ include: { vendor: { select: { name: true } } }, orderBy: { name: "asc" }, take: 500 }); // safety cap — see /admin API pagination follow-up
   return NextResponse.json(materials);
 }
 

@@ -1,6 +1,6 @@
 // Storefront collection/PLP: /shop/all plus one page per backend-configured category
 import { prisma } from "@/lib/prisma";
-import { categoryPaths, pageMetadata, breadcrumbJsonLd } from "@/lib/seo";
+import { categoryPaths, pageMetadata, breadcrumbJsonLd, jsonLdHtml } from "@/lib/seo";
 import { getCategories } from "@/lib/categories";
 import { toSFProduct, PRODUCT_INCLUDE } from "@/lib/storefront-adapter";
 import { Collection } from "@/components/storefront/Collection";
@@ -63,7 +63,7 @@ export default async function CategoryPage({ params }: { params: { category: str
 
   return (
     <>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdHtml(
         breadcrumbJsonLd([{ name: "Home", path: "/" }, { name: "Collection", path: "/shop/all" }, ...(params.category !== "all" ? [{ name: label, path: `/shop/${params.category}` }] : [])])
       ) }} />
       <Breadcrumb items={[{ name: "Home", path: "/" }, { name: "Collection", path: "/shop/all" }, ...(params.category !== "all" ? [{ name: label, path: `/shop/${params.category}` }] : [])]} />

@@ -1,6 +1,6 @@
 import "./globals.css";
 import { Bodoni_Moda, Manrope } from "next/font/google";
-import { organizationJsonLd, websiteJsonLd } from "@/lib/seo";
+import { organizationJsonLd, websiteJsonLd, jsonLdHtml } from "@/lib/seo";
 import { getSiteSettings } from "@/lib/settings";
 import Script from "next/script";
 
@@ -55,8 +55,8 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   return (
     <html lang="en" className={`${bodoniModa.variable} ${manrope.variable}`}>
       <body>
-        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd()) }} />
-        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd()) }} />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdHtml(organizationJsonLd()) }} />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdHtml(websiteJsonLd()) }} />
         {s.gaMeasurementId && (
           <>
             <Script src={`https://www.googletagmanager.com/gtag/js?id=${s.gaMeasurementId}`} strategy="afterInteractive" />

@@ -1,7 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { toSFProduct, PRODUCT_INCLUDE } from "@/lib/storefront-adapter";
 import { About } from "@/components/storefront/About";
-import { pageMetadata, faqJsonLd, breadcrumbJsonLd } from "@/lib/seo";
+import { pageMetadata, faqJsonLd, breadcrumbJsonLd, jsonLdHtml } from "@/lib/seo";
 
 export const metadata = pageMetadata({
   title: "About Us",
@@ -28,8 +28,8 @@ export default async function AboutPage() {
 
   return (
     <>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd(FAQS)) }} />
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd([{ name: "Home", path: "/" }, { name: "About", path: "/about" }])) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdHtml(faqJsonLd(FAQS)) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdHtml(breadcrumbJsonLd([{ name: "Home", path: "/" }, { name: "About", path: "/about" }])) }} />
       <About originPiece={originPiece} processImage={processImage} processPieces={processPieces} pieceCount={totalCount} faqs={FAQS} />
     </>
   );

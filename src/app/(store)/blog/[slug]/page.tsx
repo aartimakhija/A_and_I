@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import { toSFProduct, PRODUCT_INCLUDE } from "@/lib/storefront-adapter";
 import { BlogPostView } from "@/components/storefront/BlogPostView";
 import { Breadcrumb } from "@/components/storefront/Breadcrumb";
-import { pageMetadata, articleJsonLd, breadcrumbJsonLd } from "@/lib/seo";
+import { pageMetadata, articleJsonLd, breadcrumbJsonLd, jsonLdHtml } from "@/lib/seo";
 
 export async function generateMetadata({ params }: { params: { slug: string } }) {
   const post = await prisma.blogPost.findUnique({ where: { slug: params.slug } });
@@ -41,8 +41,8 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
 
   return (
     <>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd(post)) }} />
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdHtml(articleJsonLd(post)) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdHtml(
         breadcrumbJsonLd([{ name: "Home", path: "/" }, { name: "Journal", path: "/blog" }, { name: post.title, path: `/blog/${post.slug}` }])
       ) }} />
       <Breadcrumb items={[{ name: "Home", path: "/" }, { name: "Journal", path: "/blog" }, { name: post.title, path: `/blog/${post.slug}` }]} />

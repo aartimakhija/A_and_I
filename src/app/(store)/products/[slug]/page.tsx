@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/prisma";
-import { productJsonLd, pageMetadata, breadcrumbJsonLd } from "@/lib/seo";
+import { productJsonLd, pageMetadata, breadcrumbJsonLd, jsonLdHtml } from "@/lib/seo";
 import { toSFProduct, PRODUCT_INCLUDE } from "@/lib/storefront-adapter";
 import { Product } from "@/components/storefront/Product";
 import { Breadcrumb } from "@/components/storefront/Breadcrumb";
@@ -59,8 +59,8 @@ export default async function ProductPage({ params }: { params: { slug: string }
 
   return (
     <>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(productJsonLd(p)) }} />
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdHtml(productJsonLd(p)) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdHtml(
         breadcrumbJsonLd([{ name: "Home", path: "/" }, { name: "Collection", path: "/shop/all" }, { name: catLabel, path: `/shop/${p.category}` }, { name: p.name, path: `/products/${p.slug}` }])
       ) }} />
       <Breadcrumb items={[{ name: "Home", path: "/" }, { name: "Collection", path: "/shop/all" }, { name: catLabel, path: `/shop/${p.category}` }, { name: p.name, path: `/products/${p.slug}` }]} />

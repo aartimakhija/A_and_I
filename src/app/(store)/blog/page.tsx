@@ -1,6 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { BlogList } from "@/components/storefront/BlogList";
-import { pageMetadata, breadcrumbJsonLd } from "@/lib/seo";
+import { pageMetadata, breadcrumbJsonLd, jsonLdHtml } from "@/lib/seo";
 
 export const metadata = pageMetadata({
   title: "Journal",
@@ -16,7 +16,7 @@ export default async function BlogPage() {
   });
   return (
     <>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd([{ name: "Home", path: "/" }, { name: "Journal", path: "/blog" }])) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdHtml(breadcrumbJsonLd([{ name: "Home", path: "/" }, { name: "Journal", path: "/blog" }])) }} />
       <BlogList posts={posts.map((p) => ({ ...p, publishedAt: p.publishedAt?.toISOString() ?? null }))} />
     </>
   );

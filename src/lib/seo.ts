@@ -7,6 +7,16 @@ const DEFAULT_DESCRIPTION = "Indian craft, global silhouette. Womenswear handmad
 const DEFAULT_OG_IMAGE = "/og-default.png"; // see /public/og-default.png — swap for real brand photography when available
 
 /**
+ * JSON.stringify a JSON-LD payload for safe inline embedding via
+ * dangerouslySetInnerHTML. Escapes "<" so a value that happens to contain the
+ * literal string "</script>" (e.g. admin-authored product or blog copy)
+ * can't prematurely close the script tag or inject markup into the page.
+ */
+export function jsonLdHtml(data: unknown): string {
+  return JSON.stringify(data).replace(/</g, "\\u003c");
+}
+
+/**
  * Shared metadata builder — every page should call this instead of hand-rolling
  * a `Metadata` object, so title length, OG/Twitter tags, and canonical URLs stay
  * consistent site-wide. `path` should start with "/" (e.g. "/shop/all").
