@@ -31,7 +31,7 @@ export function BlogList({ posts }: { posts: Post[] }) {
         <section className="shell pb-20">
           <Link href={`/blog/${lead.slug}`} className="group grid items-center gap-12 lg:grid-cols-[1.15fr_1fr]">
             <div className="card-zoom relative aspect-4/3 overflow-hidden bg-secondary">
-              {lead.coverImage && <Image src={lead.coverImage} alt="" fill sizes="(max-width: 1024px) 100vw, 60vw" className="object-cover" priority />}
+              {lead.coverImage && <Image src={lead.coverImage} alt={lead.title} fill sizes="(max-width: 1024px) 100vw, 60vw" className="object-cover" priority />}
             </div>
             <div>
               <p className="eyebrow">
@@ -50,7 +50,7 @@ export function BlogList({ posts }: { posts: Post[] }) {
           {rest.map((p) => (
             <Link key={p.id} href={`/blog/${p.slug}`} className="group block">
               <div className="card-zoom relative aspect-4/5 overflow-hidden bg-secondary">
-                {p.coverImage && <Image src={p.coverImage} alt="" fill sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw" className="object-cover" />}
+                {p.coverImage && <Image src={p.coverImage} alt={p.title} fill sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw" className="object-cover" />}
               </div>
               <p className="eyebrow mt-5">{dateLabel(p.publishedAt)} · {p.authorName}</p>
               <h3 className="display-md mt-3 text-xl group-hover:text-primary">{p.title}</h3>

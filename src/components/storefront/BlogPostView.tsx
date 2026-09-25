@@ -42,7 +42,7 @@ export function BlogPostView({ post, products, related }: { post: Post; products
       {post.coverImage && (
         <div className="shell">
           <div className="relative aspect-16/10 w-full overflow-hidden bg-secondary">
-            <Image src={post.coverImage} alt="" fill sizes="100vw" className="object-cover" priority />
+            <Image src={post.coverImage} alt={post.title} fill sizes="100vw" className="object-cover" priority />
           </div>
         </div>
       )}
@@ -96,7 +96,7 @@ export function BlogPostView({ post, products, related }: { post: Post; products
               {related.map((r) => (
                 <Link key={r.slug} href={`/blog/${r.slug}`} className="group block">
                   <div className="card-zoom relative aspect-4/3 overflow-hidden bg-secondary">
-                    {r.coverImage && <Image src={r.coverImage} alt="" fill sizes="(max-width: 640px) 100vw, 33vw" className="object-cover" />}
+                    {r.coverImage && <Image src={r.coverImage} alt={r.title} fill sizes="(max-width: 640px) 100vw, 33vw" className="object-cover" />}
                   </div>
                   {dateLabel(r.publishedAt) && <p className="eyebrow mt-5">{dateLabel(r.publishedAt)}</p>}
                   <h3 className="display-md mt-3 text-xl group-hover:text-primary">{r.title}</h3>
