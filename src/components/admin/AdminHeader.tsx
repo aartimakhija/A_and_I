@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
+import { signOut } from "next-auth/react";
 
 type Hit = { type: string; label: string; sublabel?: string; href: string };
 type Notification = { id: string; type: string; message: string; href: string; severity: "info" | "warning" | "urgent" };
@@ -71,26 +72,34 @@ export default function AdminHeader() {
         )}
       </div>
 
-      <div ref={notifRef} style={{ position: "relative" }}>
-        <button onClick={() => setNotifOpen((o) => !o)} style={{ background: "none", border: "1px solid #ddd", padding: "8px 14px", cursor: "pointer", fontSize: 13, position: "relative" }}>
-          Notifications
-          {notifications.length > 0 && (
-            <span style={{ position: "absolute", top: -6, right: -6, background: "#B0503E", color: "#fff", borderRadius: "50%", fontSize: 10, width: 18, height: 18, display: "flex", alignItems: "center", justifyContent: "center" }}>
-              {notifications.length}
-            </span>
+      <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+        <div ref={notifRef} style={{ position: "relative" }}>
+          <button onClick={() => setNotifOpen((o) => !o)} style={{ background: "none", border: "1px solid #ddd", padding: "8px 14px", cursor: "pointer", fontSize: 13, position: "relative" }}>
+            Notifications
+            {notifications.length > 0 && (
+              <span style={{ position: "absolute", top: -6, right: -6, background: "#B0503E", color: "#fff", borderRadius: "50%", fontSize: 10, width: 18, height: 18, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                {notifications.length}
+              </span>
+            )}
+          </button>
+          {notifOpen && (
+            <div style={{ position: "absolute", top: "100%", right: 0, background: "#fff", border: "1px solid #ddd", marginTop: 4, width: 360, maxHeight: 400, overflowY: "auto", zIndex: 50 }}>
+              {notifications.length === 0 && <div style={{ padding: 14, fontSize: 12, color: "#999" }}>Nothing needs your attention right now.</div>}
+              {notifications.map((n) => (
+                <button key={n.id} onClick={() => { setNotifOpen(false); router.push(n.href); }} style={{ display: "block", width: "100%", textAlign: "left", padding: "10px 12px", border: "none", borderBottom: "1px solid #f5f5f5", background: "none", cursor: "pointer" }}>
+                  <span style={{ fontSize: 10, letterSpacing: 1, textTransform: "uppercase", color: severityColor[n.severity] }}>{n.type}</span>
+                  <div style={{ fontSize: 13 }}>{n.message}</div>
+                </button>
+              ))}
+            </div>
           )}
+        </div>
+        <button
+          onClick={() => signOut({ callbackUrl: "/login" })}
+          style={{ background: "none", border: "1px solid #ddd", padding: "8px 14px", cursor: "pointer", fontSize: 13, color: "#8a2f22" }}
+        >
+          Sign out
         </button>
-        {notifOpen && (
-          <div style={{ position: "absolute", top: "100%", right: 0, background: "#fff", border: "1px solid #ddd", marginTop: 4, width: 360, maxHeight: 400, overflowY: "auto", zIndex: 50 }}>
-            {notifications.length === 0 && <div style={{ padding: 14, fontSize: 12, color: "#999" }}>Nothing needs your attention right now.</div>}
-            {notifications.map((n) => (
-              <button key={n.id} onClick={() => { setNotifOpen(false); router.push(n.href); }} style={{ display: "block", width: "100%", textAlign: "left", padding: "10px 12px", border: "none", borderBottom: "1px solid #f5f5f5", background: "none", cursor: "pointer" }}>
-                <span style={{ fontSize: 10, letterSpacing: 1, textTransform: "uppercase", color: severityColor[n.severity] }}>{n.type}</span>
-                <div style={{ fontSize: 13 }}>{n.message}</div>
-              </button>
-            ))}
-          </div>
-        )}
       </div>
     </div>
   );

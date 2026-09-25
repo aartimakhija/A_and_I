@@ -7,10 +7,34 @@ import VendorLeadTime from "@/components/admin/VendorLeadTime";
 import NewVendorButton from "@/components/admin/NewVendorButton";
 
 export default async function AdminVendors() {
-  const vendors = await prisma.vendor.findMany({
-    include: { _count: { select: { products: true } } },
-    orderBy: { name: "asc" },
-  });
+  // TEMPORARY diagnostic: this and several other admin pages have started
+  // showing Next's generic "omitted in production" error. Catching the
+  // fetch here (before it becomes an uncaught render error subject to that
+  // redaction) prints the real message/code — this will tell us whether
+  // it's a DB/connection problem or something else. Remove once we know.
+  let vendors: any[];
+  try {
+    vendors = await prisma.vendor.findMany({
+      include: { _count: { select: { products: true } } },
+      orderBy: { name: "asc" },
+    });
+  } catch (err: any) {
+    return (
+      <div style={{ padding: 32, maxWidth: 900, fontFamily: "system-ui, sans-serif" }}>
+        <h1 style={{ fontSize: 18, fontWeight: 600, marginBottom: 12 }}>Diagnostic: vendors fetch failed</h1>
+        <div style={{ background: "#fdecea", color: "#8a2f22", padding: 16, borderRadius: 4, fontSize: 13, whiteSpace: "pre-wrap", wordBreak: "break-word", marginBottom: 16 }}>
+          <strong>{err?.name || "Error"}:</strong> {String(err?.message ?? err)}
+        </div>
+        {err?.code && <p style={{ fontSize: 12, color: "#888", marginBottom: 8 }}>Prisma code: {err.code}</p>}
+        {err?.meta && (
+          <pre style={{ fontSize: 11, background: "#f5f3ef", padding: 12, borderRadius: 4, overflowX: "auto", marginBottom: 16 }}>{JSON.stringify(err.meta, null, 2)}</pre>
+        )}
+        {err?.stack && (
+          <pre style={{ fontSize: 11, background: "#f5f3ef", padding: 12, borderRadius: 4, overflowX: "auto" }}>{String(err.stack)}</pre>
+        )}
+      </div>
+    );
+  }
   const allVendorOptions = vendors.map((v) => ({ id: v.id, name: v.name }));
 
   return (
