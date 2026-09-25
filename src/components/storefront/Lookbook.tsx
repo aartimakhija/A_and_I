@@ -8,7 +8,7 @@ import type { SFProduct } from "@/lib/storefront-adapter";
 
 const LOOKS = [
   { occasion: "Sangeet · Reception",
-    intent: "Built for the entrance. Let the sequins carry the drama and keep everything else quiet and gold.",
+    intent: "Built for the entrance. Let the cutwork geometry carry the drama and keep everything else quiet.",
     bag: "A structured gold minaudière, or a deep bottle-green velvet potli.",
     jewels: "Uncut polki studs and one stacked kada — skip the necklace, the neckline is the necklace.",
     feet: "Antique-gold block heels — comfort for a long night of being looked at." },
