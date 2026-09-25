@@ -13,7 +13,7 @@ function CuratedCard({ product, index }: { product: SFProduct; index: number }) 
   const second = product.images[1];
   return (
     <article className="reveal group" style={{ transitionDelay: `${(index % 6) * 80}ms` }}>
-      <Link href={`/products/${product.slug}`} className="relative block aspect-3/4 overflow-hidden bg-secondary">
+      <Link href={`/products/${product.slug}`} prefetch={false} className="relative block aspect-3/4 overflow-hidden bg-secondary">
         {product.images[0] && (
           <Image
             src={product.images[0]}
@@ -40,7 +40,7 @@ function CuratedCard({ product, index }: { product: SFProduct; index: number }) 
         {product.mrp && <span className="mr-1.5 line-through">{formatPrice(product.mrp)}</span>}
         {formatPrice(product.price)}
       </p>
-      <Link href={`/products/${product.slug}`} className="micro link-underline mt-4 inline-block text-foreground">
+      <Link href={`/products/${product.slug}`} prefetch={false} className="micro link-underline mt-4 inline-block text-foreground">
         Explore piece →
       </Link>
     </article>

@@ -8,7 +8,7 @@ export function ProductCard({ product }: { product: SFProduct }) {
   const secondImage = product.images[1];
   return (
     <article className="group relative">
-      <Link href={`/products/${product.slug}`} className="relative block aspect-3/4 overflow-hidden bg-secondary">
+      <Link href={`/products/${product.slug}`} prefetch={false} className="relative block aspect-3/4 overflow-hidden bg-secondary">
         {product.images[0] && (
           <Image
             src={product.images[0]}
@@ -36,7 +36,7 @@ export function ProductCard({ product }: { product: SFProduct }) {
       </Link>
       <div className="mt-4 flex items-baseline justify-between gap-4">
         <h3 className="text-sm">
-          <Link href={`/products/${product.slug}`} className="link-underline">
+          <Link href={`/products/${product.slug}`} prefetch={false} className="link-underline">
             {product.name}
             {product.colorName && <span className="text-muted-foreground"> | {product.colorName}</span>}
           </Link>
