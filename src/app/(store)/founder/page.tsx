@@ -44,7 +44,9 @@ export default async function FounderPage() {
     getSiteSettings(),
   ]);
   const studioImage = studioProduct ? toSFProduct(studioProduct).images[0] : null;
-  const founderImage = settings.founderImageUrl ?? null;
+  // Falls back to the photo shipped in /public until (or unless) the admin
+  // uploads a different one via Settings, which still takes precedence.
+  const founderImage = settings.founderImageUrl ?? "/founder-artee.jpg";
   return (
     <>
       <section className="shell py-20">
