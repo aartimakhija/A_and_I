@@ -20,11 +20,20 @@ export async function generateMetadata({ params }: { params: { category: string 
 }
 
 export default async function CategoryPage({ params }: { params: { category: string } }) {
-  const categories = await getCategories();
+  const allCategories = await getCategories();
   const where: any = { status: "ACTIVE" };
   if (params.category !== "all") where.category = params.category;
   const products = await prisma.product.findMany({ where, include: PRODUCT_INCLUDE, orderBy: { createdAt: "desc" } });
-  const label = params.category === "all" ? "The Collection" : categories.find((c) => c.slug === params.category)?.name ?? params.category;
+  const label = params.category === "all" ? "The Collection" : allCategories.find((c) => c.slug === params.category)?.name ?? params.category;
+
+  // A category with zero live products is a dead end, not a "coming soon" —
+  // never show it as something to browse (filter chips here, tiles below,
+  // and anywhere else categories are listed on the storefront). The admin
+  // Categories page still shows everything, since staff need to manage a
+  // category before it has products in it.
+  const counts = await prisma.product.groupBy({ by: ["category"], where: { status: "ACTIVE" }, _count: { _all: true } });
+  const countBySlug = new Map(counts.map((c) => [c.category, c._count._all]));
+  const categories = allCategories.filter((c) => (countBySlug.get(c.slug) ?? 0) > 0);
 
   // "Shop by category" tile row (matching Lovable's shop/all page) — one
   // representative piece per category, only shown on the unfiltered /shop/all view.
