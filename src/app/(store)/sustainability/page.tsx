@@ -13,7 +13,7 @@ export const metadata = pageMetadata({
 const commitments = [
   { n: "01", t: "Mostly made after you order", d: "Most pieces are made once ordered rather than speculatively — a run opens, we count the interest, we make that many. Select pieces are kept in stock for faster dispatch." },
   { n: "02", t: "Small runs", d: "Run sizes are set by the hours an atelier has, not by a forecast. When the hours run out, the run closes." },
-  { n: "03", t: "Natural fibres, by default", d: "Handloom cotton, washed linen, silk where the drape demands it. No polyester linings, no plastic sequins, ever." },
+  { n: "03", t: "Natural fibres, by default", d: "Washed linen is the current default, chosen for how it holds a laser-cut edge. No polyester linings, no plastic sequins, ever." },
   { n: "04", t: "The same hands, repeatedly", d: "A small group of makers works with Artee season after season, paid per piece at rates agreed before the season opens rather than squeezed at the end of it." },
 ];
 
@@ -23,10 +23,14 @@ const honest = [
   { q: "Water", a: "Dyeing and finishing use a great deal of water. We reuse dye baths where the shade allows it, but we do not yet measure our usage well enough to publish an honest number — so we will not publish one." },
 ];
 
+// Replaces an earlier three-tier list (linen / handloom cotton / hand
+// embroidery) that described a prior collection. The current catalogue is a
+// single material — washed linen — so this is three honest facts about that
+// one fabric rather than three different fabrics that aren't actually sold.
 const materials = [
-  { t: "Washed linen", d: "Breathable, forgiving in heat, and it improves with laundering instead of degrading. The everyday tier.", life: "Hand-wash cold · dry flat in shade" },
-  { t: "Handloom cotton", d: "Woven to order, so the slight irregularity across the width is the loom, not a flaw. Holds pleating and structure.", life: "Hand-wash cold · press on the reverse" },
-  { t: "Hand embroidery", d: "Applied by hand onto finished panels. This is where the hours — and the price — actually go.", life: "Dry clean only · store folded in cotton" },
+  { t: "Washed linen", d: "100% linen, pre-washed so what you receive is the size and softness it will stay — chosen because it holds a laser-cut edge without fraying.", life: "Hand-wash cold · dry flat in shade" },
+  { t: "Why it breathes", d: "Flax fibre is naturally hollow, which is part of why linen has stayed a warm-climate staple for thousands of years.", life: "Worth wearing closer to skin than you'd expect" },
+  { t: "How it ages", d: "Linen creases by nature and softens with every wash — a sign of a natural fibre being worn, not a laundering failure.", life: "Gets better, not worse, with wear" },
 ];
 
 export default async function SustainabilityPage() {
@@ -77,9 +81,9 @@ export default async function SustainabilityPage() {
       </section>
 
       <section className="shell border-t border-border py-20">
-        <p className="eyebrow">Materials</p>
+        <p className="eyebrow">Material</p>
         <h2 className="display-lg mt-6 max-w-2xl">
-          Three cloths, <span className="gold-italic">chosen for wear.</span>
+          One cloth, <span className="gold-italic">chosen for wear.</span>
         </h2>
         <dl className="mt-12 grid gap-10 md:grid-cols-3">
           {materials.map((m) => (

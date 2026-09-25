@@ -6,14 +6,14 @@ import type { SFProduct } from "@/lib/storefront-adapter";
 
 const PILLARS = [
   { n: "01", h: "Curation, not volume", b: "We don't chase every trend into existence. Every piece earns its place in the collection before it's ever made — fewer choices, each one considered." },
-  { n: "02", h: "Craft, not costume", b: "Bandhani tied by hand. Mirror-work set one disc at a time. Zari woven the slow way. Real techniques, cut into shapes built for right now — not heritage as decoration." },
+  { n: "02", h: "Craft, not costume", b: "Girih geometry drawn by hand before a single cut is made. Laser precision where a blade alone can't hold the pattern. Every edge finished by hand once the cut is done. Real technique, not heritage as decoration." },
   { n: "03", h: "Trust, not trend", b: "Every garment carries its own story — who made it, where the fabric came from. Scan the passport and see it for yourself. Signal over noise." },
 ];
 
 const PROCESS = [
   { n: "01", h: "Selected", b: "Our curation board reviews every design against one question: does this earn its place? Most don't make the cut." },
-  { n: "02", h: "Made in small runs", b: "Produced in limited counts with named ateliers in Jaipur and Kutch — never a factory line, never a guess at demand." },
-  { n: "03", h: "Fitted to you", b: "Choose your size and fabric tier — signature linen, premium handloom, or hand-embroidered couture — before it's finished." },
+  { n: "02", h: "Made in small runs", b: "Produced in limited counts with a specialist craft partner — never a factory line, never a guess at demand." },
+  { n: "03", h: "Fitted to you", b: "Choose your size before it's confirmed for production — the fabric and cutwork are fixed for each design, laser-cut and hand-finished the same way across the capsule." },
   { n: "04", h: "Delivered, and remembered", b: "Every piece ships with its own digital passport: the atelier, the material origin, the hands behind it." },
 ];
 

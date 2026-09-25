@@ -15,8 +15,8 @@ export function Bespoke({ pieces }: { pieces: SFProduct[] }) {
           Your piece,<br /><span className="gold-italic">your measurements.</span>
         </h1>
         <p className="mx-auto mt-5.5 max-w-lg text-[15px] font-light leading-loose text-paper-foreground/75">
-          Every A&amp;I piece already offers a choice of fabric tier. For a true bespoke commission — your exact measurements,
-          a fabric or finish not in the current collection — our ateliers in Jaipur and Kutch take it further.
+          For a true bespoke commission — your exact measurements, or a colourway not in the current shortlist — our
+          craft partner can take a design further than the standard run.
         </p>
       </section>
 
@@ -41,9 +41,8 @@ export function Bespoke({ pieces }: { pieces: SFProduct[] }) {
           <span className="eyebrow">The bespoke process</span>
           <h2 className="display-md mt-2.5">Transparent from the <span className="gold-italic">first email.</span></h2>
           <p className="mt-5 text-[15px] font-light leading-loose text-muted-foreground">
-            Bespoke commissions start at our Hand-embroidered couture tier pricing, with a minimum lead time of 6–8 weeks
-            depending on the piece and atelier. We&apos;ll confirm exact pricing and timeline once we understand what you have in mind —
-            no obligation, no configurator, just a conversation with the studio.
+            Bespoke commissions are priced per piece once we understand what you have in mind, with a minimum lead time
+            of 6–8 weeks depending on the design. No obligation, no configurator, just a conversation with the studio.
           </p>
           <div className="mt-7.5 flex flex-wrap justify-center gap-3.5">
             <button onClick={() => router.push("/contact?topic=bespoke")} className="btn-solid-gold">Enquire about a bespoke piece</button>

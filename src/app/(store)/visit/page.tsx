@@ -11,14 +11,14 @@ export const metadata = pageMetadata({
 });
 
 const appointments = [
-  { t: "The studio hour", where: "Ahmedabad, by appointment", d: "One hour, one rail, the current run in every fabric tier. You are measured properly and we cut nothing until you have slept on it." },
+  { t: "The studio hour", where: "Ahmedabad, by appointment", d: "One hour, one rail, the current shortlisted run. You are measured properly and we cut nothing until you have slept on it." },
   { t: "A call instead", where: "Anywhere, 20 minutes", d: "Video, swatch photos held up in daylight, and honest talk about which size to take. Most people who do this order once and never send it back." },
   { t: "Swatches by post", where: "Anywhere in India", d: "Can't come, can't call? Name the pieces you are weighing up and we post the cloths so you can see them against your own skin and light." },
 ];
 
 const hour = [
   { n: "01", t: "Before you arrive", d: "Send the pieces you want on the rail. They are pressed and hung before you walk in, so the hour is spent on you and not on hunting." },
-  { n: "02", t: "The cloth first", d: "You handle every fabric tier of the same design in daylight. Handloom is impossible to judge on a screen — this is the part that changes minds." },
+  { n: "02", t: "The cloth first", d: "You handle the linen and the cutwork of the same design in daylight. A laser-cut edge is impossible to judge on a screen — this is the part that changes minds." },
   { n: "03", t: "Measured properly", d: "Bust, waist and hip, taken once and kept on your file so every future piece is cut to the same body." },
   { n: "04", t: "Nothing signed", d: "You leave with notes and no obligation. If you decide later, the enquiry picks up exactly where the hour ended." },
 ];
@@ -34,7 +34,7 @@ export default async function VisitPage() {
           Come and <span className="gold-italic">feel the cloth.</span>
         </h1>
         <p className="mt-7 max-w-xl text-muted-foreground">
-          Handloom is difficult to photograph and impossible to fake in person. If you can reach us,
+          Laser-cut geometry is difficult to judge from a photo and impossible to fake in person. If you can reach us,
           come — nothing is expected of you on the day.
         </p>
       </section>

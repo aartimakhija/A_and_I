@@ -6,7 +6,7 @@ import { pageMetadata, breadcrumbJsonLd, jsonLdHtml } from "@/lib/seo";
 
 export const metadata = pageMetadata({
   title: "Bespoke",
-  description: "Made-to-measure commissions from A&I's Jaipur and Kutch ateliers — your exact measurements, your choice of fabric and finish.",
+  description: "Made-to-measure commissions from A&I's craft partner — your exact measurements, on a design from the current capsule.",
   path: "/bespoke",
 });
 

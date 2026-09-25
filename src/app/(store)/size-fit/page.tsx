@@ -24,8 +24,8 @@ const measures = [
 ];
 
 const fitNotes = [
-  { k: "Structured pieces", v: "Cut closer through the body. Between sizes on anything structured? Size up — our ateliers can take it in." },
-  { k: "Draped & linen pieces", v: "Run generous by design, so they move the way handloom is meant to. Stay true to size rather than sizing down." },
+  { k: "Structured pieces", v: "Cut closer through the body. Between sizes on anything structured? Size up — our craft partner can take it in." },
+  { k: "Draped & linen pieces", v: "Run generous by design, so the linen falls the way it's meant to instead of clinging. Stay true to size rather than sizing down." },
   { k: "Sets", v: "Both halves are cut in the same size. If your top and bottom differ, tell us in your order notes and we'll split it at no extra cost." },
 ];
 

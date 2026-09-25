@@ -18,7 +18,7 @@ const LOOKS = [
     jewels: "Thin gold hoops and a fine chain by day — add a stacked cuff at night.",
     feet: "Tan strappy flats for daylight; nude heels to lengthen the palazzo for evening." },
   { occasion: "Mehndi · Festive day",
-    intent: "Heritage print, modern attitude. Let the bandhani lead and keep everything else earthy.",
+    intent: "Heritage-inspired geometry, modern attitude. Let the cutwork lead and keep everything else earthy.",
     bag: "A beaded potli in oxblood, or a tan leather sling for a fusion daytime look.",
     jewels: "Oxidised silver jhumkas and one statement ring — silver, not gold, against the orange.",
     feet: "Embroidered juttis for an Indian event; tan mules to take it Western." },

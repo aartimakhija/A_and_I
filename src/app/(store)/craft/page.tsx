@@ -5,32 +5,34 @@ import { toSFProduct, PRODUCT_INCLUDE } from "@/lib/storefront-adapter";
 import { pageMetadata } from "@/lib/seo";
 
 export const metadata = pageMetadata({
-  title: "The Craft — Bandhani, Mirror-Work, Zari",
-  description: "Three techniques and the hours behind each one. How bandhani, mirror-work and zari become a modern wardrobe at A&I.",
+  title: "The Craft — Laser-Cut Girih, Bauhaus & Moorish Cutwork",
+  description: "How Architecture in Linen is actually made: girih geometry drawn by hand, laser-cut for precision, then finished edge by edge.",
   path: "/craft",
 });
 
+// Replaces an earlier version of this page describing bandhani, mirror-work
+// and zari — techniques from a prior collection that isn't part of the
+// current catalogue. Every technique below is one the live "Architecture in
+// Linen" capsule actually uses (see scripts/seed-blog.ts and the product
+// pages themselves for the same facts, verified against the live catalogue).
 const TECHNIQUES = [
   {
-    name: "Bandhani",
-    place: "India",
-    hours: "16 days per length",
-    text: "Cloth is lifted into thousands of points, each bound twice in thread, then dyed in a single lot. Untied, the pattern appears as tiny unrepeatable circles.",
-    tell: "Look for a faint drift in the grid across the shoulder — the fold, recorded.",
+    name: "Girih cutwork",
+    eyebrow: "Architecture in Linen · Laser-cut",
+    text: "The girih grid — the interlocking star-and-polygon tiling found in centuries-old Islamic tilework — is drawn to each garment's own pattern pieces before a single cut is made, then laser-cut by a specialist craft partner so the geometry stays exact.",
+    tell: "Look close at the repeat: it's drawn to fit this exact panel, not a stock pattern trimmed to size.",
   },
   {
-    name: "Mirror-work",
-    place: "Bhuj, Gujarat",
-    hours: "1,200 discs per garment",
-    text: "Each glass disc is caught under a hand-worked buttonhole ring. No glue, no plastic sequins, no shortcut version of this.",
-    tell: "Turn the piece over: the reverse should be as tidy as the front.",
+    name: "Hand-finished edges",
+    eyebrow: "Every piece · Bound by hand",
+    text: "A laser-cut edge in linen would fray without help. Every cut edge is hand-bound once the pattern is cut, so the open geometry holds its shape wear after wear instead of coming apart at the edge.",
+    tell: "Run a finger along a cut edge — it should feel finished and bound, not raw or fibrous.",
   },
   {
-    name: "Zari",
-    place: "India",
-    hours: "4 metres a day",
-    text: "Fine metal thread woven into handloom on a wooden pit loom. It catches light in a way foil printing never manages.",
-    tell: "Hold it to a window — real zari warms rather than flashes.",
+    name: "Four design languages, one technique",
+    eyebrow: "Girih · Bauhaus · Moorish muqarnas · Art Nouveau",
+    text: "The same laser-cut technique carries four real design traditions across the capsule — Persian girih tiling, the honeycomb muqarnas vaulting of Moorish architecture, Bauhaus's reduction to grid and right angle, and Art Nouveau's flowing vine line work.",
+    tell: "Compare two pieces side by side — the cut technique is identical, but the geometry it's tracing is different each time.",
   },
 ];
 
@@ -51,8 +53,7 @@ export default async function CraftPage() {
           The craft <span className="gold-italic">behind the cut.</span>
         </h1>
         <p className="mt-7 max-w-xl text-muted-foreground">
-          Three techniques, and an honest count of the hours. If you know what to look for, you can
-          check every claim on this page with your own hands.
+          One technique, four design languages, and a couple of things to check with your own hands.
         </p>
       </section>
 
@@ -61,11 +62,11 @@ export default async function CraftPage() {
           <div key={t.name} className={`reveal grid items-center gap-12 lg:grid-cols-2 ${i % 2 ? "lg:[&>*:first-child]:order-2" : ""}`}>
             <div className="card-zoom relative aspect-4/5 w-full bg-secondary">
               {images[i] && (
-                <Image src={images[i]} alt={`${t.name} craftwork, up close`} fill sizes="(max-width: 1024px) 100vw, 50vw" className="object-cover" />
+                <Image src={images[i]} alt={`${t.name}, up close on an Architecture in Linen piece`} fill sizes="(max-width: 1024px) 100vw, 50vw" className="object-cover" />
               )}
             </div>
             <div>
-              <p className="eyebrow">{t.place} · {t.hours}</p>
+              <p className="eyebrow">{t.eyebrow}</p>
               <h2 className="display-lg mt-5">
                 <span className="gold-italic">{t.name}</span>
               </h2>
@@ -75,8 +76,8 @@ export default async function CraftPage() {
                 <br />
                 {t.tell}
               </p>
-              <Link href="/shop/craft" className="link-underline micro mt-8 inline-block">
-                See pieces in {t.name.toLowerCase()}
+              <Link href="/shop/all" className="link-underline micro tap-scale mt-8 inline-block">
+                See the capsule →
               </Link>
             </div>
           </div>
@@ -95,10 +96,10 @@ export default async function CraftPage() {
               Then it is <span className="italic text-accent">finished by hand.</span>
             </h2>
             <p className="mt-6 text-paper-muted">
-              Our finishing team rolls every hem, sets every button and presses every panel. The
-              last centimetre decides how a garment falls, so we refuse to give it to a machine.
+              Our finishing team rolls every hem, sets every button and hand-binds every cut edge.
+              The last centimetre decides how a garment falls, so we refuse to give it to a machine.
             </p>
-            <Link href="/blog" className="link-underline micro mt-9 inline-block text-paper-foreground">
+            <Link href="/blog" className="link-underline micro tap-scale mt-9 inline-block text-paper-foreground">
               Read more from the journal
             </Link>
           </div>

@@ -8,7 +8,7 @@ import type { CollectionCard } from "@/components/site/CollectionSection";
 
 export const metadata = pageMetadata({
   title: "A&I — Style With Us",
-  description: "Indian craft, global silhouette. Womenswear handmade in small runs across India — bandhani, mirror-work, and zari cut into contemporary silhouettes.",
+  description: "Architecture in Linen: girih cutwork laser-cut into washed linen, shortlisted in small runs and made once it's wanted. Womenswear designed in Ahmedabad, India.",
   path: "/",
 });
 
