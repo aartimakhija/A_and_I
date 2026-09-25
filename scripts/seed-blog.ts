@@ -114,6 +114,21 @@ If a piece you've reserved doesn't get enough interest to justify a run, you're 
 It's a slower way to launch a collection than filling a warehouse and hoping. It's also the only way we know to make sure nothing in the capsule gets made that nobody actually wanted.`,
   },
   {
+    slug: "the-story-of-linen-flax-to-finished-cloth",
+    productSlug: "architecture-in-linen-look-02-sculptural-halterneck-girih-backless-midi-dress",
+    title: "The Story of Linen: From Flax Plant to Finished Cloth",
+    subtitle: "Before it was a capsule name, linen was one of the oldest fabrics humans have ever made. Here's the fibre itself.",
+    body: `Linen doesn't start as a fabric at all — it starts as flax, a slim blue-flowering plant grown for its stalk rather than its bloom. The fibre comes from inside that stalk: after harvest, the stalks are laid out and left to "ret," a controlled rotting that loosens the woody outer layer from the long fibres inside. Those fibres are then combed out, spun into yarn, and woven into cloth — a process that's changed in scale and machinery over the centuries, but not much in principle.
+
+It's also one of the oldest textiles people have made. Linen fragments have turned up in Neolithic dig sites, and it was the fabric of choice in ancient Egypt for everything from everyday clothing to the wrappings used in mummification — chosen then, as now, for how cool and breathable it is against skin in a hot climate. Few fabrics have stayed in continuous use for quite that long.
+
+The properties that made it useful thousands of years ago are the same ones that make it useful in a garment today. Flax fibre is naturally hollow, which lets air move through the weave and moisture evaporate quickly — part of why linen has stayed a warm-weather staple across so many cultures. It's also a relatively stiff, strong fibre compared to cotton, which is exactly why it holds a crisp edge well: a looser, more elastic weave would soften or fray at a cut line, where linen's structure holds.
+
+Linen creases easily, and that's worth saying plainly rather than treating it as a flaw to hide. A crease in linen has always read as a sign of a natural fibre being worn and lived in, not a laundering failure — closer to how a leather bag develops character than how a synthetic fabric is expected to stay flat. It also genuinely softens with every wash, which is part of why a well-cared-for linen piece tends to get more comfortable, not less, over years of wear.
+
+None of this is really about any one capsule — it's just what the fibre is. Our own use of it, and the exact care that keeps a laser-cut edge intact, is covered separately in how we work with it. This is the plainer story: what linen is, and why it's been worth using for as long as people have been making cloth at all.`,
+  },
+  {
     slug: "how-pre-order-actually-works",
     productSlug: null,
     title: "How Pre-Order Actually Works at A&I",

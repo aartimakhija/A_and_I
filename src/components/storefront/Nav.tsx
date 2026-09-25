@@ -37,7 +37,7 @@ export function Nav() {
       </div>
 
       <div className="flex shrink-0 items-center gap-3 lg:gap-4.5">
-        <button onClick={() => setSearchOpen(true)} className="micro hidden text-muted-foreground lg:inline">Search</button>
+        <button onClick={() => setSearchOpen(true)} className="micro tap-scale text-muted-foreground">Search</button>
         <button onClick={() => setSavedOpen(true)} className="micro hidden text-muted-foreground lg:inline">
           Saved{saved.length > 0 ? ` (${saved.length})` : ""}
         </button>

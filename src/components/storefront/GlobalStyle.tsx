@@ -79,7 +79,7 @@ export function GlobalStyle() {
         * { scroll-behavior: auto !important; }
         .marquee { animation: none !important; }
         .kb, .sheen::before, .rise, .fillbar { animation: none !important; }
-        .reveal, .reveal-img { opacity: 1 !important; transform: none !important; clip-path: none !important; transition: none !important; }
+        .reveal, .reveal-img, .reveal-scale { opacity: 1 !important; transform: none !important; clip-path: none !important; transition: none !important; }
         .ulink::after, .btn::before { transition: none !important; }
       }
     `;

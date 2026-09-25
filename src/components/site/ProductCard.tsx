@@ -10,7 +10,7 @@ export function ProductCard({ product }: { product: SFProduct }) {
     <article className="group relative [perspective:1200px]">
       {/* Subtle tilt-on-hover, restored from the earlier design — pure CSS,
           no JS mouse-tracking, so it can't jank or fight scroll performance. */}
-      <Link href={`/products/${product.slug}`} prefetch={false} className="relative block aspect-3/4 overflow-hidden bg-secondary transition-transform duration-500 ease-out will-change-transform group-hover:[transform:rotateX(2deg)_rotateY(-4deg)_scale(1.02)]">
+      <Link href={`/products/${product.slug}`} prefetch={false} className="relative block aspect-3/4 overflow-hidden bg-secondary transition-transform duration-500 ease-out will-change-transform group-hover:[transform:rotateX(2deg)_rotateY(-4deg)_scale(1.02)] active:scale-[0.98]">
         {product.images[0] && (
           <Image
             src={product.images[0]}

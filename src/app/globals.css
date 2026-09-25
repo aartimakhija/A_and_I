@@ -248,11 +248,14 @@
   text-transform: uppercase;
   letter-spacing: 0.2em;
   font-weight: 500;
-  transition: background-color 0.35s ease, color 0.35s ease;
+  transition: background-color 0.35s ease, color 0.35s ease, transform 0.15s ease;
   &:hover {
     background: var(--color-primary);
     border-color: var(--color-primary);
     color: var(--color-primary-foreground);
+  }
+  &:active {
+    transform: scale(0.96);
   }
 }
 
@@ -272,6 +275,10 @@
   &:hover {
     filter: brightness(1.08);
     transform: translateY(-2px);
+  }
+  &:active {
+    transform: scale(0.96);
+    filter: brightness(1.02);
   }
 }
 
@@ -301,6 +308,30 @@
   &:hover img {
     transform: scale(1.06);
   }
+  &:active img {
+    transform: scale(1.09);
+  }
+}
+
+/* Small tap/click feedback for chips, tiles and icon buttons — the touch
+   equivalent of a hover state, since touch devices never fire :hover. */
+@utility tap-scale {
+  transition: transform 0.15s ease;
+  &:active {
+    transform: scale(0.94);
+  }
+}
+
+/* Reveal variant with a touch of scale, for hero-weight images that should
+   feel like they're settling into place rather than just fading up. */
+@utility reveal-scale {
+  opacity: 0;
+  transform: scale(0.96);
+  transition: opacity 1s cubic-bezier(0.2,0.8,0.2,1), transform 1s cubic-bezier(0.2,0.8,0.2,1);
+  &[data-in] {
+    opacity: 1;
+    transform: none;
+  }
 }
 
 @utility grain {
@@ -319,6 +350,12 @@
 @media (prefers-reduced-motion: reduce) {
   .animate-slow-zoom {
     animation: none;
+  }
+  .tap-scale:active,
+  .btn-solid-gold:active,
+  .btn-outline-ink:active,
+  .card-zoom:active img {
+    transform: none;
   }
 }
 

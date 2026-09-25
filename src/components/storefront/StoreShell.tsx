@@ -50,7 +50,7 @@ function useRevealObserver() {
     );
 
     const observeNew = () => {
-      document.querySelectorAll(".reveal:not([data-in]), .reveal-img:not([data-in])").forEach((el) => io.observe(el));
+      document.querySelectorAll(".reveal:not([data-in]), .reveal-img:not([data-in]), .reveal-scale:not([data-in])").forEach((el) => io.observe(el));
     };
 
     observeNew();
