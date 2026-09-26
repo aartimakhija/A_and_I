@@ -62,14 +62,16 @@ export function Lookbook({ products }: { products: SFProduct[] }) {
         return (
           <section key={d.id} className={i % 2 === 0 ? "bg-background" : "bg-secondary"}>
             <div className="shell grid items-center gap-8 py-10 md:grid-cols-2 md:gap-16 md:py-20">
-              <button
-                className={`relative aspect-4/5 overflow-hidden bg-card ${flip ? "md:order-2" : "md:order-1"}`}
-                onClick={() => router.push(`/products/${d.slug}`)}
-                style={layer(2.6, rm)}
-              >
-                {d.images[0] && <Image src={d.images[0]} alt={d.name} fill sizes="(max-width: 768px) 100vw, 45vw" className="object-contain" />}
-              </button>
-              <div className={flip ? "md:order-1" : "md:order-2"}>
+              <div className={`reveal-img ${flip ? "md:order-2" : "md:order-1"}`}>
+                <button
+                  className="card-zoom relative aspect-4/5 w-full overflow-hidden bg-card"
+                  onClick={() => router.push(`/products/${d.slug}`)}
+                  style={layer(2.6, rm)}
+                >
+                  {d.images[0] && <Image src={d.images[0]} alt={d.name} fill sizes="(max-width: 768px) 100vw, 45vw" className="object-contain" />}
+                </button>
+              </div>
+              <div className={`reveal ${flip ? "md:order-1" : "md:order-2"}`} style={{ transitionDelay: "80ms" }}>
                 <div className="font-display text-5xl leading-none text-primary/50 md:text-6xl">{String(i + 1).padStart(2, "0")}</div>
                 <div className="mt-2.5"><span className="eyebrow">{look.occasion}</span></div>
                 <h2 className="display-md my-3.5">{d.name}</h2>
@@ -80,7 +82,7 @@ export function Lookbook({ products }: { products: SFProduct[] }) {
                   <Row label="On your feet">{look.feet}</Row>
                 </div>
                 <div className="mt-7">
-                  <button onClick={() => router.push(`/products/${d.slug}`)} className="btn-outline-ink">
+                  <button onClick={() => router.push(`/products/${d.slug}`)} className="btn-outline-ink tap-scale">
                     Shop this look — {formatPrice(d.price)}
                   </button>
                 </div>
