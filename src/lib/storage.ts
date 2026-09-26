@@ -12,6 +12,16 @@
 // Until those are set this module fails soft in dev by writing to /public/uploads
 // instead, so the rest of the app (which only ever deals with a public `url` string)
 // doesn't need to know which backend is active.
+//
+// IMPORTANT — this fallback is dev-only. Vercel (and most serverless hosts) deploy
+// the app onto a read-only filesystem outside of /tmp: a write to /public/uploads
+// from a running production function will fail outright (or, on hosts that do allow
+// it, land in a scratch area that's wiped on the next deploy/instance and never
+// shared with other instances). The 39 product images live on the site today are
+// static files that were committed to the repo by a one-off migration script, not
+// written by this fallback while deployed — so if S3_* isn't set in production, the
+// admin/vendor "upload image" button is silently broken there even though the
+// existing catalogue looks fine. See the guard below.
 
 import { writeFile, mkdir } from "fs/promises";
 import path from "path";
@@ -63,6 +73,19 @@ export async function uploadImageBuffer(buffer: Buffer, opts: { filename: string
       ACL: "public-read",
     }));
     return { url: publicUrl(key), key };
+  }
+
+  // Vercel sets this env var in every deployment (and only there) — if we're running
+  // on Vercel with no S3 configured, don't even attempt the /public/uploads write:
+  // it will fail (read-only fs) or silently not persist, and either way the caller
+  // deserves a clear reason rather than a raw filesystem error.
+  if (process.env.VERCEL) {
+    throw new Error(
+      "Image storage isn't configured for this deployment yet — uploads can't be saved here. " +
+      "Set S3_BUCKET, S3_ACCESS_KEY_ID and S3_SECRET_ACCESS_KEY (a real AWS S3 bucket, or an " +
+      "S3-compatible one like Cloudflare R2 with S3_ENDPOINT + S3_PUBLIC_URL_BASE) in the " +
+      "project's environment variables, then redeploy."
+    );
   }
 
   // Dev fallback: write into /public/uploads so `url` still resolves locally.

@@ -13,6 +13,13 @@ export async function POST(req: NextRequest) {
   if (file.size > 8 * 1024 * 1024) return NextResponse.json({ error: "max 8MB" }, { status: 400 });
 
   const buffer = Buffer.from(await file.arrayBuffer());
-  const { url } = await uploadImageBuffer(buffer, { filename: file.name, contentType: file.type, folder: "products" });
-  return NextResponse.json({ url, backend: storageBackend });
+  try {
+    const { url } = await uploadImageBuffer(buffer, { filename: file.name, contentType: file.type, folder: "products" });
+    return NextResponse.json({ url, backend: storageBackend });
+  } catch (err: any) {
+    // Most likely cause here is storage.ts's own guard (no S3 configured on a host
+    // with a read-only filesystem) — surface that message as-is rather than a bare 500,
+    // since it tells whoever's managing hosting exactly what env vars to set.
+    return NextResponse.json({ error: err?.message || "Image upload failed." }, { status: 500 });
+  }
 }
