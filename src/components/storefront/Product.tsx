@@ -28,8 +28,14 @@ function trackEvent(name: string, params: Record<string, unknown>) {
 }
 
 export function Product({
-  product, related, paired, defaultDeliveryNotes,
-}: { product: SFProduct; related: SFProduct[]; paired?: SFProduct[]; defaultDeliveryNotes?: string | null }) {
+  product, related, paired, defaultDeliveryNotes, reservation,
+}: {
+  product: SFProduct; related: SFProduct[]; paired?: SFProduct[]; defaultDeliveryNotes?: string | null;
+  // Real reservation progress + the vendor's actual production lead time —
+  // only present for preOrder products. Absent (not zero) when a count
+  // genuinely isn't available, so we never render "0 of 0 reserved".
+  reservation?: { count: number; moq: number; leadTimeDays: number };
+}) {
   const { addToCart, saved, toggleSaved, styleProfile } = useStore();
   const recommended = styleProfile?.recommendedSize;
   const recommendedInStock = recommended && product.variants.find((v) => v.size === recommended && v.stock > 0);
@@ -251,7 +257,23 @@ export function Product({
                   <input value={reservePhone} onChange={(e) => setReservePhone(e.target.value)} placeholder="Phone (optional)" className="field-line mb-2" />
                   <input value={reserveLocation} onChange={(e) => setReserveLocation(e.target.value)} placeholder="City (optional)" className="field-line mb-3" />
                   <button onClick={reserve} className="btn-solid-gold w-full">{reserving ? "Reserving…" : `Reserve — Size ${size}`}</button>
-                  <p className="mt-2 text-xs text-muted-foreground">No payment now. We only go into production once enough of you commit — you&apos;ll get an early-access discount for reserving.</p>
+                  <p className="mt-2 text-xs text-muted-foreground">No payment now. You&apos;ll get an early-access discount for reserving.</p>
+                  {reservation && (
+                    <div className="mt-3">
+                      <div className="h-1 w-full overflow-hidden rounded-full bg-muted">
+                        <div
+                          className="h-full rounded-full bg-primary transition-[width]"
+                          style={{ width: `${Math.min(100, Math.round((reservation.count / Math.max(reservation.moq, 1)) * 100))}%` }}
+                        />
+                      </div>
+                      <p className="mt-1.5 text-xs text-muted-foreground">
+                        {reservation.count >= reservation.moq
+                          ? `${reservation.count} reserved — this run is confirmed and now in production.`
+                          : `${reservation.count} of ${reservation.moq} reserved — we go into production once we reach ${reservation.moq}.`}
+                        {" "}Once confirmed, it usually ships within {Math.round(reservation.leadTimeDays / 7)} weeks.
+                      </p>
+                    </div>
+                  )}
                   <Link href="/blog/what-shortlisted-means-reserving-a-piece" className="link-underline micro mt-1.5 inline-block text-xs text-muted-foreground">
                     What does &quot;Reserve&quot; actually mean? →
                   </Link>

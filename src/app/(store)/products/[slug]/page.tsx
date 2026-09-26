@@ -28,10 +28,22 @@ export async function generateMetadata(props: { params: Promise<{ slug: string }
 export default async function ProductPage(props: { params: Promise<{ slug: string }> }) {
   const params = await props.params;
   const [p, settings] = await Promise.all([
-    prisma.product.findUnique({ where: { slug: params.slug }, include: PRODUCT_INCLUDE }),
+    prisma.product.findUnique({
+      where: { slug: params.slug },
+      include: { ...PRODUCT_INCLUDE, vendor: { select: { moq: true, leadTimeDays: true } } },
+    }),
     getSiteSettings(),
   ]);
   if (!p) notFound();
+
+  // Real reservation progress against the vendor's actual minimum production
+  // run (Vendor.moq) and a bounded lead time (Vendor.leadTimeDays) — both
+  // already tracked in the DB but never surfaced on the PDP, so "we only go
+  // into production once enough of you commit" had no visible evidence
+  // behind it. CANCELLED reservations don't count toward the total.
+  const reservedCount = p.preOrder
+    ? await prisma.preOrder.count({ where: { productId: p.id, status: { not: "CANCELLED" } } })
+    : 0;
 
   // DRAFT and ARCHIVED products aren't public yet/anymore (SOLD_OUT still
   // is — it's just out of stock, not hidden). A signed-in admin can still
@@ -66,7 +78,10 @@ export default async function ProductPage(props: { params: Promise<{ slug: strin
         breadcrumbJsonLd([{ name: "Home", path: "/" }, { name: "Collection", path: "/shop/all" }, { name: catLabel, path: `/shop/${p.category}` }, { name: p.name, path: `/products/${p.slug}` }])
       ) }} />
       <Breadcrumb items={[{ name: "Home", path: "/" }, { name: "Collection", path: "/shop/all" }, { name: catLabel, path: `/shop/${p.category}` }, { name: p.name, path: `/products/${p.slug}` }]} />
-      <Product product={product} related={related} paired={paired} defaultDeliveryNotes={settings.defaultDeliveryNotes} />
+      <Product
+        product={product} related={related} paired={paired} defaultDeliveryNotes={settings.defaultDeliveryNotes}
+        reservation={p.preOrder ? { count: reservedCount, moq: p.vendor.moq, leadTimeDays: p.vendor.leadTimeDays } : undefined}
+      />
     </>
   );
 }
