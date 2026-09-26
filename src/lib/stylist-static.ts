@@ -7,12 +7,21 @@
 export type Occasion = { id: string; label: string; categories: string[]; keywords: string[] };
 export type Vibe = { id: string; label: string };
 
+// All live catalogue products currently sit under a single category,
+// "craft" (see Product.tsx's CAT_LABEL — the same fact that caused the
+// /sustainability image bug fixed earlier). Every occasion below includes
+// "craft" in its categories so the +3 category bonus applies across the
+// whole real catalogue rather than only to "wedding" and "datenight" —
+// otherwise "brunch", "resort" and "work" silently lost their category
+// signal and fell back to colour-only matching, occasionally surfacing an
+// evening gown as a "Workwear · Meetings" pick. If distinct categories
+// ("ready", "linen") come back into use later, narrow these again.
 export const OCCASIONS: Occasion[] = [
   { id: "wedding", label: "Wedding · Sangeet", categories: ["craft"], keywords: ["sangeet", "wedding", "reception", "festive", "bridal"] },
-  { id: "brunch", label: "Brunch · Casual day", categories: ["ready", "linen"], keywords: ["brunch", "casual", "day", "everyday"] },
+  { id: "brunch", label: "Brunch · Casual day", categories: ["ready", "linen", "craft"], keywords: ["brunch", "casual", "day", "everyday"] },
   { id: "datenight", label: "Date night · Cocktails", categories: ["craft", "ready"], keywords: ["cocktail", "date", "evening", "night"] },
-  { id: "resort", label: "Resort · Destination", categories: ["linen", "ready"], keywords: ["resort", "travel", "vacation", "destination", "linen"] },
-  { id: "work", label: "Workwear · Meetings", categories: ["ready", "linen"], keywords: ["work", "office", "meeting", "tailored"] },
+  { id: "resort", label: "Resort · Destination", categories: ["linen", "ready", "craft"], keywords: ["resort", "travel", "vacation", "destination", "linen"] },
+  { id: "work", label: "Workwear · Meetings", categories: ["ready", "linen", "craft"], keywords: ["work", "office", "meeting", "tailored"] },
 ];
 
 export const VIBES: Vibe[] = [
