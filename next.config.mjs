@@ -36,7 +36,18 @@ const CSP = [
 ].join("; ");
 
 const nextConfig = {
-  images: { remotePatterns: [{ protocol: "https", hostname: "**" }] },
+  // Narrowed from hostname: "**" (any HTTPS host on the internet, which lets
+  // anyone ask Next's Image Optimization API to fetch and process an
+  // arbitrary external URL — an SSRF-shaped risk, and part of why a recent
+  // Next.js advisory around AVIF image optimization mattered). Product
+  // photos actually come from S3 (src/lib/storage.ts's publicUrl(), default
+  // "<bucket>.s3.<region>.amazonaws.com" unless S3_PUBLIC_URL_BASE is set to
+  // a custom domain) — the site's own CSP img-src already only allows
+  // *.amazonaws.com, so this matches what was already the real, working
+  // constraint. If production sets S3_PUBLIC_URL_BASE to something other
+  // than an amazonaws.com URL (e.g. a Cloudflare R2 or CDN domain), add that
+  // exact hostname here too, and to img-src in the CSP below.
+  images: { remotePatterns: [{ protocol: "https", hostname: "*.amazonaws.com" }] },
   experimental: { serverActions: { bodySizeLimit: "5mb" } },
   async headers() {
     return [
