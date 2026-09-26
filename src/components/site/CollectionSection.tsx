@@ -1,7 +1,10 @@
+"use client";
+
 import Link from "next/link";
 import Image from "next/image";
 import type { SFProduct } from "@/lib/storefront-adapter";
 import { formatPrice } from "@/lib/format";
+import { useTiltOnHover } from "@/lib/useTiltOnHover";
 
 export type CollectionCard = { slug: string; name: string; imageUrl?: string | null; blurb?: string };
 
@@ -11,9 +14,23 @@ function descriptor(p: SFProduct) {
 
 function CuratedCard({ product, index }: { product: SFProduct; index: number }) {
   const second = product.images[1];
+  // Direction-aware tilt-on-hover — see src/lib/useTiltOnHover.ts. This used
+  // to be its own static rotateX(2deg) rotateY(-4deg), the same fixed tilt
+  // regardless of which side the pointer came from; now shares the real
+  // implementation with ProductCard instead of drifting from it again.
+  const tilt = useTiltOnHover<HTMLAnchorElement>();
   return (
     <article className="reveal group [perspective:1200px]" style={{ transitionDelay: `${(index % 6) * 80}ms` }}>
-      <Link href={`/products/${product.slug}`} prefetch={false} className="relative block aspect-3/4 overflow-hidden bg-secondary transition-transform duration-500 ease-out will-change-transform group-hover:[transform:rotateX(2deg)_rotateY(-4deg)_scale(1.02)]">
+      <Link
+        ref={tilt.ref}
+        href={`/products/${product.slug}`}
+        prefetch={false}
+        onPointerMove={tilt.onPointerMove}
+        onPointerLeave={tilt.onPointerLeave}
+        onPointerCancel={tilt.onPointerCancel}
+        style={tilt.style}
+        className="relative block aspect-3/4 overflow-hidden bg-secondary transition-transform duration-300 ease-out will-change-transform"
+      >
         {product.images[0] && (
           <Image
             src={product.images[0]}
