@@ -6,7 +6,7 @@ import { InstagramFeed, type InstagramTile } from "@/components/site/InstagramFe
 import { fetchInstagramFeed, instagramPostImageUrl } from "@/lib/integrations";
 
 /**
- * Sections 04–08 of the homepage flow, adapted to the "Architecture in
+ * Sections 04–07 of the homepage flow, adapted to the "Architecture in
  * Linen" capsule (Persian girih cutwork) — the collection this narrative is
  * built around while it's in pre-production. Sections 01–03 (arrival, point
  * of view, collection) are composed ahead of this in app/(store)/page.tsx.
@@ -25,11 +25,18 @@ import { fetchInstagramFeed, instagramPostImageUrl } from "@/lib/integrations";
  * once each instead of twice, so the page reads tighter without losing any
  * of the material/process/trust information it had before.
  *
+ * Sections 04 ("Material as design") and 06 ("Why this capsule exists")
+ * were later merged into one "The capsule" section — both were telling the
+ * same shortlisted-capsule story from two angles (what it's made of, why it
+ * exists) back to back, so they now run as one section with the fabric
+ * image, the origin story as intro prose, and the material facts side by
+ * side. Sections renumbered 04–07 accordingly.
+ *
  * The former "From idea to atelier" 5-photo process gallery (sketch / direction /
  * cut / finish / fit) was removed on direct request — it duplicated the same
  * making-of story already told on every product page (see ProductStory.tsx's
  * "The idea" / "The direction" sections) without adding anything the homepage
- * needed on top of that. Sections renumbered 04–08 accordingly.
+ * needed on top of that.
  */
 
 const IMG = "/uploads/products";
@@ -61,12 +68,6 @@ const valueProps = [
   { k: "Made once it's wanted", v: "Shortlisted first, produced once enough of you reserve — nothing is made on spec." },
   { k: "Honest about the stage", v: "We tell you plainly when a piece is a concept render versus a finished garment." },
   { k: "Full transparency", v: "Clear sizing, delivery, returns and support information on every product page." },
-];
-
-const whyWeExist = [
-  { k: "The observation", v: "Girih tiling has shaped architecture for centuries but rarely appears in clothing at this scale — most of what exists is printed, not cut." },
-  { k: "The belief", v: "A geometric pattern earns its place on a garment when it's cut into the cloth itself, not laid over it." },
-  { k: "The intention", v: "A small, shortlisted capsule — Architecture in Linen — built to find out which of these forty ideas deserves to be made." },
 ];
 
 const fallbackInstagramTiles: InstagramTile[] = [
@@ -101,17 +102,17 @@ export async function HomeFlow() {
     <>
       <Marquee items={["Girih geometry", "Laser-cut linen", "Hand-finished edges", "Shortlisted capsule", "A&I"]} />
 
-      {/* 04 — MATERIAL AS DESIGN */}
+      {/* 04 — THE CAPSULE */}
       <section className="border-y border-border bg-card">
         <div className="shell py-24">
           <div className="reveal">
             <div className="flex items-center gap-6">
               <span className="display-md text-2xl italic text-primary">04</span>
               <span className="h-px flex-1 bg-border" />
-              <span className="micro text-muted-foreground">Material as design</span>
+              <span className="micro text-muted-foreground">The capsule</span>
             </div>
             <h2 className="display-lg mt-8 max-w-3xl">
-              Material is part of <span className="gold-italic">the design.</span>
+              Why it exists, <span className="gold-italic">what it&apos;s made of.</span>
             </h2>
           </div>
           <div className="mt-14 grid items-start gap-14 lg:grid-cols-2">
@@ -120,6 +121,17 @@ export async function HomeFlow() {
                 <Image src={flagship.fabricImage} alt="Macro close-up of the laser-cut girih cutwork fabric" fill sizes="(max-width: 1024px) 100vw, 50vw" className="object-cover" />
               </div>
               <p className="micro mt-6 text-muted-foreground">Material → design → body</p>
+              <p className="mt-6 max-w-md text-muted-foreground">
+                Girih tiling has shaped architecture for centuries but rarely appears in clothing at
+                this scale — most of what exists is printed, not cut. We believe a geometric pattern
+                earns its place on a garment when it&apos;s cut into the cloth itself, not laid over
+                it. Architecture in Linen is a small, shortlisted capsule built to find out which of
+                forty such ideas deserves to be made.
+              </p>
+              <blockquote className="display-md mt-10 max-w-md italic">
+                "A pattern this old deserves to be cut into cloth, not printed on it."
+                <footer className="micro mt-5 not-italic text-muted-foreground">Artee Makhija, founder of A&amp;I</footer>
+              </blockquote>
             </div>
             <div className="reveal" style={{ transitionDelay: "80ms" }}>
               <dl className="divide-y divide-border border-y border-border">
@@ -130,9 +142,17 @@ export async function HomeFlow() {
                   </div>
                 ))}
               </dl>
-              <Link href="/shop/all" className="link-underline micro tap-scale mt-8 inline-block">
-                See every shortlisted look →
-              </Link>
+              <div className="mt-8 flex flex-wrap items-center gap-8">
+                <Link href="/shop/all" className="link-underline micro tap-scale inline-block">
+                  See every shortlisted look →
+                </Link>
+                <Link href="/craft" className="link-underline micro tap-scale inline-block">
+                  See how it&apos;s made →
+                </Link>
+                <Link href="/founder" className="link-underline micro tap-scale inline-block">
+                  Read the founder&apos;s story →
+                </Link>
+              </div>
             </div>
           </div>
         </div>
@@ -186,54 +206,12 @@ export async function HomeFlow() {
         </div>
       </section>
 
-      {/* 06 — WHY THIS CAPSULE EXISTS */}
-      <section className="border-y border-border bg-card">
-        <div className="shell grid gap-14 py-24 lg:grid-cols-[0.9fr_1.1fr]">
-          <div className="reveal">
-            <div className="card-zoom relative aspect-4/5 w-full bg-secondary">
-              <Image
-                src={`${IMG}/1790000000037-architecture-in-linen-look-123-bauhaus-grid-cutwork-jumpsuit-0.jpg`}
-                alt="Design reference render from the Architecture in Linen capsule"
-                fill
-                sizes="(max-width: 1024px) 100vw, 45vw"
-                className="object-cover"
-              />
-            </div>
-          </div>
-          <div className="reveal" style={{ transitionDelay: "80ms" }}>
-            <div className="flex items-center gap-6">
-              <span className="display-md text-2xl italic text-primary">06</span>
-              <span className="h-px flex-1 bg-border" />
-              <span className="micro text-muted-foreground">Why this capsule exists</span>
-            </div>
-            <h2 className="display-lg mt-8">
-              Why Architecture in Linen <span className="gold-italic">exists.</span>
-            </h2>
-            <dl className="mt-10 space-y-7 border-t border-border pt-8">
-              {whyWeExist.map((w) => (
-                <div key={w.k}>
-                  <dt className="micro text-primary">{w.k}</dt>
-                  <dd className="mt-2 text-muted-foreground">{w.v}</dd>
-                </div>
-              ))}
-            </dl>
-            <blockquote className="display-md mt-12 max-w-xl italic">
-              "A pattern this old deserves to be cut into cloth, not printed on it."
-              <footer className="micro mt-5 not-italic text-muted-foreground">Artee Makhija, founder of A&amp;I</footer>
-            </blockquote>
-            <Link href="/founder" className="link-underline micro tap-scale mt-8 inline-block">
-              Read the founder&apos;s story →
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* 07 — THE A&I WORLD */}
+      {/* 06 — THE A&I WORLD */}
       <section className="bg-paper text-paper-foreground">
         <div className="shell py-24">
           <div className="reveal">
             <div className="flex items-center gap-6">
-              <span className="display-md text-2xl italic text-accent">07</span>
+              <span className="display-md text-2xl italic text-accent">06</span>
               <span className="h-px flex-1 bg-paper-foreground/15" />
               <span className="micro text-paper-muted">The A&amp;I world</span>
             </div>
@@ -277,7 +255,7 @@ export async function HomeFlow() {
         </div>
       </section>
 
-      {/* 08 — FIND YOURS / CLOSING */}
+      {/* 07 — FIND YOURS / CLOSING */}
       <section className="grain relative overflow-hidden border-t border-border">
         <div className="absolute inset-0">
           <Image

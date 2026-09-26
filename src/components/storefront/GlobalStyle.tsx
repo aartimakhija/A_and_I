@@ -41,11 +41,6 @@ export function GlobalStyle() {
       .ulink { position: relative; }
       .ulink::after { content: ""; position: absolute; left: 0; right: 0; bottom: -3px; height: 1px; background: ${T.gold}; transform: scaleX(0); transform-origin: right; transition: transform 0.4s cubic-bezier(0.2,0.8,0.2,1); }
       .ulink:hover::after { transform: scaleX(1); transform-origin: left; }
-      .btn { position: relative; overflow: hidden; }
-      .btn > span { position: relative; z-index: 1; transition: color 0.4s ease; }
-      .btn::before { content: ""; position: absolute; inset: 0; z-index: 0; background: var(--sweep, ${T.gold}); transform: translateX(-101%); transition: transform 0.5s cubic-bezier(0.2,0.8,0.2,1); }
-      .btn:hover::before { transform: translateX(0); }
-      .btn:hover > span { color: var(--sweeptext, ${T.ink}); }
       .fx-bar { position: fixed; top: 0; left: 0; height: 2px; width: 0; background: ${T.gold}; z-index: 100; transition: width 0.1s linear; }
       .fx-grain { position: fixed; inset: 0; pointer-events: none; z-index: 90; opacity: 0.05; background-image: radial-gradient(rgba(0,0,0,0.9) 0.5px, transparent 0.6px); background-size: 3px 3px; }
       .fx-vignette { position: fixed; inset: 0; pointer-events: none; z-index: 89; background: radial-gradient(115% 100% at 50% 42%, transparent 60%, rgba(28,26,24,0.09) 100%); }
@@ -94,7 +89,7 @@ export function GlobalStyle() {
         .marquee { animation: none !important; }
         .kb, .sheen::before, .rise, .fillbar { animation: none !important; }
         .reveal, .reveal-img, .reveal-scale { opacity: 1 !important; transform: none !important; clip-path: none !important; transition: none !important; }
-        .ulink::after, .btn::before { transition: none !important; }
+        .ulink::after { transition: none !important; }
       }
     `;
   return <style dangerouslySetInnerHTML={{ __html: css }} />;

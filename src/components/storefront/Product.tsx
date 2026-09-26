@@ -112,7 +112,7 @@ export function Product({
         <div className="md:sticky md:top-24 md:self-start">
           <div className="flex items-start justify-between">
             <span className="eyebrow">{catLabel}</span>
-            <button onClick={() => toggleSaved(product.id)} aria-label="Save to wishlist" className={`text-xl leading-none ${isSaved ? "text-primary" : "text-muted-foreground"}`}>
+            <button onClick={() => toggleSaved(product.id)} aria-label="Save to wishlist" className={`wishlist-heart text-xl leading-none ${isSaved ? "is-saved text-primary" : "text-muted-foreground"}`}>
               {isSaved ? "♥" : "♡"}
             </button>
           </div>

@@ -38,17 +38,17 @@ export function Nav() {
 
       <div className="flex shrink-0 items-center gap-3 lg:gap-4.5">
         <button onClick={() => setSearchOpen(true)} className="micro tap-scale text-muted-foreground">Search</button>
-        <button onClick={() => setSavedOpen(true)} className="micro hidden text-muted-foreground lg:inline">
+        <button onClick={() => setSavedOpen(true)} className="micro tap-scale hidden text-muted-foreground lg:inline">
           Saved{saved.length > 0 ? ` (${saved.length})` : ""}
         </button>
         <Link href={isLoggedIn ? "/account/orders" : "/login"} className="link-underline micro hidden text-muted-foreground lg:inline">
           {isLoggedIn ? "Account" : "Login"}
         </Link>
-        <button onClick={() => setCartOpen(true)} className="micro relative text-foreground">
+        <button onClick={() => setCartOpen(true)} className="micro tap-scale relative text-foreground">
           Bag
           {cart.length > 0 && <span className="ml-1.5 text-[10px] text-primary">({cart.length})</span>}
         </button>
-        <button onClick={() => setMenuOpen(!menuOpen)} aria-label="Menu" className="micro text-foreground lg:hidden">
+        <button onClick={() => setMenuOpen(!menuOpen)} aria-label="Menu" className="micro tap-scale text-foreground lg:hidden">
           {menuOpen ? "Close" : "Menu"}
         </button>
       </div>
@@ -76,8 +76,8 @@ export function Nav() {
           {mobileExtra.map(([href, label]) => (
             <Link key={href} href={href} onClick={() => setMenuOpen(false)} className={`${navLinkClass(href)} text-left text-sm`}>{label}</Link>
           ))}
-          <button onClick={() => { setMenuOpen(false); setSearchOpen(true); }} className="micro text-left text-sm text-muted-foreground">Search</button>
-          <button onClick={() => { setMenuOpen(false); setSavedOpen(true); }} className="micro text-left text-sm text-muted-foreground">
+          <button onClick={() => { setMenuOpen(false); setSearchOpen(true); }} className="micro tap-scale text-left text-sm text-muted-foreground">Search</button>
+          <button onClick={() => { setMenuOpen(false); setSavedOpen(true); }} className="micro tap-scale text-left text-sm text-muted-foreground">
             Saved{saved.length > 0 ? ` (${saved.length})` : ""}
           </button>
           <Link href={isLoggedIn ? "/account/orders" : "/login"} onClick={() => setMenuOpen(false)} className={`${navLinkClass(isLoggedIn ? "/account" : "/login")} text-left text-sm`}>
