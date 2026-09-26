@@ -54,7 +54,13 @@ export function pageMetadata({
   const url = `${SITE_URL}${path}`;
   const ogImage = image || DEFAULT_OG_IMAGE;
   return {
-    title: cleanTitle,
+    // The homepage's own title ("A&I — Style With Us") already leads with
+    // the brand name, so letting the root layout's title.template append
+    // "— A&I" again produced "A&I — Style With Us — A&I" (this was the
+    // 319-view variant GA logged — the double-suffix bug's other shape,
+    // distinct from the trailing-suffix one `stripBrandSuffix` handles).
+    // `absolute` renders the string exactly as given and skips the template.
+    title: cleanTitle === SITE_NAME ? { absolute: cleanTitle } : cleanTitle,
     description,
     alternates: { canonical: url },
     robots: noIndex ? { index: false, follow: false } : { index: true, follow: true },
