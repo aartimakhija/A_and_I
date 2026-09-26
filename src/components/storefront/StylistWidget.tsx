@@ -12,7 +12,7 @@ export function StylistWidget() {
   const [occasion, setOccasion] = useState<string | null>(null);
   const [vibe, setVibe] = useState<string | null>(null);
   const [asking, setAsking] = useState(false);
-  const [result, setResult] = useState<{ blurb: string; picks: Pick[] } | null>(null);
+  const [result, setResult] = useState<{ blurb: string; picks: Pick[] } | { error: string } | null>(null);
 
   async function go(occasionId: string, vibeId: string) {
     setOccasion(occasionId); setVibe(vibeId);
@@ -22,7 +22,8 @@ export function StylistWidget() {
         method: "POST", headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ occasion: occasionId, vibe: vibeId }),
       });
-      setResult(await res.json());
+      const data = await res.json();
+      setResult(res.ok ? data : { error: data?.error || "Something went wrong — try again in a moment." });
     } finally {
       setAsking(false);
     }
@@ -76,7 +77,14 @@ export function StylistWidget() {
 
             {asking && <p className="text-sm text-muted-foreground">One moment…</p>}
 
-            {result && !asking && (
+            {result && !asking && "error" in result && (
+              <div>
+                <button onClick={reset} className="mb-3 text-xs text-muted-foreground">← start over</button>
+                <p className="text-[13.5px] font-light leading-relaxed text-foreground">{result.error}</p>
+              </div>
+            )}
+
+            {result && !asking && "picks" in result && (
               <div>
                 <button onClick={reset} className="mb-3 text-xs text-muted-foreground">← start over</button>
                 <p className="text-[13.5px] font-light leading-relaxed text-foreground">{result.blurb}</p>
