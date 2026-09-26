@@ -12,7 +12,8 @@ type MovementPiece = { slug: string; name: string; imageUrl?: string | null; vid
 /**
  * Homepage flow — ported 1:1 from Lovable's index.tsx + HomeFlow.tsx:
  * ArrivalHero (01) → Marquee → PointOfView (02) → CollectionSection (03) →
- * HomeFlow (04–08, closes with the newsletter + a real-photo Instagram grid). Every
+ * HomeFlow (04–08, closes with the newsletter + an Instagram grid — live posts when
+ * INSTAGRAM_TOKEN is configured, the brand's own product photography otherwise). Every
  * section is data-driven from the live catalogue, so this stays correct as
  * products change instead of pointing at hard-coded slugs.
  */

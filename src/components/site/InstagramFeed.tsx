@@ -3,12 +3,14 @@ import Image from "next/image";
 export type InstagramTile = { src: string; alt: string };
 
 /**
- * A real-photography grid standing in for a live Instagram embed — we don't
- * have an API token wired up (see src/lib/integrations.ts fetchInstagramFeed,
- * currently unused), so rather than fake a feed, this uses the brand's own
- * product photography, which is honest about what it is while still giving
- * the "follow along" section the collage feel that was asked for. Swap in
- * fetchInstagramFeed()'s real posts here later without touching the layout.
+ * Renders as a grid of image tiles, whichever source they came from.
+ * HomeFlow decides that source: it calls fetchInstagramFeed() (see
+ * src/lib/integrations.ts) and passes real Instagram photos here whenever
+ * INSTAGRAM_TOKEN is configured and returns enough usable posts; otherwise
+ * it falls back to the brand's own product photography, which is honest
+ * about what it is while still giving the "follow along" section the
+ * collage feel that was asked for. This component itself doesn't care
+ * which one it's showing — it just lays out whatever tiles it's given.
  */
 export function InstagramFeed({ tiles, handle, profileUrl }: { tiles: InstagramTile[]; handle: string; profileUrl: string }) {
   return (

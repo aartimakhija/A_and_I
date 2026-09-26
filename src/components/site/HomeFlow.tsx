@@ -2,7 +2,8 @@ import Link from "next/link";
 import Image from "next/image";
 import { Marquee } from "@/components/site/Marquee";
 import { NewsletterForm } from "@/components/site/NewsletterForm";
-import { InstagramFeed } from "@/components/site/InstagramFeed";
+import { InstagramFeed, type InstagramTile } from "@/components/site/InstagramFeed";
+import { fetchInstagramFeed, instagramPostImageUrl } from "@/lib/integrations";
 
 /**
  * Sections 04–08 of the homepage flow, adapted to the "Architecture in
@@ -68,7 +69,7 @@ const whyWeExist = [
   { k: "The intention", v: "A small, shortlisted capsule — Architecture in Linen — built to find out which of these forty ideas deserves to be made." },
 ];
 
-const instagramTiles = [
+const fallbackInstagramTiles: InstagramTile[] = [
   { src: flagship.image, alt: "Asymmetric one-shoulder girih cutwork gown" },
   { src: `${IMG}/1790000000001-architecture-in-linen-look-02-sculptural-halterneck-girih-backless-midi-dress-0.jpg`, alt: "Sculptural halterneck girih backless midi dress" },
   { src: `${IMG}/1790000000002-architecture-in-linen-look-06-sculptural-wide-leg-girih-linen-jumpsuit-0.jpg`, alt: "Sculptural wide-leg girih linen jumpsuit" },
@@ -77,7 +78,25 @@ const instagramTiles = [
   { src: `${IMG}/1790000000027-architecture-in-linen-look-72-marigold-line-print-blazer-dress-0.jpg`, alt: "Marigold line-print blazer dress" },
 ];
 
-export function HomeFlow() {
+/**
+ * Live Instagram photos when INSTAGRAM_TOKEN is configured and Instagram
+ * actually returns enough usable images; the curated product-photo grid
+ * otherwise. Requires a full 6 so the grid never shows a half-empty mix of
+ * real posts and stand-ins.
+ */
+async function getInstagramTiles(): Promise<InstagramTile[]> {
+  const posts = await fetchInstagramFeed(6);
+  const live = posts
+    .map((p) => {
+      const src = instagramPostImageUrl(p);
+      return src ? { src, alt: p.caption?.slice(0, 140) || "Instagram post from @arteeandi" } : null;
+    })
+    .filter((t): t is InstagramTile => t !== null);
+  return live.length >= 6 ? live.slice(0, 6) : fallbackInstagramTiles;
+}
+
+export async function HomeFlow() {
+  const instagramTiles = await getInstagramTiles();
   return (
     <>
       <Marquee items={["Girih geometry", "Laser-cut linen", "Hand-finished edges", "Shortlisted capsule", "A&I"]} />

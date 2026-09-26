@@ -26,7 +26,7 @@ const CSP = [
   "script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://checkout.razorpay.com",
   "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
   "font-src 'self' https://fonts.gstatic.com data:",
-  "img-src 'self' data: blob: https://*.amazonaws.com https://www.googletagmanager.com https://www.google-analytics.com https://www.google.co.in",
+  "img-src 'self' data: blob: https://*.amazonaws.com https://*.cdninstagram.com https://*.fbcdn.net https://www.googletagmanager.com https://www.google-analytics.com https://www.google.co.in",
   "connect-src 'self' https://www.google-analytics.com https://*.google-analytics.com https://analytics.google.com https://stats.g.doubleclick.net https://api.razorpay.com https://lumberjack.razorpay.com",
   "frame-src https://checkout.razorpay.com https://api.razorpay.com",
   "object-src 'none'",
@@ -47,7 +47,17 @@ const nextConfig = {
   // constraint. If production sets S3_PUBLIC_URL_BASE to something other
   // than an amazonaws.com URL (e.g. a Cloudflare R2 or CDN domain), add that
   // exact hostname here too, and to img-src in the CSP below.
-  images: { remotePatterns: [{ protocol: "https", hostname: "*.amazonaws.com" }] },
+  // The other two hostnames are Instagram/Facebook's media CDN — only used
+  // once INSTAGRAM_TOKEN is set (src/lib/integrations.ts fetchInstagramFeed);
+  // harmless to allow ahead of time since nothing serves from there until
+  // that token exists.
+  images: {
+    remotePatterns: [
+      { protocol: "https", hostname: "*.amazonaws.com" },
+      { protocol: "https", hostname: "*.cdninstagram.com" },
+      { protocol: "https", hostname: "*.fbcdn.net" },
+    ],
+  },
   experimental: { serverActions: { bodySizeLimit: "5mb" } },
   async headers() {
     return [

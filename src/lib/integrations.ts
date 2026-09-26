@@ -20,10 +20,33 @@ export async function sendSMS(to: string, body: string) {
   return { to, body, queued: true };
 }
 
-export async function fetchInstagramFeed(limit = 8) {
+export type InstagramPost = {
+  id: string;
+  media_type?: "IMAGE" | "VIDEO" | "CAROUSEL_ALBUM";
+  media_url?: string;
+  thumbnail_url?: string;
+  permalink: string;
+  caption?: string;
+};
+
+export async function fetchInstagramFeed(limit = 8): Promise<InstagramPost[]> {
   if (!process.env.INSTAGRAM_TOKEN) return [];
-  const url = `https://graph.instagram.com/${process.env.INSTAGRAM_USER_ID}/media?fields=id,media_url,permalink,caption&limit=${limit}&access_token=${process.env.INSTAGRAM_TOKEN}`;
-  const r = await fetch(url, { next: { revalidate: 3600 } });
-  const j = await r.json();
-  return j.data ?? [];
+  const url = `https://graph.instagram.com/${process.env.INSTAGRAM_USER_ID}/media?fields=id,media_type,media_url,thumbnail_url,permalink,caption&limit=${limit}&access_token=${process.env.INSTAGRAM_TOKEN}`;
+  try {
+    const r = await fetch(url, { next: { revalidate: 3600 } });
+    if (!r.ok) return [];
+    const j = await r.json();
+    return Array.isArray(j?.data) ? j.data : [];
+  } catch {
+    // Network hiccup or the token expired — fail soft, same as no token configured.
+    return [];
+  }
+}
+
+/** A post is only usable as a static image tile if it has a real image URL: a
+ * plain photo, or a video's thumbnail. (media_url on a VIDEO points at the
+ * video file itself, not an image, so that's skipped rather than shown broken.) */
+export function instagramPostImageUrl(post: InstagramPost): string | null {
+  if (post.media_type === "VIDEO") return post.thumbnail_url ?? null;
+  return post.media_url ?? post.thumbnail_url ?? null;
 }
