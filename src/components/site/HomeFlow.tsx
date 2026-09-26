@@ -5,7 +5,7 @@ import { NewsletterForm } from "@/components/site/NewsletterForm";
 import { InstagramFeed } from "@/components/site/InstagramFeed";
 
 /**
- * Sections 04–09 of the homepage flow, adapted to the "Architecture in
+ * Sections 04–08 of the homepage flow, adapted to the "Architecture in
  * Linen" capsule (Persian girih cutwork) — the collection this narrative is
  * built around while it's in pre-production. Sections 01–03 (arrival, point
  * of view, collection) are composed ahead of this in app/(store)/page.tsx.
@@ -23,6 +23,12 @@ import { InstagramFeed } from "@/components/site/InstagramFeed";
  * new copy replacing verified facts — it's the same verified facts, told
  * once each instead of twice, so the page reads tighter without losing any
  * of the material/process/trust information it had before.
+ *
+ * The former "From idea to atelier" 5-photo process gallery (sketch / direction /
+ * cut / finish / fit) was removed on direct request — it duplicated the same
+ * making-of story already told on every product page (see ProductStory.tsx's
+ * "The idea" / "The direction" sections) without adding anything the homepage
+ * needed on top of that. Sections renumbered 04–08 accordingly.
  */
 
 const IMG = "/uploads/products";
@@ -38,44 +44,6 @@ const flagship = {
 // The full pipeline in one sequence — was two separate sections (a 3-step
 // "idea to form" and a 4-step "concept to atelier") that shared the same
 // story arc. Told once, as five steps from sketch to finished fit.
-const process = [
-  {
-    n: "01",
-    label: "The idea",
-    body: "Persian girih geometry — the interlocking star-and-polygon patterning found in centuries-old tilework — reworked as a cutwork motif for cloth.",
-    image: flagship.sketchImage,
-    alt: "Design sketch and technical detail sheet for the asymmetric one-shoulder girih cutwork gown",
-  },
-  {
-    n: "02",
-    label: "The direction",
-    body: "A one-shoulder column silhouette, a diagonal colour-block seam, the geometry placed where it will move with the body rather than sit flat.",
-    image: `${IMG}/1790000000017-architecture-in-linen-look-05-deep-v-keyhole-girih-wrap-gown-0.jpg`,
-    alt: "Design reference render for a related girih wrap gown silhouette",
-  },
-  {
-    n: "03",
-    label: "The cut",
-    body: "Laser-cut by a specialist craft partner, edge by edge, so the geometry stays exact.",
-    image: `${IMG}/1790000000030-architecture-in-linen-look-92-ombr-lasercut-density-jumpsuit-in-cobalt-sky-making.jpg`,
-    alt: "Hands at work on the lasercut density detail",
-  },
-  {
-    n: "04",
-    label: "The finish",
-    body: "Every cut edge is hand-bound so the open geometry holds its shape rather than fraying.",
-    image: `${IMG}/1790000000034-architecture-in-linen-look-111-girih-cutwork-evening-gown-making.jpg`,
-    alt: "Hands hand-binding a girih cutwork edge",
-  },
-  {
-    n: "05",
-    label: "The fit",
-    body: "Checked against the block before it's confirmed for production — still a shortlisted design today, ahead of the studio photography to come.",
-    image: `${IMG}/1790000000036-architecture-in-linen-look-121-moorish-muqarnas-cutwork-caftan-making.jpg`,
-    alt: "Hands checking the fit of a cutwork caftan against the block",
-  },
-];
-
 const materialFacts = [
   { k: "Why this fabric", v: "Mostly 100% washed linen, chosen for how it holds a laser-cut edge without fraying — a handful of pieces use silk or organza instead, always stated on their own page." },
   { k: "How the cutwork is made", v: "Precision laser-cut by a specialist craft partner, then hand-finished at every edge so the pattern holds its shape wear after wear." },
@@ -112,45 +80,14 @@ const instagramTiles = [
 export function HomeFlow() {
   return (
     <>
-      {/* 04 — FROM IDEA TO ATELIER */}
-      <section className="shell py-24">
-        <div className="reveal">
-          <div className="flex items-center gap-6">
-            <span className="display-md text-2xl italic text-primary">04</span>
-            <span className="h-px flex-1 bg-border" />
-            <span className="micro text-muted-foreground">From idea to atelier</span>
-          </div>
-          <h2 className="display-lg mt-8 max-w-3xl">
-            The idea <span className="gold-italic">becomes a piece.</span>
-          </h2>
-        </div>
-        <div className="mt-14 grid gap-8 sm:grid-cols-2 lg:grid-cols-5">
-          {process.map((j, i) => (
-            <div key={j.n} className="reveal" style={{ transitionDelay: `${i * 70}ms` }}>
-              <div className="card-zoom relative aspect-4/5 w-full bg-secondary">
-                <Image src={j.image} alt={j.alt} fill sizes="(max-width: 768px) 50vw, 20vw" className="object-cover" />
-              </div>
-              <p className="micro mt-6 text-primary">{j.n} — {j.label}</p>
-              <p className="mt-3 text-sm text-muted-foreground">{j.body}</p>
-            </div>
-          ))}
-        </div>
-        <div className="reveal">
-          <p className="display-md mt-16 max-w-2xl italic">And then, the idea becomes a piece.</p>
-          <Link href="/craft" className="link-underline micro tap-scale mt-8 inline-block">
-            See how the cutwork is made →
-          </Link>
-        </div>
-      </section>
-
       <Marquee items={["Girih geometry", "Laser-cut linen", "Hand-finished edges", "Shortlisted capsule", "A&I"]} />
 
-      {/* 05 — MATERIAL AS DESIGN */}
+      {/* 04 — MATERIAL AS DESIGN */}
       <section className="border-y border-border bg-card">
         <div className="shell py-24">
           <div className="reveal">
             <div className="flex items-center gap-6">
-              <span className="display-md text-2xl italic text-primary">05</span>
+              <span className="display-md text-2xl italic text-primary">04</span>
               <span className="h-px flex-1 bg-border" />
               <span className="micro text-muted-foreground">Material as design</span>
             </div>
@@ -182,11 +119,11 @@ export function HomeFlow() {
         </div>
       </section>
 
-      {/* 06 — THE A&I DIFFERENCE */}
+      {/* 05 — THE A&I DIFFERENCE */}
       <section className="shell py-24">
         <div className="reveal">
           <div className="flex items-center gap-6">
-            <span className="display-md text-2xl italic text-primary">06</span>
+            <span className="display-md text-2xl italic text-primary">05</span>
             <span className="h-px flex-1 bg-border" />
             <span className="micro text-muted-foreground">The A&amp;I difference</span>
           </div>
@@ -230,7 +167,7 @@ export function HomeFlow() {
         </div>
       </section>
 
-      {/* 07 — WHY THIS CAPSULE EXISTS */}
+      {/* 06 — WHY THIS CAPSULE EXISTS */}
       <section className="border-y border-border bg-card">
         <div className="shell grid gap-14 py-24 lg:grid-cols-[0.9fr_1.1fr]">
           <div className="reveal">
@@ -246,7 +183,7 @@ export function HomeFlow() {
           </div>
           <div className="reveal" style={{ transitionDelay: "80ms" }}>
             <div className="flex items-center gap-6">
-              <span className="display-md text-2xl italic text-primary">07</span>
+              <span className="display-md text-2xl italic text-primary">06</span>
               <span className="h-px flex-1 bg-border" />
               <span className="micro text-muted-foreground">Why this capsule exists</span>
             </div>
@@ -272,12 +209,12 @@ export function HomeFlow() {
         </div>
       </section>
 
-      {/* 08 — THE A&I WORLD */}
+      {/* 07 — THE A&I WORLD */}
       <section className="bg-paper text-paper-foreground">
         <div className="shell py-24">
           <div className="reveal">
             <div className="flex items-center gap-6">
-              <span className="display-md text-2xl italic text-accent">08</span>
+              <span className="display-md text-2xl italic text-accent">07</span>
               <span className="h-px flex-1 bg-paper-foreground/15" />
               <span className="micro text-paper-muted">The A&amp;I world</span>
             </div>
@@ -321,7 +258,7 @@ export function HomeFlow() {
         </div>
       </section>
 
-      {/* 09 — FIND YOURS / CLOSING */}
+      {/* 08 — FIND YOURS / CLOSING */}
       <section className="grain relative overflow-hidden border-t border-border">
         <div className="absolute inset-0">
           <Image
