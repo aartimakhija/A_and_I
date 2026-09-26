@@ -46,7 +46,7 @@ export function Bespoke({ pieces }: { pieces: SFProduct[] }) {
           </p>
           <div className="mt-7.5 flex flex-wrap justify-center gap-3.5">
             <button onClick={() => router.push("/contact?topic=bespoke")} className="btn-solid-gold">Enquire about a bespoke piece</button>
-            <button onClick={() => router.push("/about")} className="btn-outline-ink">Read our FAQ</button>
+            <button onClick={() => router.push("/faq")} className="btn-outline-ink">Read our FAQ</button>
           </div>
         </div>
       </section>
