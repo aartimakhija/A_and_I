@@ -9,7 +9,7 @@ const Body = z.object({
 });
 
 export async function POST(req: NextRequest) {
-  const { ok } = rateLimit(`newsletter:${clientIp(req)}`, 5, 10 * 60 * 1000); // 5 signups / 10 min per IP
+  const { ok } = await rateLimit(`newsletter:${clientIp(req)}`, 5, 10 * 60 * 1000); // 5 signups / 10 min per IP
   if (!ok) return NextResponse.json({ error: "Too many attempts — please try again in a few minutes." }, { status: 429 });
 
   const parsed = Body.safeParse(await req.json());

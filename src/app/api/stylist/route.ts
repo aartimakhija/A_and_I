@@ -9,7 +9,7 @@ import { rateLimit, clientIp } from "@/lib/rate-limit";
 // public, DB-hitting route on the site that had no rate limit (contact,
 // newsletter, checkout, preorders, returns and promo/validate all do).
 export async function POST(req: NextRequest) {
-  const { ok } = rateLimit(`stylist:${clientIp(req)}`, 30, 10 * 60 * 1000); // 30 requests / 10 min per IP
+  const { ok } = await rateLimit(`stylist:${clientIp(req)}`, 30, 10 * 60 * 1000); // 30 requests / 10 min per IP
   if (!ok) return NextResponse.json({ error: "Too many requests — try again in a few minutes." }, { status: 429 });
 
   const { occasion, vibe } = await req.json();

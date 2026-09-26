@@ -18,7 +18,7 @@ const Body = z.object({
 });
 
 export async function POST(req: NextRequest) {
-  const { ok } = rateLimit(`checkout:${clientIp(req)}`, 20, 10 * 60 * 1000); // 20 attempts / 10 min per IP
+  const { ok } = await rateLimit(`checkout:${clientIp(req)}`, 20, 10 * 60 * 1000); // 20 attempts / 10 min per IP
   if (!ok) return NextResponse.json({ error: "Too many checkout attempts — please wait a few minutes and try again." }, { status: 429 });
 
   const parsed = Body.safeParse(await req.json());

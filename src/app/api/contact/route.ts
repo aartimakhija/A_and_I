@@ -11,7 +11,7 @@ const Body = z.object({
 });
 
 export async function POST(req: NextRequest) {
-  const { ok } = rateLimit(`contact:${clientIp(req)}`, 5, 10 * 60 * 1000); // 5 messages / 10 min per IP
+  const { ok } = await rateLimit(`contact:${clientIp(req)}`, 5, 10 * 60 * 1000); // 5 messages / 10 min per IP
   if (!ok) return NextResponse.json({ error: "Too many messages — please try again in a few minutes." }, { status: 429 });
 
   const parsed = Body.safeParse(await req.json());

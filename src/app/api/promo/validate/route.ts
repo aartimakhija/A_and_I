@@ -5,7 +5,7 @@ import { rateLimit, clientIp } from "@/lib/rate-limit";
 export async function GET(req: NextRequest) {
   // Promo codes are short, guessable strings — without a limit here this endpoint
   // is a free oracle for brute-forcing/enumerating active discount codes.
-  const { ok } = rateLimit(`promo:${clientIp(req)}`, 15, 10 * 60 * 1000); // 15 lookups / 10 min per IP
+  const { ok } = await rateLimit(`promo:${clientIp(req)}`, 15, 10 * 60 * 1000); // 15 lookups / 10 min per IP
   if (!ok) return NextResponse.json({ valid: false, error: "Too many attempts — please try again later." }, { status: 429 });
 
   const code = req.nextUrl.searchParams.get("code")?.trim().toUpperCase();

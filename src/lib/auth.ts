@@ -16,12 +16,14 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         // Brute-force / credential-stuffing guard. Two keys: per-IP (catches an
         // attacker spraying many emails from one place) and per-email (catches
         // distributed attempts against one account). Both count every attempt,
-        // not just failures, so this stays a stopgap same as the rest of
-        // src/lib/rate-limit.ts's honest limitation — swap for a durable store
-        // for real protection.
+        // not just failures. Backed by Upstash Redis when configured (see
+        // src/lib/rate-limit.ts) — falls back to an in-memory, per-instance
+        // count otherwise, which is a stopgap rather than real protection.
         const ip = clientIp(request);
-        const ipLimit = rateLimit(`login-ip:${ip}`, 20, 10 * 60 * 1000);
-        const emailLimit = rateLimit(`login-email:${email}`, 8, 10 * 60 * 1000);
+        const [ipLimit, emailLimit] = await Promise.all([
+          rateLimit(`login-ip:${ip}`, 20, 10 * 60 * 1000),
+          rateLimit(`login-email:${email}`, 8, 10 * 60 * 1000),
+        ]);
         if (!ipLimit.ok || !emailLimit.ok) return null;
 
         const user = await prisma.user.findUnique({ where: { email } });

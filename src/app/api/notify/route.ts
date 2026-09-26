@@ -7,7 +7,7 @@ const Body = z.object({ productId: z.string(), email: z.string().email(), size: 
 
 // Back-in-stock waitlist capture
 export async function POST(req: NextRequest) {
-  const { ok } = rateLimit(`notify:${clientIp(req)}`, 20, 10 * 60 * 1000);
+  const { ok } = await rateLimit(`notify:${clientIp(req)}`, 20, 10 * 60 * 1000);
   if (!ok) return NextResponse.json({ error: "Too many requests — please try again later." }, { status: 429 });
 
   const parsed = Body.safeParse(await req.json());

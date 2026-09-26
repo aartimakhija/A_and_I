@@ -18,7 +18,7 @@ const Body = z.object({
 // request must also match the order's email, whether or not the requester
 // is signed in, so a guessed/leaked ID alone isn't enough.
 export async function POST(req: NextRequest) {
-  const { ok } = rateLimit(`returns:${clientIp(req)}`, 10, 15 * 60 * 1000);
+  const { ok } = await rateLimit(`returns:${clientIp(req)}`, 10, 15 * 60 * 1000);
   if (!ok) return NextResponse.json({ error: "Too many requests — please try again later." }, { status: 429 });
 
   const session = await getSession();

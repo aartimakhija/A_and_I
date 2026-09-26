@@ -21,7 +21,7 @@ const Body = z.object({
 // small discount code as the incentive to commit early, per the drop-system
 // playbook: confirm quantity before a single unit is cut.
 export async function POST(req: NextRequest) {
-  const { ok } = rateLimit(`preorder:${clientIp(req)}`, 15, 10 * 60 * 1000);
+  const { ok } = await rateLimit(`preorder:${clientIp(req)}`, 15, 10 * 60 * 1000);
   if (!ok) return NextResponse.json({ error: "Too many requests — please try again later." }, { status: 429 });
 
   const parsed = Body.safeParse(await req.json());
