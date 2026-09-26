@@ -1,7 +1,7 @@
 export const faqs = [
   {
     q: "How does ordering work?",
-    a: "Add a piece to your bag, choose your size and fabric tier, and check out securely by card, UPI or netbanking through Razorpay. Pieces marked pre-order work differently — see below.",
+    a: "Add a piece to your bag, choose your size, and check out securely by card, UPI or netbanking through Razorpay. Pieces marked pre-order work differently — see below.",
   },
   {
     q: "How long does dispatch take?",
@@ -28,7 +28,7 @@ export const faqs = [
     a: "Check the size chart on any product page, or take the two-minute fit quiz — four questions, no measuring tape — for a personal recommendation.",
   },
   {
-    q: "Can I change my size or fabric tier after ordering?",
+    q: "Can I change my size after ordering?",
     a: "Once an order is placed we begin preparing it, so write to us as soon as possible if something needs to change and we'll do what we can before it ships.",
   },
   {

@@ -4,7 +4,7 @@ import { faqs } from "./data";
 
 export const metadata = pageMetadata({
   title: "FAQ — Sizing, Shipping, Fabrics & Returns",
-  description: "Answers on A&I sizing, checkout, made-to-order and pre-order timelines, fabric tiers, shipping, returns, studio visits and wholesale.",
+  description: "Answers on A&I sizing, checkout, made-to-order and pre-order timelines, shipping, returns, studio visits and wholesale.",
   path: "/faq",
 });
 

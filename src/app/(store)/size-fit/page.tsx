@@ -69,7 +69,7 @@ export default function SizeFitPage() {
         </div>
         <p className="mt-6 text-sm text-muted-foreground">
           Between sizes, or want a piece cut to your own measurements? Bespoke is made to measure —
-          no surcharge on the fabric tier you have chosen.
+          same linen, same cutwork, cut to your own numbers.
         </p>
         <Link href="/fit-quiz" className="btn-outline-ink mt-6 inline-flex">
           Take the fit quiz instead
