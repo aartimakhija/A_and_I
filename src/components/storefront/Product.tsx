@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { SIZES } from "./theme";
@@ -15,6 +15,17 @@ import type { SFProduct } from "@/lib/storefront-adapter";
 
 const CAT_LABEL: Record<string, string> = { ready: "Ready-to-Wear", craft: "Indian Craft", linen: "Linen" };
 const VIEW_LABELS = ["View 01", "View 02", "View 03", "Detail"];
+
+// GA4 doesn't otherwise see a single custom event on this whole site — no
+// view_item, no reserve/lead event, nothing between page_view and scroll —
+// so there's no way to tell "nobody clicks Reserve" from "it's never
+// recorded." Optional-chained and swallowed: never breaks the page if gtag
+// hasn't loaded yet or is blocked by the visitor.
+function trackEvent(name: string, params: Record<string, unknown>) {
+  try {
+    (window as unknown as { gtag?: (...args: unknown[]) => void }).gtag?.("event", name, params);
+  } catch {}
+}
 
 export function Product({
   product, related, paired, defaultDeliveryNotes,
@@ -44,6 +55,16 @@ export function Product({
   const sizeStock = (s: string) => product.variants.find((v) => v.size === s)?.stock ?? 0;
   const catLabel = CAT_LABEL[product.category] ?? product.category;
 
+  useEffect(() => {
+    trackEvent("view_item", {
+      currency: "INR",
+      value: product.price,
+      items: [{ item_id: product.id, item_name: product.name, item_category: product.category, price: product.price }],
+    });
+    // fires once per page view — deliberately not re-run on size/tier changes
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [product.id]);
+
   async function requestNotify() {
     if (!notifyEmail) return;
     try {
@@ -65,6 +86,11 @@ export function Product({
       });
       const json = await res.json();
       if (!res.ok) throw new Error(json.error || "Could not reserve — try again");
+      trackEvent("generate_lead", {
+        currency: "INR",
+        value: product.price,
+        items: [{ item_id: product.id, item_name: product.name, item_category: product.category, price: product.price, item_variant: size }],
+      });
       setReserved({ discountCode: json.discountCode });
     } catch (e: any) {
       setReserveError(e.message);
