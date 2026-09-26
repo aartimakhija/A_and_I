@@ -41,36 +41,71 @@ export function About({ originPiece, processImage, processPieces, pieceCount, fa
         <span className="eyebrow text-paper-foreground/70">Founded by Artee Makhija</span>
         <h1 className="display-xl mt-4">One founder,<br /><span className="gold-italic">one point of view.</span></h1>
         <p className="mx-auto mt-6 max-w-lg text-[15px] font-light leading-loose text-paper-foreground/70">
-          A&amp;I began with a simple frustration: wanting clothes that felt considered without feeling
-          precious — beautifully Indian or quietly global, never both at once. So Artee began building
-          the house she wanted to exist.
+          &ldquo;We have 365 days to get dressed, not ten. Looking and feeling considered
+          shouldn&apos;t be reserved for parties. So I built the house I could never find.&rdquo;
         </p>
       </section>
 
-      <section className="shell grid items-center gap-8 py-14 md:grid-cols-[1fr_1.15fr] md:gap-16 md:py-24">
+      <section className="shell grid items-start gap-8 py-14 md:grid-cols-[1fr_1.15fr] md:gap-16 md:py-24">
         {originPiece?.images[0] && (
           <div className="reveal card-zoom relative aspect-4/5 overflow-hidden bg-secondary">
             <Image src={originPiece.images[0]} alt={originPiece.name} fill sizes="(max-width: 768px) 100vw, 45vw" className="object-cover" />
           </div>
         )}
         <div className="reveal" style={{ transitionDelay: "80ms" }}>
-          <span className="eyebrow">How it started</span>
-          <h2 className="display-md mt-2.5">The house she wanted<br /><span className="gold-italic">to exist.</span></h2>
+          <span className="eyebrow">In her own words</span>
+          <h2 className="display-md mt-2.5">The house<br /><span className="gold-italic">I could never find.</span></h2>
           <p className="mt-5 max-w-md text-[15px] font-light leading-loose text-muted-foreground">
-            A&amp;I was founded by Artee Makhija. It began with a simple frustration: wanting clothes
-            that felt considered without feeling precious, and finding too few pieces that brought
-            together contemporary silhouettes, distinctive materials and Indian craft in the way she
-            imagined — everything was either loud heritage or quiet minimalism, never a version of
-            both that felt like <i>her</i>.
+            I have always believed that clothes should make ordinary days feel a little more intentional.
           </p>
           <p className="mt-4 max-w-md text-[15px] font-light leading-loose text-muted-foreground">
-            So she went looking for the ateliers who still do it the old way — hand-tied bandhani,
-            mirror-work set disc by disc, zari woven on a slow loom — and asked them to help her cut it
-            into something contemporary, made with intention.
+            I was twelve when I first became fascinated by fashion. I spent hours stitching, embroidering
+            and inventing my own designs. I would look at a garment and immediately wonder what I could
+            change — the silhouette, the colour, the detail, the way it could become something else.
           </p>
           <p className="mt-4 max-w-md text-[15px] font-light leading-loose text-muted-foreground">
+            Eventually, people started noticing.
+            <br />
+            <i>&ldquo;Where did you get that?&rdquo;</i>
+            <br />
+            I would tell them, <i>&ldquo;I designed it.&rdquo;</i>
+            <br />
+            Then they began asking me to design and customise pieces for them too. I never outgrew
+            that curiosity.
+          </p>
+          <p className="mt-4 max-w-md text-[15px] font-light leading-loose text-muted-foreground">
+            As I grew older and began searching for clothes for myself, I often found myself wanting
+            something that was difficult to find — pieces that felt refined without feeling excessive,
+            beautifully considered without feeling precious, and special enough to be remembered but
+            easy enough to actually live in.
+          </p>
+          <p className="mt-4 max-w-md text-[15px] font-light leading-loose text-muted-foreground">
+            I kept returning to one simple truth: we have 365 days to get dressed, not ten. Looking and
+            feeling considered shouldn&apos;t be reserved for parties. So I built the house I could
+            never find.
+          </p>
+          <p className="mt-4 max-w-md text-[15px] font-light leading-loose text-muted-foreground">
+            A&amp;I is a contemporary womenswear label created in small runs in India. We pay close
+            attention to design, fabric, construction and finish — creating pieces that feel distinctive,
+            refined and made to be lived in.
+          </p>
+          <p className="mt-4 max-w-md text-[15px] font-light leading-loose text-muted-foreground">
+            Every garment must earn its place. It must feel good on the body. It must be thoughtfully
+            made. And it must still feel right long after the first wear. We believe in making less,
+            making carefully, and creating pieces that can become part of a woman&apos;s real wardrobe —
+            not just her special-occasion wardrobe.
+          </p>
+          <p className="mt-4 max-w-md text-[15px] font-light leading-loose text-muted-foreground">
+            I still design with the same curiosity I had as a girl. Only now, the pieces leave my table
+            and find their way into other women&apos;s lives. This is A&amp;I — clothes for the full
+            year, made with care, meant to be lived in.
+          </p>
+          <p className="mt-5 max-w-md text-[15px] italic text-muted-foreground">
+            — Artee Makhija, Founder &amp; Creative Director, A&amp;I
+          </p>
+          <p className="mt-6 max-w-md text-[15px] font-light leading-loose text-muted-foreground">
             {pieceCount > 0 ? `${pieceCount} pieces later, ` : "One collection later, "}that&apos;s
-            still the only rule she follows: if it doesn&apos;t earn its place on the rail, it isn&apos;t made.
+            still the only rule I follow: if it doesn&apos;t earn its place on the rail, it isn&apos;t made.
           </p>
           <div className="mt-7"><button onClick={() => router.push("/lookbook")} className="btn-outline-ink">See it styled</button></div>
         </div>

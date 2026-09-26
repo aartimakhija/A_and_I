@@ -5,7 +5,7 @@ import { pageMetadata, faqJsonLd, breadcrumbJsonLd, jsonLdHtml } from "@/lib/seo
 
 export const metadata = pageMetadata({
   title: "About Us",
-  description: "The story behind A&I — how a shared closet frustration became a house built on curation, craft, and trust over trend.",
+  description: "The story behind A&I, in founder Artee Makhija's own words — from a childhood spent designing her own clothes to building the house of considered, everyday pieces she could never find.",
   path: "/about",
 });
 
