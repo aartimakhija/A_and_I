@@ -9,7 +9,8 @@ import { notFound } from "next/navigation";
 
 const CAT_LABEL: Record<string, string> = { ready: "Ready-to-Wear", craft: "Indian Craft", linen: "Linen" };
 
-export async function generateMetadata({ params }: { params: { slug: string } }) {
+export async function generateMetadata(props: { params: Promise<{ slug: string }> }) {
+  const params = await props.params;
   const p = await prisma.product.findUnique({ where: { slug: params.slug }, include: { images: true } });
   if (!p) return {};
   if (p.status === "DRAFT" || p.status === "ARCHIVED") {
@@ -24,7 +25,8 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   });
 }
 
-export default async function ProductPage({ params }: { params: { slug: string } }) {
+export default async function ProductPage(props: { params: Promise<{ slug: string }> }) {
+  const params = await props.params;
   const [p, settings] = await Promise.all([
     prisma.product.findUnique({ where: { slug: params.slug }, include: PRODUCT_INCLUDE }),
     getSiteSettings(),

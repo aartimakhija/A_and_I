@@ -9,7 +9,8 @@ import { Breadcrumb } from "@/components/storefront/Breadcrumb";
 export async function generateStaticParams() { return categoryPaths(); }
 export const revalidate = 3600;
 
-export async function generateMetadata({ params }: { params: { category: string } }) {
+export async function generateMetadata(props: { params: Promise<{ category: string }> }) {
+  const params = await props.params;
   const categories = await getCategories();
   const label = params.category === "all" ? "The Collection" : categories.find((c) => c.slug === params.category)?.name ?? params.category;
   return pageMetadata({
@@ -19,7 +20,8 @@ export async function generateMetadata({ params }: { params: { category: string 
   });
 }
 
-export default async function CategoryPage({ params }: { params: { category: string } }) {
+export default async function CategoryPage(props: { params: Promise<{ category: string }> }) {
+  const params = await props.params;
   const allCategories = await getCategories();
   const where: any = { status: "ACTIVE" };
   if (params.category !== "all") where.category = params.category;

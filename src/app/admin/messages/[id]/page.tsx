@@ -7,7 +7,8 @@ const TOPIC_LABEL: Record<string, string> = {
   general: "General", wholesale: "Wholesale", press: "Press", vendor: "Vendor inquiry",
 };
 
-export default async function MessageDetail({ params }: { params: { id: string } }) {
+export default async function MessageDetail(props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   const message = await prisma.contactMessage.findUnique({ where: { id: params.id } });
   if (!message) notFound();
 

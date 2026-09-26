@@ -3,7 +3,8 @@ import Link from "next/link";
 import { getVendorLedgerDetail } from "@/lib/vendor-ledger";
 import RecordPaymentForm from "@/components/admin/RecordPaymentForm";
 
-export default async function VendorLedgerPage({ params }: { params: { vendorId: string } }) {
+export default async function VendorLedgerPage(props: { params: Promise<{ vendorId: string }> }) {
+  const params = await props.params;
   const ledger = await getVendorLedgerDetail(params.vendorId);
   if (!ledger) notFound();
 

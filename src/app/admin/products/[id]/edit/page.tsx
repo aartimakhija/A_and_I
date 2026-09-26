@@ -7,7 +7,8 @@ import { Badge, Button, PageHeader } from "@/components/admin/ui";
 import { productStatusTone } from "@/lib/status-tone";
 import { ProductFormErrorBoundary } from "@/components/admin/ProductFormErrorBoundary";
 
-export default async function EditProduct({ params }: { params: { id: string } }) {
+export default async function EditProduct(props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   // TEMPORARY diagnostic wrapper: Next.js redacts the real error message for
   // anything thrown during a Server Component's render in production builds
   // (even inside our own admin error.tsx), replacing it with "the specific

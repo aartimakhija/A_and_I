@@ -7,7 +7,8 @@ import Link from "next/link";
 
 const PAGE_SIZE = 200;
 
-export default async function AdminPreorders({ searchParams }: { searchParams: { page?: string } }) {
+export default async function AdminPreorders(props: { searchParams: Promise<{ page?: string }> }) {
+  const searchParams = await props.searchParams;
   const page = Math.max(1, parseInt(searchParams.page || "1", 10) || 1);
   const [grouped, recent, recentTotal] = await Promise.all([
     // Unaffected by "All requests" pagination below — production planning always

@@ -4,7 +4,8 @@ import Link from "next/link";
 
 const PAGE_SIZE = 100;
 
-export default async function AdminOrders({ searchParams }: { searchParams: { page?: string } }) {
+export default async function AdminOrders(props: { searchParams: Promise<{ page?: string }> }) {
+  const searchParams = await props.searchParams;
   const page = Math.max(1, parseInt(searchParams.page || "1", 10) || 1);
   const [orders, total] = await Promise.all([
     prisma.order.findMany({

@@ -2,7 +2,8 @@ import { prisma } from "@/lib/prisma";
 import { notFound } from "next/navigation";
 import OrderStatusForm from "@/components/admin/OrderStatusForm";
 
-export default async function AdminOrderDetail({ params }: { params: { id: string } }) {
+export default async function AdminOrderDetail(props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   const order = await prisma.order.findUnique({
     where: { id: params.id },
     include: { items: true, payment: true, shipment: { include: { events: { orderBy: { at: "desc" } } } }, returns: true },

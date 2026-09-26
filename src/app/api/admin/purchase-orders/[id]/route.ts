@@ -2,7 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { requireRole } from "@/lib/rbac";
 
-export async function GET(_req: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(_req: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   await requireRole(["ADMIN"]);
   const po = await prisma.purchaseOrder.findUnique({
     where: { id: params.id },
@@ -12,7 +13,8 @@ export async function GET(_req: NextRequest, { params }: { params: { id: string 
   return NextResponse.json(po);
 }
 
-export async function PATCH(req: NextRequest, { params }: { params: { id: string } }) {
+export async function PATCH(req: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   await requireRole(["ADMIN"]);
   const existing = await prisma.purchaseOrder.findUnique({ where: { id: params.id } });
   if (!existing) return NextResponse.json({ error: "not found" }, { status: 404 });

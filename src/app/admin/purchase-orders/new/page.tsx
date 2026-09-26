@@ -1,7 +1,10 @@
 import { prisma } from "@/lib/prisma";
 import POForm from "@/components/admin/POForm";
 
-export default async function NewPO({ searchParams }: { searchParams: { vendorId?: string; productId?: string; qty?: string } }) {
+export default async function NewPO(
+  props: { searchParams: Promise<{ vendorId?: string; productId?: string; qty?: string }> }
+) {
+  const searchParams = await props.searchParams;
   const [vendors, products] = await Promise.all([
     prisma.vendor.findMany({ select: { id: true, name: true }, orderBy: { name: "asc" } }),
     prisma.product.findMany({ select: { id: true, name: true, basePrice: true }, orderBy: { name: "asc" } }),

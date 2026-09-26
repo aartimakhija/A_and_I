@@ -2,7 +2,8 @@ import { prisma } from "@/lib/prisma";
 import { notFound } from "next/navigation";
 import MaterialOrderStatus from "@/components/admin/MaterialOrderStatus";
 
-export default async function MaterialOrderPage({ params }: { params: { id: string } }) {
+export default async function MaterialOrderPage(props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   const order = await prisma.materialOrder.findUnique({
     where: { id: params.id },
     include: { vendor: true, items: { orderBy: { position: "asc" }, include: { material: true } } },

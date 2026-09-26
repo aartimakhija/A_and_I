@@ -4,7 +4,8 @@ import { getSiteSettings } from "@/lib/settings";
 import { urlQR } from "@/lib/passport";
 import { LabelPrintView } from "@/components/admin/LabelPrintView";
 
-export default async function ProductLabel({ params }: { params: { id: string } }) {
+export default async function ProductLabel(props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   const [product, settings] = await Promise.all([
     prisma.product.findUnique({ where: { id: params.id } }),
     getSiteSettings(),

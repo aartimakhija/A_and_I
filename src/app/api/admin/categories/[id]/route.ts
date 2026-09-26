@@ -2,7 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { requireRole } from "@/lib/rbac";
 
-export async function PATCH(req: NextRequest, { params }: { params: { id: string } }) {
+export async function PATCH(req: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   await requireRole(["ADMIN"]);
   const b = await req.json();
   const data: any = {};
@@ -11,7 +12,8 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
   return NextResponse.json(category);
 }
 
-export async function DELETE(_req: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(_req: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   await requireRole(["ADMIN"]);
   const category = await prisma.category.findUnique({ where: { id: params.id } });
   if (!category) return NextResponse.json({ error: "not found" }, { status: 404 });

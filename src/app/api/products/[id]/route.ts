@@ -2,7 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { requireRole, vendorScope } from "@/lib/rbac";
 
-export async function GET(_req: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(_req: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   const s = await requireRole(["ADMIN", "VENDOR"]);
   const p = await prisma.product.findFirst({
     where: { id: params.id, ...vendorScope(s) },
@@ -15,7 +16,8 @@ export async function GET(_req: NextRequest, { params }: { params: { id: string 
 // Edit an existing product — the CMS "edit product" form's endpoint.
 // Vendors can only edit their own products; vendorScope() enforces that at read time,
 // and we re-check ownership explicitly before writing.
-export async function PATCH(req: NextRequest, { params }: { params: { id: string } }) {
+export async function PATCH(req: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   const s = await requireRole(["ADMIN", "VENDOR"]);
   const existing = await prisma.product.findFirst({ where: { id: params.id, ...vendorScope(s) } });
   if (!existing) return NextResponse.json({ error: "not found" }, { status: 404 });
@@ -66,7 +68,8 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
   return NextResponse.json(full);
 }
 
-export async function DELETE(_req: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(_req: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   const s = await requireRole(["ADMIN", "VENDOR"]);
   const existing = await prisma.product.findFirst({ where: { id: params.id, ...vendorScope(s) } });
   if (!existing) return NextResponse.json({ error: "not found" }, { status: 404 });

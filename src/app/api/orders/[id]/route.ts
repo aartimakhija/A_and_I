@@ -4,7 +4,8 @@ import { requireRole } from "@/lib/rbac";
 import { trackingUrlFor } from "@/lib/shipping";
 import { sendWhatsApp } from "@/lib/integrations";
 
-export async function GET(_req: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(_req: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   await requireRole(["ADMIN"]);
   const order = await prisma.order.findUnique({
     where: { id: params.id },
@@ -17,7 +18,8 @@ export async function GET(_req: NextRequest, { params }: { params: { id: string 
 // Update order status and/or shipment (carrier, tracking number, delivery status).
 // This is the admin "update order status" form's endpoint — the OMS write path
 // that was previously missing (admin pages were read-only).
-export async function PATCH(req: NextRequest, { params }: { params: { id: string } }) {
+export async function PATCH(req: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   await requireRole(["ADMIN"]);
   const b = await req.json();
   const order = await prisma.order.findUnique({ where: { id: params.id }, include: { shipment: true } });

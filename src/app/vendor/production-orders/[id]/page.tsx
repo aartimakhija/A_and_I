@@ -3,7 +3,8 @@ import { getSession } from "@/lib/rbac";
 import { notFound } from "next/navigation";
 import AdvanceStatusButton from "@/components/vendor/AdvanceStatusButton";
 
-export default async function VendorProductionOrderDetail({ params }: { params: { id: string } }) {
+export default async function VendorProductionOrderDetail(props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   const s = await getSession();
   const po = await prisma.purchaseOrder.findUnique({
     where: { id: params.id },

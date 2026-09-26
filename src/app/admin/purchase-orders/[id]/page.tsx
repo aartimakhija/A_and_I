@@ -4,7 +4,8 @@ import { getSiteSettings } from "@/lib/settings";
 import { POPrintView } from "@/components/admin/POPrintView";
 import QCSection from "@/components/admin/QCSection";
 
-export default async function POPage({ params }: { params: { id: string } }) {
+export default async function POPage(props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   const [po, settings] = await Promise.all([
     prisma.purchaseOrder.findUnique({
       where: { id: params.id },

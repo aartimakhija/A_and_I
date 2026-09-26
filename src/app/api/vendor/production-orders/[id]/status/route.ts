@@ -13,7 +13,8 @@ const VENDOR_TRANSITIONS: Record<string, string> = {
   IN_PROGRESS: "READY_FOR_PICKUP",
 };
 
-export async function POST(_req: NextRequest, { params }: { params: { id: string } }) {
+export async function POST(_req: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   const s = await requireRole(["VENDOR"]);
   const po = await prisma.purchaseOrder.findUnique({ where: { id: params.id } });
   if (!po || po.vendorId !== s.vendorId) return NextResponse.json({ error: "not found" }, { status: 404 });

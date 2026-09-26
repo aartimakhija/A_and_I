@@ -2,7 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { requireRole } from "@/lib/rbac";
 
-export async function PATCH(req: NextRequest, { params }: { params: { id: string } }) {
+export async function PATCH(req: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   await requireRole(["ADMIN"]);
   const b = await req.json();
   const data: any = {};
@@ -12,7 +13,8 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
   return NextResponse.json(material);
 }
 
-export async function DELETE(_req: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(_req: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   await requireRole(["ADMIN"]);
   const inUse = await prisma.productMaterial.count({ where: { materialId: params.id } });
   if (inUse > 0) {

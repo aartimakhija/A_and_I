@@ -1,7 +1,8 @@
 // Digital Garment Passport (Trust layer) — public page a QR/NFC scan resolves to.
 import { prisma } from "@/lib/prisma";
 import { notFound } from "next/navigation";
-export default async function Passport({ params }: { params: { serial: string } }) {
+export default async function Passport(props: { params: Promise<{ serial: string }> }) {
+  const params = await props.params;
   const p = await prisma.passport.findUnique({
     where: { serial: params.serial },
     include: { orderItem: { include: { product: { include: { vendor: true } } } } },

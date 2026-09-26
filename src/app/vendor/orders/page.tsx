@@ -5,7 +5,8 @@ import Link from "next/link";
 
 const PAGE_SIZE = 200;
 
-export default async function VendorOrders({ searchParams }: { searchParams: { page?: string } }) {
+export default async function VendorOrders(props: { searchParams: Promise<{ page?: string }> }) {
+  const searchParams = await props.searchParams;
   const s = await getSession();
   const page = Math.max(1, parseInt(searchParams.page || "1", 10) || 1);
   const where = { vendorId: s.vendorId! };

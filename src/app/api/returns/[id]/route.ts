@@ -5,7 +5,8 @@ import { refundPayment } from "@/lib/razorpay";
 
 // Admin: move a return through APPROVED → PICKED_UP → RECEIVED → REFUNDED, or REJECTED.
 // Issuing REFUNDED (with an amount) actually calls Razorpay to refund the payment.
-export async function PATCH(req: NextRequest, { params }: { params: { id: string } }) {
+export async function PATCH(req: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   await requireRole(["ADMIN"]);
   const b = await req.json();
   const ret = await prisma.return.findUnique({

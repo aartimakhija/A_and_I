@@ -5,7 +5,8 @@ import { BlogPostView } from "@/components/storefront/BlogPostView";
 import { Breadcrumb } from "@/components/storefront/Breadcrumb";
 import { pageMetadata, articleJsonLd, breadcrumbJsonLd, jsonLdHtml } from "@/lib/seo";
 
-export async function generateMetadata({ params }: { params: { slug: string } }) {
+export async function generateMetadata(props: { params: Promise<{ slug: string }> }) {
+  const params = await props.params;
   const post = await prisma.blogPost.findUnique({ where: { slug: params.slug } });
   if (!post) return {};
   return pageMetadata({
@@ -16,7 +17,8 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   });
 }
 
-export default async function BlogPostPage({ params }: { params: { slug: string } }) {
+export default async function BlogPostPage(props: { params: Promise<{ slug: string }> }) {
+  const params = await props.params;
   const post = await prisma.blogPost.findUnique({
     where: { slug: params.slug },
     include: {
