@@ -77,7 +77,7 @@ const process = [
 ];
 
 const materialFacts = [
-  { k: "Why this fabric", v: "100% washed linen, chosen for how it holds a laser-cut edge without fraying — the geometry stays crisp instead of softening into the weave." },
+  { k: "Why this fabric", v: "Mostly 100% washed linen, chosen for how it holds a laser-cut edge without fraying — a handful of pieces use silk or organza instead, always stated on their own page." },
   { k: "How the cutwork is made", v: "Precision laser-cut by a specialist craft partner, then hand-finished at every edge so the pattern holds its shape wear after wear." },
   { k: "What the colour does", v: "A diagonal colour-block seam sets a rust or teal panel against the base linen — the girih motif reads differently across each half." },
   { k: "Where this stands today", v: "Shortlisted from a capsule of forty looks. We're sharing the designs ahead of production so the pieces people want most get made first." },

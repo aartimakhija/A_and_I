@@ -6,7 +6,7 @@ import { pageMetadata } from "@/lib/seo";
 
 export const metadata = pageMetadata({
   title: "Responsibility — Small Runs, Named Hands",
-  description: "How A&I makes: small runs, natural fibres, named ateliers, and the things we haven't solved yet.",
+  description: "How A&I makes: small runs, natural fibres, a named craft partner, and the things we haven't solved yet.",
   path: "/sustainability",
 });
 
@@ -24,9 +24,11 @@ const honest = [
 ];
 
 // Replaces an earlier three-tier list (linen / handloom cotton / hand
-// embroidery) that described a prior collection. The current catalogue is a
-// single material — washed linen — so this is three honest facts about that
-// one fabric rather than three different fabrics that aren't actually sold.
+// embroidery) that described a prior collection. Washed linen is the
+// default fabric across the current catalogue (a handful of pieces use
+// silk or organza instead, stated on their own product page), so this is
+// three honest facts about the default fabric rather than three different
+// fabrics that aren't actually sold.
 const materials = [
   { t: "Washed linen", d: "100% linen, pre-washed so what you receive is the size and softness it will stay — chosen because it holds a laser-cut edge without fraying.", life: "Hand-wash cold · dry flat in shade" },
   { t: "Why it breathes", d: "Flax fibre is naturally hollow, which is part of why linen has stayed a warm-climate staple for thousands of years.", life: "Worth wearing closer to skin than you'd expect" },
@@ -34,7 +36,7 @@ const materials = [
 ];
 
 export default async function SustainabilityPage() {
-  const linenProduct = await prisma.product.findFirst({ where: { status: "ACTIVE", category: "linen" }, include: PRODUCT_INCLUDE, orderBy: { createdAt: "desc" } });
+  const linenProduct = await prisma.product.findFirst({ where: { status: "ACTIVE" }, include: PRODUCT_INCLUDE, orderBy: { createdAt: "desc" } });
   const linenImage = linenProduct ? toSFProduct(linenProduct).images[0] : null;
   return (
     <>
@@ -62,7 +64,7 @@ export default async function SustainabilityPage() {
       <section className="bg-paper text-paper-foreground">
         <div className="shell grid items-center gap-14 py-24 lg:grid-cols-[1fr_1.1fr]">
           <div className="reveal card-zoom relative aspect-4/5 w-full bg-paper-foreground/10">
-            {linenImage && <Image src={linenImage} alt="A natural-fibre piece from the A&I collection" fill sizes="(max-width: 1024px) 100vw, 50vw" className="object-cover" />}
+            {linenImage && <Image src={linenImage} alt="A piece from the current A&I capsule" fill sizes="(max-width: 1024px) 100vw, 50vw" className="object-cover" />}
           </div>
           <div className="reveal" style={{ transitionDelay: "80ms" }}>
             <h2 className="display-lg">
@@ -83,7 +85,7 @@ export default async function SustainabilityPage() {
       <section className="shell border-t border-border py-20">
         <p className="eyebrow">Material</p>
         <h2 className="display-lg mt-6 max-w-2xl">
-          One cloth, <span className="gold-italic">chosen for wear.</span>
+          Linen first, <span className="gold-italic">chosen for wear.</span>
         </h2>
         <dl className="mt-12 grid gap-10 md:grid-cols-3">
           {materials.map((m) => (
@@ -94,7 +96,11 @@ export default async function SustainabilityPage() {
             </div>
           ))}
         </dl>
-        <p className="mt-12 max-w-2xl text-sm text-muted-foreground">
+        <p className="mt-8 max-w-2xl text-sm text-muted-foreground">
+          A handful of pieces use silk or organza instead of linen — always stated plainly on
+          that piece&apos;s own product page.
+        </p>
+        <p className="mt-6 max-w-2xl text-sm text-muted-foreground">
           Making mostly after you order has one real environmental advantage and it is not a
           certificate: we rarely make a piece nobody asked for. Everything else on this page is us
           trying to be honest about the rest.

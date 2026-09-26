@@ -11,7 +11,7 @@ export const metadata = pageMetadata({
 
 const FAQS = [
   { question: "Where are A&I pieces made?", answer: "Every piece is made in India, in small runs, by a specialist craft partner — never mass-produced." },
-  { question: "What fabric is used?", answer: "Every current piece is 100% washed linen, chosen for how cleanly it holds a laser-cut edge without fraying. If a future design uses a different fabric, that will be stated plainly on its own product page." },
+  { question: "What fabric is used?", answer: "Most current pieces are 100% washed linen, chosen for how cleanly it holds a laser-cut edge without fraying. A handful of pieces use silk or organza instead, and that's always stated plainly on that piece's own product page." },
   { question: "Do you restock sold-out pieces?", answer: "No — every piece is a limited run. Once it sells out, it's gone, though you can join the waitlist to be notified if a restock happens." },
   { question: "How do I know my size?", answer: "Take our two-minute Fit Quiz — no measuring tape needed — and we'll recommend a size across the whole collection." },
 ];
