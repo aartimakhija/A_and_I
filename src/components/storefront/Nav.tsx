@@ -53,8 +53,21 @@ export function Nav() {
         </button>
       </div>
 
+      {/* Backdrop: without it, the drawer below (a plain absolute dropdown, not
+          a full-screen takeover) left the rest of the page fully visible and
+          tappable right underneath it once its own content ran out — on a
+          phone the hero's CTA links were literally visible and clickable
+          through the "open" menu. Same pattern as CartDrawer/SavedDrawer's own
+          backdrop, just starting below the nav bar instead of the full viewport
+          so the bar (and the Close button) stays undimmed. */}
+      <div
+        onClick={() => setMenuOpen(false)}
+        aria-hidden
+        className={`fixed inset-x-0 top-[62px] bottom-0 z-40 bg-black/40 transition-opacity duration-300 lg:hidden ${menuOpen ? "pointer-events-auto opacity-100" : "pointer-events-none opacity-0"}`}
+      />
+
       {menuOpen && (
-        <div className="absolute inset-x-0 top-[62px] flex flex-col gap-4 border-b border-border bg-background px-6 py-4">
+        <div className="absolute inset-x-0 top-[62px] z-50 flex flex-col gap-4 border-b border-border bg-background px-6 py-4">
           <Link href="/" onClick={() => setMenuOpen(false)} className={`${navLinkClass("/")} text-left text-sm`}>Home</Link>
           <Link href="/shop/all" onClick={() => setMenuOpen(false)} className={`${navLinkClass("/shop/all")} text-left text-sm`}>Collection</Link>
           {links.slice(1).map(([href, label]) => (
