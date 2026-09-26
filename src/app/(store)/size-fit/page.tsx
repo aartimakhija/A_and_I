@@ -45,7 +45,12 @@ export default function SizeFitPage() {
 
       <section className="shell pb-20">
         <h2 className="display-md">The size chart</h2>
-        <div className="mt-8 overflow-x-auto">
+        {/* The table is wider than a phone screen (5 columns of measurements) — it scrolls
+            horizontally within its own box rather than blowing out the page, same pattern as
+            the product gallery's mobile swipe hint below. Without this hint, a cut-off right
+            edge with no visual cue reads as a bug rather than "there's more, swipe". */}
+        <p className="micro mt-4 text-muted-foreground sm:hidden">Swipe to see all measurements →</p>
+        <div className="relative mt-8 overflow-x-auto">
           <table className="w-full min-w-[480px] border-collapse">
             <thead>
               <tr>
@@ -66,6 +71,9 @@ export default function SizeFitPage() {
               ))}
             </tbody>
           </table>
+          {/* Static edge fade as a visual cue that there's more table to scroll to on
+              narrow screens — matches the sm:hidden breakpoint of the swipe hint above. */}
+          <div aria-hidden="true" className="pointer-events-none absolute inset-y-0 right-0 w-10 bg-gradient-to-l from-background to-transparent sm:hidden" />
         </div>
         <p className="mt-6 text-sm text-muted-foreground">
           Between sizes, or want a piece cut to your own measurements? Bespoke is made to measure —

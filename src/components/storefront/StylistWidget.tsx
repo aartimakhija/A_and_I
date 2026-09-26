@@ -39,13 +39,13 @@ export function StylistWidget() {
       <button
         onClick={() => setStylistOpen(!stylistOpen)}
         aria-label="Style finder"
-        className="fixed bottom-6 right-6 z-[70] flex h-14 w-14 items-center justify-center rounded-full bg-foreground font-display text-xl italic text-primary shadow-[0_8px_24px_rgba(0,0,0,0.25)]"
+        className="stylist-fab fixed bottom-6 right-6 z-[70] flex h-14 w-14 items-center justify-center rounded-full bg-foreground font-display text-xl italic text-primary shadow-[0_8px_24px_rgba(0,0,0,0.25)]"
       >
         {stylistOpen ? "×" : "✦"}
       </button>
 
       {stylistOpen && (
-        <div className="fixed bottom-[92px] right-6 z-[70] flex max-h-[72vh] w-[min(360px,88vw)] flex-col overflow-hidden border border-border bg-background shadow-[0_20px_60px_rgba(0,0,0,0.25)]">
+        <div className="stylist-panel fixed bottom-[92px] right-6 z-[70] flex max-h-[72vh] w-[min(360px,88vw)] flex-col overflow-hidden border border-border bg-background shadow-[0_20px_60px_rgba(0,0,0,0.25)]">
           <div className="bg-foreground px-4.5 py-4 text-background">
             <div className="font-display text-lg italic">Style finder</div>
             <div className="mt-0.5 text-xs opacity-70">Pick an occasion and a vibe — we&apos;ll pull from the collection.</div>

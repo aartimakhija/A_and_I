@@ -55,6 +55,14 @@ export function GlobalStyle() {
         .nav-burger { display: inline-block !important; }
         .pdp-sticky-bar { display: block !important; }
         body:has(.pdp-sticky-bar) { padding-bottom: 76px; }
+        /* The sticky Reserve bar and the Style-finder button both live in the
+           bottom-right corner on narrow screens. Without this, the button (a
+           higher z-index) sits directly on top of the right edge of the full-
+           width Reserve button, covering part of the one CTA on the page that
+           matters most — and eating some of its taps. Push the widget up
+           clear of the bar, keeping the button/panel gap the same as usual. */
+        body:has(.pdp-sticky-bar) .stylist-fab { bottom: 100px !important; }
+        body:has(.pdp-sticky-bar) .stylist-panel { bottom: 168px !important; }
         .util-hide { display: none !important; }
         .hero { min-height: 70vh !important; }
         .grid-4 { grid-template-columns: repeat(2,1fr) !important; }
