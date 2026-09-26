@@ -15,8 +15,11 @@
 // names draw on). Every fact below is taken from the live product pages,
 // not invented.
 //
-// Idempotent: safe to re-run. Skips any slug that already exists, and only
-// deletes the specific retired-catalogue slugs named below.
+// Idempotent: safe to re-run. For each slug below, creates it if missing,
+// and otherwise diffs the live post against the content here and updates it
+// in place if it has drifted (catches stale content left over from an older
+// run of this file, instead of silently skipping it forever). Only deletes
+// the specific retired-catalogue slugs named below.
 //
 // Run:  npx tsx scripts/seed-blog.ts
 
@@ -154,20 +157,42 @@ async function main() {
     if (res.count > 0) { console.log(`  - removed retired post: ${slug}`); removed++; }
   }
 
-  let created = 0, skipped = 0;
+  // Not a plain "skip if it exists" anymore: a post whose slug survived from an
+  // older run can carry stale body text (e.g. an earlier draft that still
+  // mentioned retired-catalogue techniques like bandhani/mirror-work) that a
+  // pure skip would leave live forever. So existing posts are diffed against
+  // the POSTS content below and updated in place when they've drifted.
+  let created = 0, updated = 0, unchanged = 0;
   for (const post of POSTS) {
     const existing = await prisma.blogPost.findUnique({ where: { slug: post.slug } });
-    if (existing) { console.log(`  = ${post.slug} already exists, skipping`); skipped++; continue; }
 
     const product = post.productSlug
       ? await prisma.product.findUnique({ where: { slug: post.productSlug }, include: { images: { orderBy: { position: "asc" }, take: 1 } } })
       : null;
-    if (post.productSlug && !product) { console.warn(`  ! product "${post.productSlug}" not found — creating post without a cover image or tag`); }
+    if (post.productSlug && !product) { console.warn(`  ! product "${post.productSlug}" not found — creating/updating post without a cover image or tag`); }
+    const coverImage = product?.images[0]?.url ?? null;
+
+    if (existing) {
+      const stale =
+        existing.title !== post.title ||
+        existing.subtitle !== post.subtitle ||
+        existing.body !== post.body ||
+        (post.productSlug != null && existing.coverImage !== coverImage);
+      if (!stale) { console.log(`  = ${post.slug} already up to date, skipping`); unchanged++; continue; }
+
+      await prisma.blogPost.update({
+        where: { slug: post.slug },
+        data: { title: post.title, subtitle: post.subtitle, body: post.body, coverImage },
+      });
+      console.log(`  ~ ${post.slug} was stale — updated to current content`);
+      updated++;
+      continue;
+    }
 
     await prisma.blogPost.create({
       data: {
         slug: post.slug, title: post.title, subtitle: post.subtitle, body: post.body,
-        coverImage: product?.images[0]?.url ?? null,
+        coverImage,
         status: "PUBLISHED", publishedAt: new Date(), authorName: "A & I Editorial",
         products: product ? { create: [{ productId: product.id, position: 0 }] } : undefined,
       },
@@ -175,7 +200,7 @@ async function main() {
     console.log(`  + ${post.slug} (tagged: ${product?.name ?? "none"})`);
     created++;
   }
-  console.log(`Done. Removed ${removed} retired post(s), created ${created}, skipped ${skipped} already-existing.`);
+  console.log(`Done. Removed ${removed} retired post(s), created ${created}, updated ${updated} stale post(s), left ${unchanged} unchanged.`);
 }
 
 main()
