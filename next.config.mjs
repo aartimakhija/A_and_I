@@ -8,13 +8,26 @@
 // Google Fonts. Once a few days pass with a clean console across storefront,
 // checkout, and admin, flip the header key below to plain
 // "Content-Security-Policy" to start enforcing it.
+//
+// Checked the live report-only console across home, product, shop, craft,
+// sustainability, gifting, founder, about and an empty-cart checkout page:
+// GA4's actual beacon domain is analytics.google.com (not just
+// www.google-analytics.com), and it also calls stats.g.doubleclick.net —
+// neither was allowed, so connect-src below now includes both; enforcing
+// the policy as it was would have silently cut off analytics. One
+// remaining, expected violation: Google Ads' cross-domain "ga-audiences"
+// remarketing pixel loads from whichever Google country domain matches the
+// visitor's locale (seen here as google.co.in) — CSP can't wildcard across
+// TLDs, so a fully clean console on that one line isn't achievable without
+// a much looser img-src; it's a remarketing-signal nicety, not core
+// analytics or checkout, so it's fine to enforce without chasing it further.
 const CSP = [
   "default-src 'self'",
   "script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://checkout.razorpay.com",
   "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
   "font-src 'self' https://fonts.gstatic.com data:",
-  "img-src 'self' data: blob: https://*.amazonaws.com https://www.googletagmanager.com https://www.google-analytics.com",
-  "connect-src 'self' https://www.google-analytics.com https://*.google-analytics.com https://api.razorpay.com https://lumberjack.razorpay.com",
+  "img-src 'self' data: blob: https://*.amazonaws.com https://www.googletagmanager.com https://www.google-analytics.com https://www.google.co.in",
+  "connect-src 'self' https://www.google-analytics.com https://*.google-analytics.com https://analytics.google.com https://stats.g.doubleclick.net https://api.razorpay.com https://lumberjack.razorpay.com",
   "frame-src https://checkout.razorpay.com https://api.razorpay.com",
   "object-src 'none'",
   "base-uri 'self'",
