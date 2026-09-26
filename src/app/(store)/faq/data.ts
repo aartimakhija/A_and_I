@@ -1,7 +1,7 @@
 export const faqs = [
   {
     q: "How does ordering work?",
-    a: "Add a piece to your bag, choose your size, and check out securely by card, UPI or netbanking through Razorpay. Pieces marked pre-order work differently — see below.",
+    a: "Every piece on the site right now is pre-order: choose your size and hit Reserve on its product page — no payment up front. We only go into production once enough of you commit, and reserving gets you an early-access discount code for when it ships. If a piece is ever marked in-stock, it works differently — see below.",
   },
   {
     q: "How long does dispatch take?",

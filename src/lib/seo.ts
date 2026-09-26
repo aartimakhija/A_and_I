@@ -17,27 +17,53 @@ export function jsonLdHtml(data: unknown): string {
 }
 
 /**
+ * Strip a trailing "— A&I" / "| A&I" (however it was punctuated) from a title
+ * so we never stack the brand suffix on top of one that's already there —
+ * some copy (product metaTitles, static page titles) already ends in "A&I".
+ * The root layout's `title.template` ("%s — A&I") is the ONE place the site
+ * appends the brand name to a page-specific title; this just makes sure the
+ * string we hand it is clean going in, however many times someone re-added it.
+ */
+function stripBrandSuffix(title: string): string {
+  let t = title;
+  for (;;) {
+    const next = t.replace(/\s*[|—-]\s*A&I\s*$/i, "").trimEnd();
+    if (next === t) break;
+    t = next;
+  }
+  return t || title;
+}
+
+/**
  * Shared metadata builder — every page should call this instead of hand-rolling
  * a `Metadata` object, so title length, OG/Twitter tags, and canonical URLs stay
  * consistent site-wide. `path` should start with "/" (e.g. "/shop/all").
+ *
+ * `title` here is set as-is on `metadata.title`: Next.js applies the root
+ * layout's `title.template` ("%s — A&I") on top of it automatically for the
+ * rendered <title> tag, so this function must NOT also append "— A&I" —
+ * doing so previously produced "Page — A&I — A&I" (or worse) site-wide.
+ * OG/Twitter titles don't get that template applied by Next, so we build
+ * those explicitly from the same clean title.
  */
 export function pageMetadata({
   title, description, path, image, noIndex,
 }: { title: string; description: string; path: string; image?: string; noIndex?: boolean }): Metadata {
-  const fullTitle = title === SITE_NAME ? title : `${title} — A&I`;
+  const cleanTitle = title === SITE_NAME ? title : stripBrandSuffix(title);
+  const socialTitle = cleanTitle === SITE_NAME ? cleanTitle : `${cleanTitle} — A&I`;
   const url = `${SITE_URL}${path}`;
   const ogImage = image || DEFAULT_OG_IMAGE;
   return {
-    title: fullTitle,
+    title: cleanTitle,
     description,
     alternates: { canonical: url },
     robots: noIndex ? { index: false, follow: false } : { index: true, follow: true },
     openGraph: {
-      title: fullTitle, description, url, siteName: SITE_NAME, type: "website",
-      images: [{ url: ogImage, width: 1200, height: 630, alt: fullTitle }],
+      title: socialTitle, description, url, siteName: SITE_NAME, type: "website",
+      images: [{ url: ogImage, width: 1200, height: 630, alt: socialTitle }],
     },
     twitter: {
-      card: "summary_large_image", title: fullTitle, description, images: [ogImage],
+      card: "summary_large_image", title: socialTitle, description, images: [ogImage],
     },
   };
 }

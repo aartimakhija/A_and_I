@@ -4,12 +4,14 @@ import { usePathname } from "next/navigation";
 import { useStore } from "./StoreContext";
 
 const links: [string, string][] = [
-  ["/", "Home"], ["/lookbook", "Lookbook"], ["/blog", "Journal"], ["/bespoke", "Bespoke"], ["/about", "About"], ["/contact", "Contact"],
+  ["/", "Home"], ["/lookbook", "Lookbook"], ["/blog", "Journal"], ["/bespoke", "Bespoke"], ["/about", "About"], ["/founder", "Founder"], ["/contact", "Contact"],
 ];
 // Desktop reaches these from the footer's "Studio" column instead of a nav
 // dropdown; the mobile drawer lists them directly after the primary links.
+// Founder moved into `links` above (Sep 2026 site audit: it was buried here
+// and in the footer only, and got ~0.5% of site pageviews as a result).
 const mobileExtra: [string, string][] = [
-  ["/craft", "Craft"], ["/founder", "Founder"], ["/visit", "Visit"],
+  ["/craft", "Craft"], ["/visit", "Visit"],
 ];
 
 export function Nav() {

@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { SIZES } from "./theme";
 import { Lightbox } from "./Lightbox";
 import { SizeChartButton } from "./SizeChartButton";
@@ -225,6 +226,9 @@ export function Product({
                   <input value={reserveLocation} onChange={(e) => setReserveLocation(e.target.value)} placeholder="City (optional)" className="field-line mb-3" />
                   <button onClick={reserve} className="btn-solid-gold w-full">{reserving ? "Reserving…" : `Reserve — Size ${size}`}</button>
                   <p className="mt-2 text-xs text-muted-foreground">No payment now. We only go into production once enough of you commit — you&apos;ll get an early-access discount for reserving.</p>
+                  <Link href="/blog/what-shortlisted-means-reserving-a-piece" className="link-underline micro mt-1.5 inline-block text-xs text-muted-foreground">
+                    What does &quot;Reserve&quot; actually mean? →
+                  </Link>
                 </div>
               )
             ) : soldOut ? (

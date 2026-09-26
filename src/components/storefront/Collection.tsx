@@ -83,8 +83,8 @@ export function Collection({ products, category, categories, categoryTiles = [] 
         </h1>
         {category === "all" && (
           <p className="mx-auto mt-6 max-w-xl text-muted-foreground">
-            Explore the complete catalogue through verified garment views. Price, fit, availability
-            and delivery are confirmed the moment you enquire.
+            Explore the complete catalogue through verified garment views. Every piece is
+            pre-order: reserve your size directly on its page, no payment and no enquiry needed.
           </p>
         )}
       </header>
