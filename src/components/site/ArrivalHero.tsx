@@ -108,7 +108,12 @@ export function ArrivalHero({
           )}
         </div>
 
-        <div className="mt-12 flex flex-wrap items-center justify-between gap-4 border-t border-white/15 pt-6">
+        {/* hero-bottom-row + the GlobalStyle.tsx media-query rule on it keeps
+            "Scroll to discover↓" clear of the fixed Style-finder button
+            (bottom-6 right-6, ~80px footprint from the true viewport edge) — on
+            desktop the .shell padding already provides that clearance, but on a
+            narrow screen this row runs edge-to-edge. */}
+        <div className="hero-bottom-row mt-12 flex flex-wrap items-center justify-between gap-4 border-t border-white/15 pt-6">
           <p className="micro text-white/60">Designed with intention. Made in India.</p>
           <div className="flex items-center gap-3">
             <span className="micro text-white/55">Scroll to discover</span>

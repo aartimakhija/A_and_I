@@ -63,6 +63,12 @@ export function GlobalStyle() {
            clear of the bar, keeping the button/panel gap the same as usual. */
         body:has(.pdp-sticky-bar) .stylist-fab { bottom: 100px !important; }
         body:has(.pdp-sticky-bar) .stylist-panel { bottom: 168px !important; }
+        /* Same Style-finder-button collision as above, different culprit: the
+           homepage hero's bottom row ("Designed with intention..." / "Scroll to
+           discover") is a justify-between row that runs edge-to-edge on a narrow
+           screen, so "Scroll to discover↓" otherwise lands right under the
+           button. Reserve the button's footprint on the right. */
+        .hero-bottom-row { padding-right: 80px; }
         .util-hide { display: none !important; }
         .hero { min-height: 70vh !important; }
         .grid-4 { grid-template-columns: repeat(2,1fr) !important; }
