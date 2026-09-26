@@ -99,7 +99,7 @@ export function ArrivalHero({
                 />
               ) : movementPiece.imageUrl ? (
                 <div className="relative aspect-4/5 w-full bg-black/40">
-                  <Image src={movementPiece.imageUrl} alt="" fill sizes="14rem" className="object-cover" />
+                  <Image src={movementPiece.imageUrl} alt={movementPiece.name} fill sizes="14rem" className="object-cover" />
                 </div>
               ) : null}
               <p className="micro mt-4 text-white/60">{movementPiece.videoUrl ? "Now in movement" : "Also new"}</p>
