@@ -64,7 +64,7 @@ export function Lookbook({ products }: { products: SFProduct[] }) {
             <div className="shell grid items-center gap-8 py-10 md:grid-cols-2 md:gap-16 md:py-20">
               <div className={`reveal-img ${flip ? "md:order-2" : "md:order-1"}`}>
                 <button
-                  className="card-zoom relative aspect-4/5 w-full overflow-hidden bg-card"
+                  className="reveal-img-clip card-zoom relative aspect-4/5 w-full overflow-hidden bg-card"
                   onClick={() => router.push(`/products/${d.slug}`)}
                   style={layer(2.6, rm)}
                 >

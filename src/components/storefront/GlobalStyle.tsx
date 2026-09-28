@@ -36,8 +36,16 @@ export function GlobalStyle() {
       /* effects */
       .reveal { opacity: 0; transform: translateY(26px); transition: opacity 0.9s cubic-bezier(0.2,0.8,0.2,1), transform 0.9s cubic-bezier(0.2,0.8,0.2,1); }
       .reveal[data-in] { opacity: 1; transform: none; }
-      .reveal-img { clip-path: inset(0 0 100% 0); transition: clip-path 1.05s cubic-bezier(0.7,0,0.2,1); }
-      .reveal-img[data-in] { clip-path: inset(0 0 0 0); }
+      /* \`.reveal-img\` itself must stay UNCLIPPED: it's the element IntersectionObserver
+         watches, and Chromium computes intersection against an element's own
+         clip-path'd paint area. A clip-path that hides 100% of the box (as this
+         effect needs, to start the "wipe" fully hidden) makes that area zero, so
+         the observer reports ratio 0 forever and data-in never gets set -- a
+         permanent deadlock. This was the Lookbook page's images-never-appear bug.
+         The fix: apply the clip-path to a nested \`.reveal-img-clip\` element
+         instead, toggled by a descendant selector off the parent's data-in. */
+      .reveal-img-clip { clip-path: inset(0 0 100% 0); transition: clip-path 1.05s cubic-bezier(0.7,0,0.2,1); }
+      .reveal-img[data-in] .reveal-img-clip { clip-path: inset(0 0 0 0); }
       .ulink { position: relative; }
       .ulink::after { content: ""; position: absolute; left: 0; right: 0; bottom: -3px; height: 1px; background: ${T.gold}; transform: scaleX(0); transform-origin: right; transition: transform 0.4s cubic-bezier(0.2,0.8,0.2,1); }
       .ulink:hover::after { transform: scaleX(1); transform-origin: left; }
@@ -88,7 +96,7 @@ export function GlobalStyle() {
         * { scroll-behavior: auto !important; }
         .marquee { animation: none !important; }
         .kb, .sheen::before, .rise, .fillbar { animation: none !important; }
-        .reveal, .reveal-img, .reveal-scale { opacity: 1 !important; transform: none !important; clip-path: none !important; transition: none !important; }
+        .reveal, .reveal-img, .reveal-img-clip, .reveal-scale { opacity: 1 !important; transform: none !important; clip-path: none !important; transition: none !important; }
         .ulink::after { transition: none !important; }
       }
     `;
