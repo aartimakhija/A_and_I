@@ -2,7 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { prisma } from "@/lib/prisma";
 import { toSFProduct, PRODUCT_INCLUDE } from "@/lib/storefront-adapter";
-import { pageMetadata } from "@/lib/seo";
+import { pageMetadata, founderPersonJsonLd, jsonLdHtml } from "@/lib/seo";
 import { getSiteSettings } from "@/lib/settings";
 
 export const metadata = pageMetadata({
@@ -49,6 +49,7 @@ export default async function FounderPage() {
   const founderImage = settings.founderImageUrl ?? "/founder-artee.jpg";
   return (
     <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdHtml(founderPersonJsonLd()) }} />
       <section className="shell py-20">
         <p className="eyebrow">Our world</p>
         <h1 className="display-xl mt-6">

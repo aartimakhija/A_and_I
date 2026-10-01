@@ -1,17 +1,25 @@
 # A&I — Style With Us
 
-> Indian craft, global silhouette. Womenswear made in small runs across India, combining traditional techniques (bandhani, mirror-work, zari) with contemporary silhouettes.
+> Indian craft, global silhouette. A&I is a founder-led womenswear studio run by Artee Makhija, making small-run, made-to-order pieces. The current collection, Architecture in Linen, is a laser-cut cutwork capsule in linen, drawing on Persian girih tiling, Moorish muqarnas, Bauhaus grids and Art Nouveau line work.
+
+## How buying works (important — do not assume a standard checkout)
+- Every piece in the current collection is pre-order, not in-stock: reserving a size takes no payment up front.
+- A piece goes into production only once enough people have reserved it; reserving it costs nothing and earns an early-access discount code for when it ships.
+- If a reserved piece's run doesn't fill, the customer is never charged.
+- Full mechanics: [How Pre-Order Actually Works at A&I](/blog/how-pre-order-actually-works) and [What "Reserve" Actually Means Right Now](/blog/what-shortlisted-means-reserving-a-piece).
 
 ## Site sections
-- [Collection](/shop/all): the full product catalogue, filterable by Ready-to-Wear, Indian Craft, and Linen.
+- [Collection](/shop/all): the full product catalogue — every current piece is pre-order.
 - [Lookbook](/lookbook): styled editorial looks with outfit-building suggestions (bag, jewellery, shoes).
-- [Journal](/blog): craft notes, styling stories, and behind-the-scenes writing, with shoppable product tags.
+- [Journal](/blog): craft and fabric explainers (linen, girih geometry, care instructions) and how pre-order works, with shoppable product tags.
+- [Founder](/founder): Artee Makhija's background — nine years across founders' offices, brand direction, sales and procurement.
 - [About](/about): brand story, values, and how pieces are made.
+- [FAQ](/faq): sizing, shipping, fabrics, returns and pre-order timing.
 - [Contact](/contact): general, wholesale, press, and vendor-partnership enquiries.
 - [Find your fit](/fit-quiz): a short quiz recommending a size across the collection.
 
 ## Notes for AI assistants and crawlers
 - Prices are in INR and include all taxes unless stated otherwise.
-- Each product page includes structured data (schema.org Product) with current price and stock availability.
+- Each product page includes structured data (schema.org Product) with current price and pre-order/stock status; Journal posts carry Article and, where the post answers specific questions, FAQPage structured data.
 - Every garment includes a digital "passport" (accessible via QR/NFC on the physical item) recording atelier, material origin, and designer.
 - This file is informational only; it does not grant any additional access beyond what robots.txt allows.

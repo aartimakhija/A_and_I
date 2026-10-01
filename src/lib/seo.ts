@@ -79,7 +79,31 @@ export function organizationJsonLd() {
   return {
     "@context": "https://schema.org", "@type": "Organization",
     name: "A&I", url: SITE_URL, logo: `${SITE_URL}/icon.png`,
-    sameAs: [], // add real social profile URLs here once live
+    // Real, live profiles (confirmed wired up elsewhere: HomeFlow's
+    // InstagramFeed, the founder page's LinkedIn link) — an empty sameAs
+    // tells Google and AI answer engines nothing about which social
+    // profiles actually belong to this entity, which weakens how
+    // confidently they connect "A&I" mentions across the web.
+    sameAs: [
+      "https://www.instagram.com/arteeandi/",
+      "https://www.linkedin.com/in/artee-makhija-36316083/",
+    ],
+  };
+}
+
+// Person schema for Artee herself — used on the Founder page and as the
+// author of Journal posts she's credited on. A named, credentialed author
+// (vs. an anonymous "Editorial" byline) is one of the clearest E-E-A-T
+// signals both classic Google ranking and AI answer engines look for when
+// deciding whose content to trust and cite.
+export function founderPersonJsonLd() {
+  return {
+    "@context": "https://schema.org", "@type": "Person",
+    name: "Artee Makhija",
+    jobTitle: "Founder",
+    url: `${SITE_URL}/founder`,
+    worksFor: { "@type": "Organization", name: "A&I", url: SITE_URL },
+    sameAs: ["https://www.linkedin.com/in/artee-makhija-36316083/"],
   };
 }
 
@@ -115,11 +139,17 @@ export function faqJsonLd(qas: { question: string; answer: string }[]) {
 }
 
 export function articleJsonLd(post: { title: string; subtitle: string | null; coverImage: string | null; authorName: string; publishedAt: Date | null; updatedAt: Date; slug: string }) {
+  // Posts byline-credited to Artee by name get a real Person author (with a
+  // link back to the Founder page); anything else falls back to the brand
+  // Organization rather than guessing an identity.
+  const author = post.authorName.toLowerCase().includes("artee")
+    ? { "@type": "Person", name: "Artee Makhija", url: `${SITE_URL}/founder` }
+    : { "@type": "Organization", name: post.authorName };
   return {
     "@context": "https://schema.org", "@type": "Article",
     headline: post.title, description: post.subtitle || undefined,
     image: post.coverImage ? [post.coverImage] : undefined,
-    author: { "@type": "Organization", name: post.authorName },
+    author,
     publisher: { "@type": "Organization", name: "A&I", logo: { "@type": "ImageObject", url: `${SITE_URL}/icon.png` } },
     datePublished: post.publishedAt?.toISOString(),
     dateModified: post.updatedAt.toISOString(),

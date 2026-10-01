@@ -3,10 +3,11 @@ import Link from "next/link";
 import Image from "next/image";
 import { ProductCard } from "@/components/site/ProductCard";
 import type { SFProduct } from "@/lib/storefront-adapter";
+import { parseBlogBody, parseInline, type BlogBlock } from "@/lib/blog-content";
 
 type Post = {
   title: string; subtitle: string | null; coverImage: string | null; body: string;
-  authorName: string; publishedAt: string | null; updatedAt?: string; category?: string | null;
+  authorName: string; authorUrl?: string | null; publishedAt: string | null; updatedAt?: string; category?: string | null;
 };
 type RelatedPost = { slug: string; title: string; coverImage: string | null; publishedAt: string | null };
 
@@ -14,15 +15,62 @@ function dateLabel(iso: string | Date | null | undefined) {
   return iso ? new Date(iso).toLocaleDateString("en-IN", { day: "numeric", month: "long", year: "numeric" }) : null;
 }
 
+function Prose({ text }: { text: string }) {
+  return (
+    <>
+      {parseInline(text).map((seg, i) =>
+        seg.href ? (
+          <Link key={i} href={seg.href} className="link-underline text-foreground">
+            {seg.text}
+          </Link>
+        ) : (
+          <span key={i}>{seg.text}</span>
+        )
+      )}
+    </>
+  );
+}
+
+function Block({ block, i }: { block: BlogBlock; i: number }) {
+  if (block.type === "h2") {
+    return (
+      <h2 key={i} className="display-md mt-14 first:mt-0">
+        {block.text}
+      </h2>
+    );
+  }
+  if (block.type === "qa") {
+    // A visually distinct "quick answer" card — the same content this also
+    // feeds into FAQPage structured data (see the [slug]/page.tsx reader):
+    // short, direct, extractable by a snippet or an AI answer engine, not
+    // just a human scrolling.
+    return (
+      <div key={i} className="mt-10 border-l-2 border-primary/40 pl-6 first:mt-0">
+        <h3 className="display-md text-lg">{block.question}</h3>
+        {block.answer.split(/\n\s*\n/).map((p, j) => (
+          <p key={j} className="mt-3 text-muted-foreground first:mt-3">
+            {p}
+          </p>
+        ))}
+      </div>
+    );
+  }
+  return (
+    <p key={i} className="mt-7 text-muted-foreground first:mt-0">
+      <Prose text={block.text} />
+    </p>
+  );
+}
+
 export function BlogPostView({ post, products, related }: { post: Post; products: SFProduct[]; related?: RelatedPost[] }) {
-  const paragraphs = post.body.split(/\n\s*\n/).map((p) => p.trim()).filter(Boolean);
+  const blocks = parseBlogBody(post.body);
   const showUpdated = post.updatedAt && post.publishedAt && new Date(post.updatedAt).toDateString() !== new Date(post.publishedAt).toDateString();
   // Embed the shoppable strip at the natural midpoint of the body, matching
   // the Kindred spec's "named products placed inline within the article
   // flow" — not just bolted on at the very end as an afterthought.
-  const mid = Math.ceil(paragraphs.length / 2);
-  const firstHalf = paragraphs.slice(0, mid);
-  const secondHalf = paragraphs.slice(mid);
+  const mid = Math.ceil(blocks.length / 2);
+  const firstHalf = blocks.slice(0, mid);
+  const secondHalf = blocks.slice(mid);
 
   return (
     <article>
@@ -34,7 +82,13 @@ export function BlogPostView({ post, products, related }: { post: Post; products
         <h1 className="display-xl mt-6">{post.title}</h1>
         {post.subtitle && <p className="mt-7 text-lg text-muted-foreground">{post.subtitle}</p>}
         <p className="micro mt-6 text-muted-foreground">
-          {post.authorName}
+          {post.authorUrl ? (
+            <Link href={post.authorUrl} className="link-underline">
+              {post.authorName}
+            </Link>
+          ) : (
+            post.authorName
+          )}
           {showUpdated && ` · Updated ${dateLabel(post.updatedAt)}`}
         </p>
       </section>
@@ -48,8 +102,8 @@ export function BlogPostView({ post, products, related }: { post: Post; products
       )}
 
       <section className="shell max-w-2xl py-20">
-        {firstHalf.map((p, i) => (
-          <p key={i} className="mt-7 text-muted-foreground first:mt-0">{p}</p>
+        {firstHalf.map((b, i) => (
+          <Block key={i} block={b} i={i} />
         ))}
       </section>
 
@@ -68,8 +122,8 @@ export function BlogPostView({ post, products, related }: { post: Post; products
 
       {secondHalf.length > 0 && (
         <section className="shell max-w-2xl py-20">
-          {secondHalf.map((p, i) => (
-            <p key={i} className="mt-7 text-muted-foreground first:mt-0">{p}</p>
+          {secondHalf.map((b, i) => (
+            <Block key={i} block={b} i={i} />
           ))}
         </section>
       )}
