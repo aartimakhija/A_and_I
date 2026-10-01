@@ -30,6 +30,14 @@ export default function ReturnActions({ id, status }: { id: string; status: stri
   );
   if (status === "APPROVED") return <button disabled={busy} style={btn} onClick={() => update("PICKED_UP")}>Mark picked up</button>;
   if (status === "PICKED_UP") return <button disabled={busy} style={btn} onClick={() => update("RECEIVED")}>Mark received</button>;
-  if (status === "RECEIVED") return <button disabled={busy} style={btn} onClick={() => update("REFUNDED")}>Issue refund</button>;
+  // No cash refunds — once the piece is back, resolve it as either a shipped
+  // exchange or, if that size/piece isn't available anymore, a store credit
+  // (the PATCH handler mints the credit code; it shows up in the table once set).
+  if (status === "RECEIVED") return (
+    <div>
+      <button disabled={busy} style={btn} onClick={() => update("EXCHANGED")}>Ship exchange</button>
+      <button disabled={busy} style={btn} onClick={() => update("STORE_CREDIT_ISSUED")}>Issue store credit</button>
+    </div>
+  );
   return <span style={{ fontSize: 11, color: "#999" }}>—</span>;
 }

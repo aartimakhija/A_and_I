@@ -3,6 +3,18 @@ import { getSession } from "@/lib/rbac";
 import RequestReturn from "@/components/store/RequestReturn";
 import { formatINR } from "@/lib/format";
 
+// A&I doesn't offer cash refunds — these are the customer-facing labels for
+// where an exchange request currently stands.
+function exchangeStatusLabel(status: string, creditCode: string | null) {
+  switch (status) {
+    case "REQUESTED": return "Exchange requested ✓";
+    case "REJECTED": return "Exchange request declined";
+    case "EXCHANGED": return "Exchanged ✓";
+    case "STORE_CREDIT_ISSUED": return creditCode ? `Store credit issued: ${creditCode}` : "Store credit issued";
+    default: return `Exchange: ${status.replaceAll("_", " ").toLowerCase()}`; // APPROVED / PICKED_UP / RECEIVED
+  }
+}
+
 export default async function Orders() {
   const s = await getSession();
   const orders = await prisma.order.findMany({
@@ -28,7 +40,7 @@ export default async function Orders() {
                   <span className="text-[13px]">{item.name} · {item.size}</span>
                   {["SHIPPED", "DELIVERED"].includes(o.status) && (
                     existingReturn
-                      ? <span className="text-xs text-muted-foreground">{existingReturn.status === "REQUESTED" ? "Return requested ✓" : `Return: ${existingReturn.status}`}</span>
+                      ? <span className="text-xs text-muted-foreground">{exchangeStatusLabel(existingReturn.status, existingReturn.creditCode)}</span>
                       : <RequestReturn orderItemId={item.id} email={o.email} />
                   )}
                 </div>

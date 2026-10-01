@@ -28,7 +28,7 @@ export function Checkout() {
   const [orderNo, setOrderNo] = useState("");
   const [apiError, setApiError] = useState("");
   const [promoInput, setPromoInput] = useState("");
-  const [promo, setPromo] = useState<{ code: string; percentOff: number } | null>(null);
+  const [promo, setPromo] = useState<{ code: string; percentOff: number; amountOff: number | null } | null>(null);
   const [promoError, setPromoError] = useState("");
   const [checkingPromo, setCheckingPromo] = useState(false);
   const set = (k: keyof typeof f) => (e: React.ChangeEvent<HTMLInputElement>) => setF((s) => ({ ...s, [k]: e.target.value }));
@@ -50,13 +50,13 @@ export function Checkout() {
       const res = await fetch(`/api/promo/validate?code=${encodeURIComponent(promoInput.trim())}`);
       const json = await res.json();
       if (!json.valid) { setPromoError("That code isn't valid or has already been used."); setPromo(null); return; }
-      setPromo({ code: promoInput.trim().toUpperCase(), percentOff: json.percentOff });
+      setPromo({ code: promoInput.trim().toUpperCase(), percentOff: json.percentOff, amountOff: json.amountOff ?? null });
     } finally {
       setCheckingPromo(false);
     }
   }
 
-  const discount = promo ? Math.round(subtotal * (promo.percentOff / 100)) : 0;
+  const discount = promo ? Math.min(subtotal, promo.amountOff ?? Math.round(subtotal * (promo.percentOff / 100))) : 0;
   const shippingCost = subtotal >= 5000 ? 0 : 99;
   const total = Math.max(0, subtotal + shippingCost - discount);
 
@@ -246,7 +246,7 @@ export function Checkout() {
             <div className="mb-1 border-b border-border pb-3.5">
               {promo ? (
                 <div className="flex items-center justify-between text-xs text-primary">
-                  <span>Code <strong>{promo.code}</strong> applied — {promo.percentOff}% off</span>
+                  <span>Code <strong>{promo.code}</strong> applied — {promo.amountOff ? `${formatINR(promo.amountOff)} credit` : `${promo.percentOff}% off`}</span>
                   <button onClick={() => { setPromo(null); setPromoInput(""); }} className="text-base leading-none text-muted-foreground">×</button>
                 </div>
               ) : (
@@ -268,7 +268,7 @@ export function Checkout() {
               </div>
               {discount > 0 && (
                 <div className="flex justify-between text-[13px] text-primary">
-                  <span>Discount ({promo?.percentOff}%)</span><span>−{formatINR(discount)}</span>
+                  <span>{promo?.amountOff ? "Store credit" : `Discount (${promo?.percentOff}%)`}</span><span>−{formatINR(discount)}</span>
                 </div>
               )}
               <div className="mt-1.5 flex items-baseline justify-between">

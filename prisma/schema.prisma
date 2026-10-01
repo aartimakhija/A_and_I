@@ -61,7 +61,9 @@ enum ReturnStatus {
   REJECTED
   PICKED_UP
   RECEIVED
-  REFUNDED
+  REFUNDED            // legacy — no longer issued; kept so historical rows still read correctly
+  EXCHANGED           // replacement unit/size shipped
+  STORE_CREDIT_ISSUED // the requested size/piece wasn't available, so a credit note was issued instead
 }
 
 enum ReturnReason {
@@ -312,7 +314,8 @@ model PromoCode {
   id              String   @id @default(cuid())
   code            String   @unique
   percentOff      Int      @default(10)
-  source          String   @default("REFERRAL")   // REFERRAL | REWARD | MANUAL
+  amountOff       Int?                             // paise; fixed-amount credit (e.g. exchange store credit) — takes priority over percentOff when set
+  source          String   @default("REFERRAL")   // REFERRAL | REWARD | MANUAL | EXCHANGE_CREDIT
   referrerUserId  String?                          // whose referral this is (for REFERRAL codes)
   rewardForUserId String?                          // who this reward belongs to (for REWARD codes)
   maxRedemptions  Int      @default(1)
@@ -507,10 +510,12 @@ model Return {
   orderItem     OrderItem    @relation(fields: [orderItemId], references: [id], onDelete: Cascade)
   reason        ReturnReason
   note          String?
+  preferredSize String?                                    // the size/variant the customer would like instead, if any
   status        ReturnStatus @default(REQUESTED)
-  refundAmount  Int?                                       // paise; set on approval
+  refundAmount  Int?                                       // paise; legacy, no longer written
   refundedAt    DateTime?
   rzpRefundId   String?
+  creditCode    String?                                    // PromoCode.code, when status is STORE_CREDIT_ISSUED
   createdAt     DateTime     @default(now())
   updatedAt     DateTime     @updatedAt
   @@index([orderId])

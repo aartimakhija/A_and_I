@@ -9,9 +9,15 @@ const Body = z.object({
   email: z.string().email(),
   reason: z.enum(["SIZE_ISSUE", "DAMAGED", "NOT_AS_DESCRIBED", "CHANGED_MIND", "QUALITY_ISSUE", "OTHER"]),
   note: z.string().optional(),
+  preferredSize: z.string().optional(),
 });
 
-// Customer-facing: request a return/refund on a delivered order item.
+const EXCHANGE_WINDOW_DAYS = 7;
+
+// Customer-facing: request an exchange on a delivered order item. A&I doesn't
+// offer cash refunds for any reason — every request resolves to either a
+// replacement unit/size, or a store credit if that size has sold out (see
+// ReturnActions.tsx / the PATCH handler below).
 // Security note: this previously only checked ownership when BOTH a session
 // and an order.userId existed — a guest order (no userId) with a known
 // orderItemId could have a return filed against it by anyone. Now every
@@ -25,7 +31,10 @@ export async function POST(req: NextRequest) {
   const parsed = Body.safeParse(await req.json());
   if (!parsed.success) return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 });
 
-  const item = await prisma.orderItem.findUnique({ where: { id: parsed.data.orderItemId }, include: { order: true } });
+  const item = await prisma.orderItem.findUnique({
+    where: { id: parsed.data.orderItemId },
+    include: { order: { include: { shipment: true } } },
+  });
   if (!item) return NextResponse.json({ error: "order item not found" }, { status: 404 });
 
   const emailMatches = item.order.email.toLowerCase() === parsed.data.email.toLowerCase();
@@ -34,11 +43,25 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "forbidden" }, { status: 403 });
   }
   if (!["DELIVERED", "SHIPPED"].includes(item.order.status)) {
-    return NextResponse.json({ error: "returns can only be requested after shipping" }, { status: 400 });
+    return NextResponse.json({ error: "exchanges can only be requested after shipping" }, { status: 400 });
+  }
+
+  // The 7-day window starts at actual delivery. If the carrier hasn't marked
+  // it delivered yet (deliveredAt is null), the window hasn't started —
+  // allow the request rather than blocking on a tracking lag.
+  const deliveredAt = item.order.shipment?.deliveredAt;
+  if (deliveredAt) {
+    const daysSince = (Date.now() - deliveredAt.getTime()) / (24 * 60 * 60 * 1000);
+    if (daysSince > EXCHANGE_WINDOW_DAYS) {
+      return NextResponse.json({ error: `The ${EXCHANGE_WINDOW_DAYS}-day exchange window for this piece has passed.` }, { status: 400 });
+    }
   }
 
   const ret = await prisma.return.create({
-    data: { orderId: item.orderId, orderItemId: item.id, reason: parsed.data.reason, note: parsed.data.note },
+    data: {
+      orderId: item.orderId, orderItemId: item.id, reason: parsed.data.reason, note: parsed.data.note,
+      preferredSize: parsed.data.preferredSize,
+    },
   });
   return NextResponse.json(ret, { status: 201 });
 }

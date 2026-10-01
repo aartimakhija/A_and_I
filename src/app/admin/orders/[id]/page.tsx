@@ -45,10 +45,12 @@ export default async function AdminOrderDetail(props: { params: Promise<{ id: st
 
           {order.returns.length > 0 && (
             <div style={{ marginTop: 24 }}>
-              <div style={{ fontSize: 13, fontWeight: 600, marginBottom: 10 }}>Returns on this order</div>
+              <div style={{ fontSize: 13, fontWeight: 600, marginBottom: 10 }}>Exchange requests on this order</div>
               {order.returns.map((r) => (
                 <div key={r.id} style={{ fontSize: 12, color: "#666", padding: "6px 0", borderBottom: "1px solid #f0f0f0" }}>
-                  {r.reason.replaceAll("_", " ")} — {r.status}{r.refundAmount ? ` — refunded ₹${(r.refundAmount / 100).toLocaleString("en-IN")}` : ""}
+                  {r.reason.replaceAll("_", " ")} — {r.status}
+                  {r.preferredSize ? ` — wants size ${r.preferredSize}` : ""}
+                  {r.status === "STORE_CREDIT_ISSUED" && r.creditCode ? ` — credit ${r.creditCode}` : ""}
                 </div>
               ))}
             </div>

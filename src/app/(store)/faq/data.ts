@@ -21,7 +21,7 @@ export const faqs = [
   },
   {
     q: "Can I return or exchange a piece?",
-    a: "Yes — request a return from your account within 7 days of delivery. Approved returns are refunded to your original payment method once we receive the item back.",
+    a: "We don't offer cash refunds, but exchanges are easy: request one from your account within 7 days of delivery. We'll exchange it for a different size once we receive it back — or, if that size has sold out, send a store credit instead.",
   },
   {
     q: "How do I find my size?",

@@ -10,7 +10,7 @@ const GROUPS: [string, [string, string][]][] = [
   ["Sales", [
     ["/admin/orders", "Orders (OMS)"],
     ["/admin/preorders", "Pre-orders"],
-    ["/admin/returns", "Returns & Refunds"],
+    ["/admin/returns", "Exchanges"],
   ]],
   ["Catalogue", [
     ["/admin/products", "Catalogue (CMS)"],

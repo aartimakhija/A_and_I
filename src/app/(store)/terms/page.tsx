@@ -35,10 +35,10 @@ const sections = [
     ],
   },
   {
-    t: "Returns & refunds",
+    t: "Exchanges",
     body: [
-      "Returns can be requested from your account once an order has shipped.",
-      "Approved returns are refunded to the original payment method once the item is received back with us.",
+      "We don't offer cash refunds for any reason. An exchange can be requested from your account within 7 days of delivery.",
+      "Once we receive the piece back, we exchange it for a different size if one is available, or issue a store credit if it isn't.",
     ],
   },
   {

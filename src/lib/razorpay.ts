@@ -45,7 +45,10 @@ export function verifyWebhook(rawBody: string, signature: string) {
   catch { return false; }
 }
 
-// Issue a refund against a captured payment — used by the returns/refunds workflow.
+// Issue a refund against a captured payment. Not currently called anywhere —
+// A&I's exchange-only policy (Oct 2026) replaced cash refunds with exchanges/
+// store credit (see src/app/api/returns) — kept as a general-purpose helper
+// in case a future refund path (e.g. a cancelled pre-order) needs it.
 // amountPaise omitted = full refund of the original payment.
 export async function refundPayment(rzpPaymentId: string, amountPaise?: number) {
   return getClient().payments.refund(rzpPaymentId, amountPaise ? { amount: amountPaise } : {});

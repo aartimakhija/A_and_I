@@ -15,5 +15,5 @@ export async function GET(req: NextRequest) {
   if (!promo || !promo.active || promo.redemptions >= promo.maxRedemptions) {
     return NextResponse.json({ valid: false });
   }
-  return NextResponse.json({ valid: true, percentOff: promo.percentOff });
+  return NextResponse.json({ valid: true, percentOff: promo.percentOff, amountOff: promo.amountOff ? promo.amountOff / 100 : null });
 }

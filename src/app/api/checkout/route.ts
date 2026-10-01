@@ -49,7 +49,7 @@ export async function POST(req: NextRequest) {
   if (promoCode) {
     promo = await prisma.promoCode.findUnique({ where: { code: promoCode.trim().toUpperCase() } });
     if (promo && promo.active && promo.redemptions < promo.maxRedemptions) {
-      discount = Math.round(subtotal * (promo.percentOff / 100));
+      discount = Math.min(subtotal, promo.amountOff ?? Math.round(subtotal * (promo.percentOff / 100)));
       appliedCode = promo.code;
     }
   }

@@ -3,7 +3,7 @@ import { pageMetadata } from "@/lib/seo";
 
 export const metadata = pageMetadata({
   title: "Shipping & Returns",
-  description: "How A&I ships: dispatch timelines, pre-order timing, and what can be returned or exchanged.",
+  description: "How A&I ships: dispatch timelines, pre-order timing, and our exchange-only policy — no cash refunds, ever.",
   path: "/shipping-returns",
 });
 
@@ -13,11 +13,11 @@ const timelines = [
   { k: "Bespoke", v: "Made to your measurements once fabric and fit are confirmed with the studio." },
 ];
 
-const returns = [
-  { k: "In-stock pieces", v: "Request a return from your account within 7 days of delivery, unworn with tags on. Refunded to your original payment method once we receive it back." },
-  { k: "Pre-order pieces", v: "Exchangeable into another size while the run is open. Once cut, the piece exists only for you and can no longer be changed." },
-  { k: "Bespoke pieces", v: "Not returnable, since they're cut to your measurements — instead, one round of alterations is included." },
-  { k: "Anything faulty", v: "Tell us within 7 days with a photograph and we repair, remake or refund it." },
+const exchanges = [
+  { k: "In-stock pieces", v: "Request an exchange from your account within 7 days of delivery, unworn with tags on. We'll exchange it for a different size once we receive it back — if that size has sold out, we issue a store credit instead. We don't offer cash refunds." },
+  { k: "Pre-order pieces", v: "Exchangeable into another size while the run is still open, free of charge. Once cutting begins, the piece exists only for you and the same 7-day, size-only exchange window applies after delivery." },
+  { k: "Bespoke pieces", v: "Made to your measurements, so once cutting begins they can't be exchanged for a different size — one round of alterations is included instead." },
+  { k: "Anything faulty", v: "Tell us within 7 days with a photograph and we repair, remake, or issue a store credit — whichever gets you a piece that's right." },
 ];
 
 export default function ShippingReturnsPage() {
@@ -60,13 +60,14 @@ export default function ShippingReturnsPage() {
       </section>
 
       <section className="shell py-20">
-        <h2 className="display-lg">Returns, honestly.</h2>
+        <h2 className="display-lg">Exchanges, honestly.</h2>
         <p className="mt-6 max-w-xl text-muted-foreground">
-          A pre-order and bespoke house can&apos;t take everything back — but nothing here is
-          final-sale-and-good-luck either.
+          We don&apos;t offer cash refunds, for any reason — but nothing here is
+          final-sale-and-good-luck either. Every piece can be exchanged for a different size, or
+          credited, within 7 days of delivery.
         </p>
         <div className="mt-12 grid gap-10 md:grid-cols-2">
-          {returns.map((r) => (
+          {exchanges.map((r) => (
             <div key={r.k} className="border-t border-border pt-6">
               <h3 className="display-md text-xl italic">{r.k}</h3>
               <p className="mt-4 text-sm text-muted-foreground">{r.v}</p>
@@ -78,7 +79,7 @@ export default function ShippingReturnsPage() {
       <section className="border-t border-border bg-secondary">
         <div className="shell flex flex-wrap items-end justify-between gap-8 py-20">
           <div>
-            <h2 className="display-md">Need to start a return?</h2>
+            <h2 className="display-md">Need to start an exchange?</h2>
             <p className="mt-4 max-w-md text-sm text-muted-foreground">
               Request it from your account with your order number and the piece — we'll confirm next
               steps by email.
