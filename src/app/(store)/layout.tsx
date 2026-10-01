@@ -57,7 +57,15 @@ export default async function StoreLayout({ children }: { children: React.ReactN
     socialInstagram: settings.socialInstagram,
     socialWhatsapp: settings.socialWhatsapp, socialPinterest: settings.socialPinterest,
     socialFacebook: settings.socialFacebook, socialTwitter: settings.socialTwitter,
-    contactEmail: settings.contactEmail, contactPhone: settings.contactPhone, logoUrl: settings.logoUrl, footerImageUrl: settings.footerImageUrl,
+    contactEmail: settings.contactEmail, contactPhone: settings.contactPhone,
+    // Falls back to the logo shipped in /public — same pattern as the
+    // founder portrait's fallback — until (or unless) the admin uploads a
+    // different one via Settings. Needed because image uploads there
+    // require S3/R2 storage env vars this deployment doesn't have set yet
+    // (see src/lib/storage.ts); without this fallback, a brand-new site has
+    // no logo anywhere at all rather than the one it shipped with.
+    logoUrl: settings.logoUrl ?? "/logo.png",
+    footerImageUrl: settings.footerImageUrl,
   };
 
   return (
