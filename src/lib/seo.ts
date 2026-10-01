@@ -178,7 +178,6 @@ export async function buildSitemap() {
   const base = SITE_URL;
   const staticEntries = [
     { url: `${base}/`, changeFrequency: "daily" as const, priority: 1 },
-    { url: `${base}/about`, changeFrequency: "monthly" as const, priority: 0.6 },
     { url: `${base}/contact`, changeFrequency: "yearly" as const, priority: 0.3 },
     { url: `${base}/lookbook`, changeFrequency: "weekly" as const, priority: 0.7 },
     { url: `${base}/blog`, changeFrequency: "daily" as const, priority: 0.7 },

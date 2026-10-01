@@ -10,7 +10,7 @@ type Principle = { n: string; title: string; caption: string; body: string; imag
  * showcasing) rather than hard-coded, so this keeps working as the featured
  * piece changes — same layout and copy as the Lovable source either way.
  */
-export function PointOfView({ images = [], storyHref = "/about" }: { images?: (string | null | undefined)[]; storyHref?: string }) {
+export function PointOfView({ images = [], storyHref = "/founder" }: { images?: (string | null | undefined)[]; storyHref?: string }) {
   const principles: Principle[] = [
     {
       n: "01",

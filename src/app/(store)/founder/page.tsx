@@ -2,14 +2,26 @@ import Link from "next/link";
 import Image from "next/image";
 import { prisma } from "@/lib/prisma";
 import { toSFProduct, PRODUCT_INCLUDE } from "@/lib/storefront-adapter";
-import { pageMetadata, founderPersonJsonLd, jsonLdHtml } from "@/lib/seo";
+import { pageMetadata, founderPersonJsonLd, faqJsonLd, breadcrumbJsonLd, jsonLdHtml } from "@/lib/seo";
 import { getSiteSettings } from "@/lib/settings";
+import { FaqAccordion } from "@/components/storefront/FaqAccordion";
 
+// This page used to be split across /founder (bio, facts, operating
+// philosophy) and /about (brand story, FAQ) — two pages telling the same
+// "one founder, one point of view" idea twice. Merged into one page at
+// /founder; /about now 301s here (see next.config.mjs).
 export const metadata = pageMetadata({
   title: "The Founder — Artee Makhija",
-  description: "A&I is founded and run by Artee Makhija in Ahmedabad. Nine years across founder's offices, brand direction, sales and procurement — now one rail, one standard.",
+  description: "A&I is founded and run by Artee Makhija in Ahmedabad — the story behind the label, in her own words, plus the nine years of founder's-office experience it draws on.",
   path: "/founder",
 });
+
+const FAQS = [
+  { question: "Where are A&I pieces made?", answer: "Every piece is made in India, in small runs, by a specialist craft partner — never mass-produced." },
+  { question: "What fabric is used?", answer: "Most current pieces are 100% washed linen, chosen for how cleanly it holds a laser-cut edge without fraying. A handful of pieces use silk or organza instead, and that's always stated plainly on that piece's own product page." },
+  { question: "Do you restock sold-out pieces?", answer: "No — every piece is a limited run. Once it sells out, it's gone, though you can join the waitlist to be notified if a restock happens." },
+  { question: "How do I know my size?", answer: "Take our two-minute Fit Quiz — no measuring tape needed — and we'll recommend a size across the whole collection." },
+];
 
 const facts = [
   { k: "Based in", v: "Ahmedabad, Gujarat" },
@@ -50,6 +62,8 @@ export default async function FounderPage() {
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdHtml(founderPersonJsonLd()) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdHtml(faqJsonLd(FAQS)) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdHtml(breadcrumbJsonLd([{ name: "Home", path: "/" }, { name: "Founder", path: "/founder" }])) }} />
       <section className="shell py-20">
         <p className="eyebrow">Our world</p>
         <h1 className="display-xl mt-6">
@@ -62,8 +76,8 @@ export default async function FounderPage() {
       </section>
 
       <section className="shell pb-24">
-        <div className="reveal grid items-center gap-12 lg:grid-cols-2">
-          <div className="card-zoom relative aspect-square w-full overflow-hidden bg-secondary">
+        <div className="reveal grid items-start gap-12 lg:grid-cols-2">
+          <div className="card-zoom relative aspect-square w-full overflow-hidden bg-secondary lg:sticky lg:top-24">
             {founderImage ? (
               <Image src={founderImage} alt="Artee Makhija, founder of A&I" fill sizes="(max-width: 1024px) 100vw, 50vw" className="object-cover" />
             ) : (
@@ -73,24 +87,85 @@ export default async function FounderPage() {
             )}
           </div>
           <div>
-            <p className="eyebrow">Founder · design, craft and the calendar</p>
+            <p className="eyebrow">In her own words</p>
             <h2 className="display-lg mt-5">
               <span className="gold-italic">Artee Makhija</span>
             </h2>
-            <p className="mt-5 text-muted-foreground">
-              Nine years spent at the centre of founders&apos; offices across furniture, automobiles,
-              retail, workspaces and software — the work of turning intention into something that
-              actually ships.
+
+            <p className="mt-6 max-w-md text-[15px] font-light leading-loose text-muted-foreground">
+              I have always believed that clothes should make ordinary days feel a little more
+              intentional.
             </p>
-            <p className="mt-5 text-muted-foreground">
-              Twice a co-founder before A&amp;I, most recently of a womenswear venture. A&amp;I is
-              what she wanted to exist: design-led clothing that can explain itself completely — the
-              idea, the cloth and the hands.
+            <p className="mt-4 max-w-md text-[15px] font-light leading-loose text-muted-foreground">
+              I was twelve when I first became fascinated by fashion. I spent hours stitching,
+              embroidering and inventing my own designs. I would look at a garment and immediately
+              wonder what I could change — the silhouette, the colour, the detail, the way it could
+              become something else.
             </p>
-            <p className="mt-5 text-muted-foreground">
-              She decides which technique a season is built around, how large a run can honestly be,
-              and whether a piece survives an ordinary Tuesday.
+            <p className="mt-4 max-w-md text-[15px] font-light leading-loose text-muted-foreground">
+              Eventually, people started noticing.
+              <br />
+              <i>&ldquo;Where did you get that?&rdquo;</i>
+              <br />
+              I would tell them, <i>&ldquo;I designed it.&rdquo;</i>
+              <br />
+              Then they began asking me to design and customise pieces for them too.
+              <br />
+              I never outgrew that curiosity.
             </p>
+            <p className="mt-4 max-w-md text-[15px] font-light leading-loose text-muted-foreground">
+              As I grew older and began searching for clothes for myself, I often found myself
+              wanting something that was difficult to find — pieces that felt refined without
+              feeling excessive, beautifully considered without feeling precious, and special
+              enough to be remembered but easy enough to actually live in.
+            </p>
+            <p className="mt-4 max-w-md text-[15px] font-light leading-loose text-muted-foreground">
+              I kept returning to one simple truth:
+              <br />
+              We have 365 days to get dressed, not ten.
+              <br />
+              Looking and feeling considered shouldn&apos;t be reserved for parties.
+              <br />
+              So I built the house I could never find.
+            </p>
+            <p className="mt-4 max-w-md text-[15px] font-light leading-loose text-muted-foreground">
+              A&amp;I is a contemporary womenswear label created in small runs in India. We pay
+              close attention to design, fabric, construction and finish — creating pieces that
+              feel distinctive, refined and made to be lived in.
+            </p>
+            <p className="mt-4 max-w-md text-[15px] font-light leading-loose text-muted-foreground">
+              Every garment must earn its place.
+              <br />
+              It must feel good on the body.
+              <br />
+              It must be thoughtfully made.
+              <br />
+              And it must still feel right long after the first wear.
+            </p>
+            <p className="mt-4 max-w-md text-[15px] font-light leading-loose text-muted-foreground">
+              We believe in making less, making carefully, and creating pieces that can become
+              part of a woman&apos;s real wardrobe — not just her special-occasion wardrobe.
+            </p>
+            <p className="mt-4 max-w-md text-[15px] font-light leading-loose text-muted-foreground">
+              I still design with the same curiosity I had as a girl.
+              <br />
+              Only now, the pieces leave my table and find their way into other women&apos;s lives.
+              <br />
+              This is A&amp;I.
+            </p>
+            <p className="mt-5 max-w-md font-display text-lg italic text-foreground">
+              Clothes for the full year.
+              <br />
+              Made with care.
+              <br />
+              Meant to be lived in.
+            </p>
+            <p className="mt-5 max-w-md text-[15px] italic text-muted-foreground">
+              — Artee Makhija
+              <br />
+              Founder &amp; Creative Director, A&amp;I
+            </p>
+
             <dl className="mt-10 grid gap-6 border-t border-border pt-8 sm:grid-cols-2">
               {facts.map((f) => (
                 <div key={f.k}>
@@ -158,6 +233,18 @@ export default async function FounderPage() {
               <p className="mt-3 text-sm text-muted-foreground">{g.v}</p>
             </div>
           ))}
+        </div>
+      </section>
+
+      <section className="border-y border-border bg-card">
+        <div className="shell max-w-3xl py-16 md:py-24">
+          <div className="reveal mb-4 text-center">
+            <span className="eyebrow">Before you ask</span>
+            <h2 className="display-lg mt-5">The <span className="gold-italic">honest answers.</span></h2>
+          </div>
+          <div className="reveal mt-10" style={{ transitionDelay: "80ms" }}>
+            <FaqAccordion faqs={FAQS} />
+          </div>
         </div>
       </section>
 

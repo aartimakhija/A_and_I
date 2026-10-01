@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import { useStore } from "./StoreContext";
 
 const links: [string, string][] = [
-  ["/", "Home"], ["/lookbook", "Lookbook"], ["/blog", "Journal"], ["/bespoke", "Bespoke"], ["/about", "About"], ["/founder", "Founder"], ["/contact", "Contact"],
+  ["/", "Home"], ["/lookbook", "Lookbook"], ["/blog", "Journal"], ["/bespoke", "Bespoke"], ["/founder", "Founder"], ["/contact", "Contact"],
 ];
 // Desktop reaches these from the footer's "Studio" column instead of a nav
 // dropdown; the mobile drawer lists them directly after the primary links.

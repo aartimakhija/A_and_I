@@ -185,7 +185,7 @@ export async function HomeFlow() {
         </div>
         <div className="reveal">
           <p className="display-md mt-16 italic">A piece should have a reason to exist.</p>
-          <Link href="/about" className="link-underline micro tap-scale mt-8 inline-block">
+          <Link href="/founder" className="link-underline micro tap-scale mt-8 inline-block">
             See what makes a piece A&amp;I →
           </Link>
         </div>

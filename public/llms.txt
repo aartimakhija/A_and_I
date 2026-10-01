@@ -12,8 +12,7 @@
 - [Collection](/shop/all): the full product catalogue — every current piece is pre-order.
 - [Lookbook](/lookbook): styled editorial looks with outfit-building suggestions (bag, jewellery, shoes).
 - [Journal](/blog): craft and fabric explainers (linen, girih geometry, care instructions) and how pre-order works, with shoppable product tags.
-- [Founder](/founder): Artee Makhija's background — nine years across founders' offices, brand direction, sales and procurement.
-- [About](/about): brand story, values, and how pieces are made.
+- [Founder](/founder): Artee Makhija's own account of starting A&I, plus her background — nine years across founders' offices, brand direction, sales and procurement. (Was split across /founder and /about; now one page — /about redirects here.)
 - [FAQ](/faq): sizing, shipping, fabrics, returns and pre-order timing.
 - [Contact](/contact): general, wholesale, press, and vendor-partnership enquiries.
 - [Find your fit](/fit-quiz): a short quiz recommending a size across the collection.

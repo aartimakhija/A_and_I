@@ -16,7 +16,7 @@ export function ArrivalHero({
   videoUrl,
   movementPiece,
   shopHref = "/shop/all",
-  storyHref = "/about",
+  storyHref = "/founder",
 }: {
   imageUrl?: string | null;
   videoUrl?: string | null;

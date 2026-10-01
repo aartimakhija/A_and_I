@@ -12,7 +12,7 @@ export function Footer() {
 
   const cols: [string, [string, string][]][] = [
     ["Shop", [["Collection", "/shop/all"], ["Lookbook", "/lookbook"], ["Journal", "/blog"], ["Bespoke", "/bespoke"], ["Gifting", "/gifting"]]],
-    ["Studio", [["The founder", "/founder"], ["The craft", "/craft"], ["Responsibility", "/sustainability"], ["Visit", "/visit"], ["About", "/about"]]],
+    ["Studio", [["The founder", "/founder"], ["The craft", "/craft"], ["Responsibility", "/sustainability"], ["Visit", "/visit"]]],
     ["Help", [["Size & fit", "/size-fit"], ["Shipping & returns", "/shipping-returns"], ["FAQ", "/faq"], ["Refer a friend", "/account/refer"], ["Press", "/press"], ["Contact", "/contact"]]],
     ...(social.length > 0 ? [["Connect", social] as [string, [string, string][]]] : []),
   ];

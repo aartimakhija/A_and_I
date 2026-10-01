@@ -59,6 +59,12 @@ const nextConfig = {
     ],
   },
   experimental: { serverActions: { bodySizeLimit: "5mb" } },
+  // /about and /founder used to be two separate pages telling the same
+  // "one founder, one point of view" story; merged into /founder (Oct 2026).
+  // Permanent redirect keeps any existing links/bookmarks/search listings working.
+  async redirects() {
+    return [{ source: "/about", destination: "/founder", permanent: true }];
+  },
   async headers() {
     return [
       {
