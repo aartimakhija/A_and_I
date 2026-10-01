@@ -1,5 +1,6 @@
 "use client";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useStore } from "./StoreContext";
 
@@ -16,7 +17,7 @@ const mobileExtra: [string, string][] = [
 
 export function Nav() {
   const pathname = usePathname();
-  const { cart, setCartOpen, saved, setSavedOpen, setSearchOpen, menuOpen, setMenuOpen, isLoggedIn } = useStore();
+  const { cart, setCartOpen, saved, setSavedOpen, setSearchOpen, menuOpen, setMenuOpen, isLoggedIn, siteSettings } = useStore();
 
   const navLinkClass = (href: string) => {
     const active = href === "/" ? pathname === "/" : pathname?.startsWith(href.split("/").slice(0, 2).join("/"));
@@ -25,8 +26,16 @@ export function Nav() {
 
   return (
     <nav className="sticky top-0 z-50 flex h-[62px] items-center justify-between gap-4 border-b border-border bg-background/85 px-5 backdrop-blur-md md:px-12">
-      <Link href="/" className="flex shrink-0 items-baseline gap-2 font-display text-2xl tracking-wide text-foreground">
-        A&nbsp;<span className="gold-italic">&amp;</span>&nbsp;I
+      <Link href="/" className="flex shrink-0 items-center gap-2">
+        {siteSettings.logoUrl ? (
+          <span className="relative h-9 w-[104px] shrink-0">
+            <Image src={siteSettings.logoUrl} alt="A&I" fill sizes="104px" className="object-contain object-left" priority />
+          </span>
+        ) : (
+          <span className="font-display text-2xl tracking-wide text-foreground">
+            A&nbsp;<span className="gold-italic">&amp;</span>&nbsp;I
+          </span>
+        )}
         <span className="ml-1 text-[8px] uppercase tracking-[0.3em] text-muted-foreground">Style with us</span>
       </Link>
 
