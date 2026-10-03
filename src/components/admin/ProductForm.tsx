@@ -178,7 +178,9 @@ export default function ProductForm({ vendors, categories, materials, isAdmin, p
 
   const textareaClass = `${fieldClass} min-h-[80px] resize-y`;
 
-  const ImageThumb = ({ url, onRemove }: { url: string; onRemove: () => void }) => (
+  const ImageThumb = ({ url, onRemove, onMoveLeft, onMoveRight }: {
+    url: string; onRemove: () => void; onMoveLeft?: () => void; onMoveRight?: () => void;
+  }) => (
     <div className="relative">
       <img src={url} alt="" className="h-24 w-20 rounded-sm border border-neutral-200 object-cover" />
       <button
@@ -189,8 +191,45 @@ export default function ProductForm({ vendors, categories, materials, isAdmin, p
       >
         ×
       </button>
+      {(onMoveLeft || onMoveRight) && (
+        <div className="absolute inset-x-0 -bottom-1.5 flex justify-center gap-1">
+          <button
+            type="button"
+            onClick={onMoveLeft}
+            disabled={!onMoveLeft}
+            aria-label="Move earlier in the sequence"
+            title="Move earlier"
+            className="flex h-5 w-5 items-center justify-center rounded-full border border-neutral-200 bg-white text-xs text-neutral-600 hover:bg-neutral-100 disabled:cursor-not-allowed disabled:opacity-30"
+          >
+            ←
+          </button>
+          <button
+            type="button"
+            onClick={onMoveRight}
+            disabled={!onMoveRight}
+            aria-label="Move later in the sequence"
+            title="Move later"
+            className="flex h-5 w-5 items-center justify-center rounded-full border border-neutral-200 bg-white text-xs text-neutral-600 hover:bg-neutral-100 disabled:cursor-not-allowed disabled:opacity-30"
+          >
+            →
+          </button>
+        </div>
+      )}
     </div>
   );
+
+  // First photo is the one used everywhere a single thumbnail is needed
+  // (collection grid, search, cart) — so reordering here is the whole UI for
+  // "which photo represents this product."
+  function moveImage(i: number, dir: -1 | 1) {
+    setImages((imgs) => {
+      const next = [...imgs];
+      const j = i + dir;
+      if (j < 0 || j >= next.length) return imgs;
+      [next[i], next[j]] = [next[j], next[i]];
+      return next;
+    });
+  }
 
   return (
     <form onSubmit={onSubmit} className="pb-4">
@@ -282,7 +321,13 @@ export default function ProductForm({ vendors, categories, materials, isAdmin, p
                 <label className={labelClass}>Gallery images</label>
                 <div className="mt-2 flex flex-wrap gap-3">
                   {images.map((url, i) => (
-                    <ImageThumb key={i} url={url} onRemove={() => setImages((imgs) => imgs.filter((_, idx) => idx !== i))} />
+                    <ImageThumb
+                      key={url + i}
+                      url={url}
+                      onRemove={() => setImages((imgs) => imgs.filter((_, idx) => idx !== i))}
+                      onMoveLeft={i > 0 ? () => moveImage(i, -1) : undefined}
+                      onMoveRight={i < images.length - 1 ? () => moveImage(i, 1) : undefined}
+                    />
                   ))}
                   <label className="flex h-24 w-20 cursor-pointer items-center justify-center rounded-sm border border-dashed border-neutral-300 text-2xl text-neutral-400 hover:border-neutral-400 hover:text-neutral-600">
                     {uploading ? "…" : "+"}
@@ -290,6 +335,10 @@ export default function ProductForm({ vendors, categories, materials, isAdmin, p
                   </label>
                 </div>
                 <p className="mt-2 text-xs text-neutral-400">
+                  First photo is used wherever a single image represents this product (collection grid, search, cart).
+                  Use the arrows under a photo to reorder — the sequence here is saved as the product's photo order.
+                </p>
+                <p className="mt-1 text-xs text-neutral-400">
                   Uploads go to S3/R2 in production, or /public/uploads in dev (see storageBackend in src/lib/storage.ts).
                 </p>
               </div>
