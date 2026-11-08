@@ -26,7 +26,7 @@ const CSP = [
   "script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://checkout.razorpay.com",
   "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
   "font-src 'self' https://fonts.gstatic.com data:",
-  "img-src 'self' data: blob: https://*.amazonaws.com https://*.cdninstagram.com https://*.fbcdn.net https://www.googletagmanager.com https://www.google-analytics.com https://www.google.co.in",
+  "img-src 'self' data: blob: https://*.amazonaws.com https://*.r2.dev https://*.cdninstagram.com https://*.fbcdn.net https://www.googletagmanager.com https://www.google-analytics.com https://www.google.co.in",
   "connect-src 'self' https://www.google-analytics.com https://*.google-analytics.com https://analytics.google.com https://stats.g.doubleclick.net https://api.razorpay.com https://lumberjack.razorpay.com",
   "frame-src https://checkout.razorpay.com https://api.razorpay.com",
   "object-src 'none'",
@@ -54,6 +54,10 @@ const nextConfig = {
   images: {
     remotePatterns: [
       { protocol: "https", hostname: "*.amazonaws.com" },
+      // Cloudflare R2's public development URL (pub-<hash>.r2.dev). If a
+      // custom domain is later attached to the bucket and set as
+      // S3_PUBLIC_URL_BASE, add that exact hostname here and to img-src above.
+      { protocol: "https", hostname: "*.r2.dev" },
       { protocol: "https", hostname: "*.cdninstagram.com" },
       { protocol: "https", hostname: "*.fbcdn.net" },
     ],

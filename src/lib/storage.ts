@@ -43,6 +43,11 @@ function client() {
     region: process.env.S3_REGION || "auto",
     endpoint: process.env.S3_ENDPOINT || undefined,
     forcePathStyle: !!process.env.S3_ENDPOINT, // needed for R2/MinIO/most non-AWS endpoints
+    // Recent SDK versions attach flexible-checksum headers to every request by
+    // default; S3-compatible stores (R2, MinIO, B2) don't all accept them.
+    // "WHEN_REQUIRED" restores the plain behaviour and is a no-op on real AWS.
+    requestChecksumCalculation: "WHEN_REQUIRED",
+    responseChecksumValidation: "WHEN_REQUIRED",
     credentials: {
       accessKeyId: process.env.S3_ACCESS_KEY_ID!,
       secretAccessKey: process.env.S3_SECRET_ACCESS_KEY!,
@@ -70,7 +75,11 @@ export async function uploadImageBuffer(buffer: Buffer, opts: { filename: string
       Key: key,
       Body: buffer,
       ContentType: opts.contentType,
-      ACL: "public-read",
+      // Real AWS needs a per-object ACL to be publicly readable. R2 and most
+      // other S3-compatible stores have no object ACLs (public access is a
+      // bucket-level setting) and some reject the header outright, so only
+      // send it when no custom endpoint is configured.
+      ...(process.env.S3_ENDPOINT ? {} : { ACL: "public-read" }),
     }));
     return { url: publicUrl(key), key };
   }
